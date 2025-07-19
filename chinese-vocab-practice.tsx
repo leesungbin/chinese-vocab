@@ -169,9 +169,15 @@ export default function Component() {
 
   const speakChinese = () => {
     if ("speechSynthesis" in window) {
-      const utterance = new SpeechSynthesisUtterance(currentWord.chinese)
-      utterance.lang = "zh-CN"
-      speechSynthesis.speak(utterance)
+      const utterance = new SpeechSynthesisUtterance(currentWord.chinese);
+      utterance.lang = "zh-CN";
+      // Select an available Chinese-language voice if present
+      const voices = speechSynthesis.getVoices();
+      const zhVoice = voices.find(v => v.lang.startsWith("zh"));
+      if (zhVoice) {
+        utterance.voice = zhVoice;
+      }
+      speechSynthesis.speak(utterance);
     }
   }
 
