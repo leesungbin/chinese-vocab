@@ -671,13 +671,13 @@ export default function Component() {
               </Button>
 
               <div
-                className={`text-sm ${themeStyles.secondaryText} backdrop-blur-md ${themeStyles.glassBackground} px-4 py-2 rounded-full ${themeStyles.glassBorder}`}
+                className={`flex flex-col items-center text-sm ${themeStyles.secondaryText} backdrop-blur-md ${themeStyles.glassBackground} px-4 py-2 rounded-full ${themeStyles.glassBorder}`}
               >
-                {currentIndex + 1} of {filteredVocabularyData.length}
+                <div>{currentIndex + 1} of {filteredVocabularyData.length}</div>
                 {!showMemorizedWords && memorizedWords.size > 0 && (
-                  <span className="ml-2 text-xs opacity-75">
+                  <div className="text-xs opacity-75">
                     ({memorizedWords.size} memorized)
-                  </span>
+                  </div>
                 )}
               </div>
 
