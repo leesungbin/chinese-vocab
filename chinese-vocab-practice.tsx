@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
-import { ChevronLeft, ChevronRight, Eye, Volume2, Sun, Moon, Shuffle, Filter } from "lucide-react"
+import { ChevronLeft, ChevronRight, Eye, Volume2, Sun, Moon, Shuffle, Filter, ChevronDown, ChevronUp } from "lucide-react"
 import {isNumber} from "node:util";
 
 interface VocabItem {
@@ -102,10 +102,11 @@ export default function Component() {
   const [chineseRevealed, setChineseRevealed] = useState(false)
   const [isDarkMode, setIsDarkMode] = useState(false)
   const [hasShownChinese, setHasShownChinese] = useState(false)
+  const [settingsOpen, setSettingsOpen] = useState(true)
 
   // Get the current word or use a placeholder if data is still loading
-  const currentWord = vocabularyData.length > 0 
-    ? vocabularyData[currentIndex] 
+  const currentWord = vocabularyData.length > 0
+    ? vocabularyData[currentIndex]
     : { id: 0, chinese: "", pinyin: "", korean: "", total: 0, day: 0 };
 
   const nextWord = () => {
@@ -145,7 +146,7 @@ export default function Component() {
     setKoreanRevealed(false);
     setChineseRevealed(false);
     setHasShownChinese(false);
-    
+
     if (day === null) {
       // Show all words
       setVocabularyData(isShuffled ? [...originalData].sort(() => Math.random() - 0.5) : originalData);
@@ -185,8 +186,8 @@ export default function Component() {
     if (!hasShownChinese && currentWord.id > 0) {
       setHasShownChinese(true)
       // Update the local data to reflect the new total
-      setVocabularyData(prev => prev.map(item => 
-        item.id === currentWord.id 
+      setVocabularyData(prev => prev.map(item =>
+        item.id === currentWord.id
           ? { ...item, total: (item.total || 0) + 1 }
           : item
       ))
@@ -263,84 +264,100 @@ export default function Component() {
         </div>
 
         {/* Settings */}
-        <div
-          className={`mb-6 backdrop-blur-md ${themeStyles.glassBackground} rounded-2xl ${themeStyles.glassBorder} shadow-xl`}
-        >
-          <div className="p-6">
-            <h3 className={`text-lg font-semibold ${themeStyles.mainText} mb-4`}>Display Settings</h3>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="show-chinese" className={`text-sm font-medium ${themeStyles.secondaryText}`}>
-                  Always show Chinese characters
-                </Label>
-                <Switch id="show-chinese" checked={showChinese} onCheckedChange={setShowChinese} />
-              </div>
-              <div className="flex items-center justify-between">
-                <Label htmlFor="show-pinyin" className={`text-sm font-medium ${themeStyles.secondaryText}`}>
-                  Always show pronunciation (Pinyin)
-                </Label>
-                <Switch id="show-pinyin" checked={showPinyin} onCheckedChange={setShowPinyin} />
-              </div>
-              <div className="flex items-center justify-between">
-                <Label htmlFor="show-korean" className={`text-sm font-medium ${themeStyles.secondaryText}`}>
-                  Always show Korean meaning
-                </Label>
-                <Switch id="show-korean" checked={showKorean} onCheckedChange={setShowKorean} />
-              </div>
-            </div>
-            
-            <h3 className={`text-lg font-semibold ${themeStyles.mainText} mb-4 mt-6`}>Word Order & Filtering</h3>
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <Button
-                  variant="outline"
-                  onClick={shuffleWords}
-                  disabled={vocabularyData.length === 0}
-                  className={`gap-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
-                >
-                  <Shuffle className="h-4 w-4" />
-                  Shuffle Words
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={resetToOriginal}
-                  disabled={vocabularyData.length === 0 || (!isShuffled && selectedDay === null)}
-                  className={`gap-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
-                >
-                  Reset Order
-                </Button>
-              </div>
-              
-              {availableDays.length > 0 && (
-                <div className="space-y-2">
-                  <Label className={`text-sm font-medium ${themeStyles.secondaryText}`}>
-                    Filter by Day Group
-                  </Label>
-                  <div className="flex flex-wrap gap-2">
-                    <Button
-                      variant={selectedDay === null ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => filterByDay(null)}
-                      className={`backdrop-blur-md ${selectedDay === null ? themeStyles.progressFill + ' text-white' : themeStyles.buttonGlass + ' ' + themeStyles.mainText} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover}`}
-                    >
-                      All Days
-                    </Button>
-                    {availableDays.map(day => (
-                      <Button
-                        key={day}
-                        variant={selectedDay === day ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => filterByDay(day)}
-                        className={`backdrop-blur-md ${selectedDay === day ? themeStyles.progressFill + ' text-white' : themeStyles.buttonGlass + ' ' + themeStyles.mainText} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover}`}
-                      >
-                        Day {day}
-                      </Button>
-                    ))}
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className={`text-xl font-semibold ${themeStyles.mainText}`}>Settings</h2>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setSettingsOpen(!settingsOpen)}
+              className={`ml-2 ${themeStyles.mainText}`}
+              aria-label={settingsOpen ? "Collapse settings" : "Expand settings"}
+            >
+              {settingsOpen ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+            </Button>
+          </div>
+          {settingsOpen && (
+            <div
+              className={`backdrop-blur-md ${themeStyles.glassBackground} rounded-2xl ${themeStyles.glassBorder} shadow-xl`}
+            >
+              <div className="p-6">
+                <h3 className={`text-lg font-semibold ${themeStyles.mainText} mb-4`}>Display Settings</h3>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="show-chinese" className={`text-sm font-medium ${themeStyles.secondaryText}`}>
+                      Always show Chinese characters
+                    </Label>
+                    <Switch id="show-chinese" checked={showChinese} onCheckedChange={setShowChinese} />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="show-pinyin" className={`text-sm font-medium ${themeStyles.secondaryText}`}>
+                      Always show pronunciation (Pinyin)
+                    </Label>
+                    <Switch id="show-pinyin" checked={showPinyin} onCheckedChange={setShowPinyin} />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="show-korean" className={`text-sm font-medium ${themeStyles.secondaryText}`}>
+                      Always show Korean meaning
+                    </Label>
+                    <Switch id="show-korean" checked={showKorean} onCheckedChange={setShowKorean} />
                   </div>
                 </div>
-              )}
+
+                <h3 className={`text-lg font-semibold ${themeStyles.mainText} mb-4 mt-6`}>Word Order & Filtering</h3>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <Button
+                      variant="outline"
+                      onClick={shuffleWords}
+                      disabled={vocabularyData.length === 0}
+                      className={`gap-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
+                    >
+                      <Shuffle className="h-4 w-4" />
+                      Shuffle Words
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={resetToOriginal}
+                      disabled={vocabularyData.length === 0 || (!isShuffled && selectedDay === null)}
+                      className={`gap-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
+                    >
+                      Reset Order
+                    </Button>
+                  </div>
+
+                  {availableDays.length > 0 && (
+                    <div className="space-y-2">
+                      <Label className={`text-sm font-medium ${themeStyles.secondaryText}`}>
+                        Filter by Day Group
+                      </Label>
+                      <div className="flex flex-wrap gap-2">
+                        <Button
+                          variant={selectedDay === null ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => filterByDay(null)}
+                          className={`backdrop-blur-md ${selectedDay === null ? themeStyles.progressFill + ' text-white' : themeStyles.buttonGlass + ' ' + themeStyles.mainText} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover}`}
+                        >
+                          All Days
+                        </Button>
+                        {availableDays.map(day => (
+                          <Button
+                            key={day}
+                            variant={selectedDay === day ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => filterByDay(day)}
+                            className={`backdrop-blur-md ${selectedDay === day ? themeStyles.progressFill + ' text-white' : themeStyles.buttonGlass + ' ' + themeStyles.mainText} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover}`}
+                          >
+                            Day {day}
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Main Vocabulary Card */}
