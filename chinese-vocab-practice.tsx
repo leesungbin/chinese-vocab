@@ -178,6 +178,11 @@ export default function Component() {
       saveMemorizedWords(newSet)
       return newSet
     })
+    // Reset reveal states when skipping to next word
+    setPinyinRevealed(false);
+    setKoreanRevealed(false);
+    setChineseRevealed(false);
+    setHasShownChinese(false);
   }
 
   // Filter vocabulary data based on memorized words setting
