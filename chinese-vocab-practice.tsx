@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
+import { Checkbox } from "@/components/ui/checkbox"
 import { ChevronLeft, ChevronRight, Eye, Volume2, Sun, Moon, Shuffle, Filter, ChevronDown, ChevronUp, Settings, X } from "lucide-react"
 import {isNumber} from "node:util";
 
@@ -14,6 +15,7 @@ interface VocabItem {
   id: number
   total?: number
   day?: number
+  memorized?: boolean
 }
 
 // Function to fetch vocabulary data from Google Sheets
@@ -103,15 +105,66 @@ export default function Component() {
   const [isDarkMode, setIsDarkMode] = useState(false)
   const [hasShownChinese, setHasShownChinese] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(true)
+  const [memorizedWords, setMemorizedWords] = useState<Set<number>>(new Set())
+  const [showMemorizedWords, setShowMemorizedWords] = useState(true)
+
+  // Load memorized words from localStorage
+  useEffect(() => {
+    const savedMemorized = localStorage.getItem('memorizedWords')
+    if (savedMemorized) {
+      try {
+        const memorizedArray = JSON.parse(savedMemorized)
+        setMemorizedWords(new Set(memorizedArray))
+      } catch (error) {
+        console.error('Error loading memorized words:', error)
+      }
+    }
+
+    const savedShowMemorized = localStorage.getItem('showMemorizedWords')
+    if (savedShowMemorized !== null) {
+      setShowMemorizedWords(JSON.parse(savedShowMemorized))
+    }
+  }, [])
+
+  // Save memorized words to localStorage
+  const saveMemorizedWords = (memorizedSet: Set<number>) => {
+    localStorage.setItem('memorizedWords', JSON.stringify(Array.from(memorizedSet)))
+  }
+
+  // Toggle memorized status for a word
+  const toggleMemorized = (wordId: number) => {
+    setMemorizedWords(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(wordId)) {
+        newSet.delete(wordId)
+      } else {
+        newSet.add(wordId)
+      }
+      saveMemorizedWords(newSet)
+      return newSet
+    })
+  }
+
+  // Filter vocabulary data based on memorized words setting
+  const getFilteredVocabularyData = () => {
+    if (showMemorizedWords) {
+      return vocabularyData;
+    }
+    return vocabularyData.filter(word => !memorizedWords.has(word.id));
+  }
+
+  const filteredVocabularyData = getFilteredVocabularyData();
 
   // Get the current word or use a placeholder if data is still loading
-  const currentWord = vocabularyData.length > 0
-    ? vocabularyData[currentIndex]
+  const currentWord = filteredVocabularyData.length > 0
+    ? filteredVocabularyData[Math.min(currentIndex, filteredVocabularyData.length - 1)]
     : { id: 0, chinese: "", pinyin: "", korean: "", total: 0, day: 0 };
 
+
   const nextWord = () => {
-    if (vocabularyData.length === 0) return;
-    setCurrentIndex((prev) => (prev + 1) % vocabularyData.length)
+    if (filteredVocabularyData.length === 0) return;
+    
+    setCurrentIndex((prev) => (prev + 1) % filteredVocabularyData.length)
     setPinyinRevealed(false)
     setKoreanRevealed(false)
     setChineseRevealed(false)
@@ -119,13 +172,25 @@ export default function Component() {
   }
 
   const prevWord = () => {
-    if (vocabularyData.length === 0) return;
-    setCurrentIndex((prev) => (prev - 1 + vocabularyData.length) % vocabularyData.length)
+    if (filteredVocabularyData.length === 0) return;
+    
+    setCurrentIndex((prev) => (prev - 1 + filteredVocabularyData.length) % filteredVocabularyData.length)
     setPinyinRevealed(false)
     setKoreanRevealed(false)
     setChineseRevealed(false)
     setHasShownChinese(false)
   }
+
+  // Reset current index when showMemorizedWords changes
+  useEffect(() => {
+    if (filteredVocabularyData.length > 0 && currentIndex >= filteredVocabularyData.length) {
+      setCurrentIndex(0)
+      setPinyinRevealed(false)
+      setKoreanRevealed(false)
+      setChineseRevealed(false)
+      setHasShownChinese(false)
+    }
+  }, [showMemorizedWords, memorizedWords, filteredVocabularyData.length, currentIndex])
 
   const shuffleWords = () => {
     if (vocabularyData.length === 0) return;
@@ -306,6 +371,19 @@ export default function Component() {
                   </Label>
                   <Switch id="show-korean" checked={showKorean} onCheckedChange={setShowKorean} />
                 </div>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="show-memorized" className={`text-sm font-medium ${themeStyles.secondaryText}`}>
+                    Show memorized words
+                  </Label>
+                  <Switch 
+                    id="show-memorized" 
+                    checked={showMemorizedWords} 
+                    onCheckedChange={(checked) => {
+                      setShowMemorizedWords(checked)
+                      localStorage.setItem('showMemorizedWords', JSON.stringify(checked))
+                    }} 
+                  />
+                </div>
               </div>
               {/* Word Order & Filtering */}
               <h3 className={`text-lg font-semibold ${themeStyles.mainText} mb-4`}>Word Order & Filtering</h3>
@@ -365,19 +443,41 @@ export default function Component() {
         <div
           className={`mb-6 backdrop-blur-lg ${themeStyles.glassBackgroundStrong} rounded-3xl ${themeStyles.glassBorderStrong} shadow-2xl`}
         >
-          <div className="p-8">
+          <div className="p-8 relative">
+            {/* Memorized Checkbox */}
+            {!isLoading && vocabularyData.length > 0 && (
+              <div className="absolute top-4 right-4">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="memorized"
+                    checked={memorizedWords.has(currentWord.id)}
+                    onCheckedChange={() => toggleMemorized(currentWord.id)}
+                    className="data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
+                  />
+                  <Label
+                    htmlFor="memorized"
+                    className={`text-sm font-medium ${themeStyles.secondaryText} cursor-pointer`}
+                  >
+                    Memorized
+                  </Label>
+                </div>
+              </div>
+            )}
             {isLoading ? (
               <div className="text-center space-y-6 min-h-[300px] flex flex-col items-center justify-center">
                 <div className={`text-2xl font-bold ${themeStyles.mainText} mb-4`}>Loading vocabulary data...</div>
                 <div className={`${themeStyles.progressFill} h-2 w-24 rounded-full animate-pulse`}></div>
               </div>
-            ) : vocabularyData.length === 0 ? (
+            ) : filteredVocabularyData.length === 0 ? (
               <div className="text-center space-y-6 min-h-[300px] flex flex-col items-center justify-center">
                 <div className={`text-2xl font-bold ${themeStyles.mainText} mb-4`}>
-                  Failed to load vocabulary data
+                  {vocabularyData.length === 0 ? "Failed to load vocabulary data" : "All words are memorized!"}
                 </div>
                 <div className={`text-lg ${themeStyles.secondaryText}`}>
-                  Please check your connection and try again
+                  {vocabularyData.length === 0 
+                    ? "Please check your connection and try again"
+                    : "Enable 'Show memorized words' in settings to see all words"
+                  }
                 </div>
               </div>
             ) : (
@@ -473,7 +573,7 @@ export default function Component() {
         </div>
 
         {/* Navigation */}
-        {!isLoading && vocabularyData.length > 0 && (
+        {!isLoading && filteredVocabularyData.length > 0 && (
           <>
             <div className="flex items-center justify-between mb-6">
               <Button
@@ -488,7 +588,12 @@ export default function Component() {
               <div
                 className={`text-sm ${themeStyles.secondaryText} backdrop-blur-md ${themeStyles.glassBackground} px-4 py-2 rounded-full ${themeStyles.glassBorder}`}
               >
-                {currentIndex + 1} of {vocabularyData.length}
+                {currentIndex + 1} of {filteredVocabularyData.length}
+                {!showMemorizedWords && memorizedWords.size > 0 && (
+                  <span className="ml-2 text-xs opacity-75">
+                    ({memorizedWords.size} memorized)
+                  </span>
+                )}
               </div>
 
               <Button
@@ -507,7 +612,7 @@ export default function Component() {
             >
               <div
                 className={`${themeStyles.progressFill} h-full rounded-full transition-all duration-300`}
-                style={{ width: `${((currentIndex + 1) / vocabularyData.length) * 100}%` }}
+                style={{ width: `${((currentIndex + 1) / filteredVocabularyData.length) * 100}%` }}
               ></div>
             </div>
           </>
