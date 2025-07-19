@@ -108,27 +108,62 @@ export default function Component() {
   const [memorizedWords, setMemorizedWords] = useState<Set<number>>(new Set())
   const [showMemorizedWords, setShowMemorizedWords] = useState(true)
 
-  // Load memorized words from localStorage
+  // Load all settings from localStorage
   useEffect(() => {
-    const savedMemorized = localStorage.getItem('memorizedWords')
-    if (savedMemorized) {
-      try {
+    try {
+      // Load memorized words
+      const savedMemorized = localStorage.getItem('memorizedWords')
+      if (savedMemorized) {
         const memorizedArray = JSON.parse(savedMemorized)
         setMemorizedWords(new Set(memorizedArray))
-      } catch (error) {
-        console.error('Error loading memorized words:', error)
       }
-    }
 
-    const savedShowMemorized = localStorage.getItem('showMemorizedWords')
-    if (savedShowMemorized !== null) {
-      setShowMemorizedWords(JSON.parse(savedShowMemorized))
+      // Load display settings
+      const savedShowMemorized = localStorage.getItem('showMemorizedWords')
+      if (savedShowMemorized !== null) {
+        setShowMemorizedWords(JSON.parse(savedShowMemorized))
+      }
+
+      const savedShowChinese = localStorage.getItem('showChinese')
+      if (savedShowChinese !== null) {
+        setShowChinese(JSON.parse(savedShowChinese))
+      }
+
+      const savedShowPinyin = localStorage.getItem('showPinyin')
+      if (savedShowPinyin !== null) {
+        setShowPinyin(JSON.parse(savedShowPinyin))
+      }
+
+      const savedShowKorean = localStorage.getItem('showKorean')
+      if (savedShowKorean !== null) {
+        setShowKorean(JSON.parse(savedShowKorean))
+      }
+
+      const savedIsDarkMode = localStorage.getItem('isDarkMode')
+      if (savedIsDarkMode !== null) {
+        setIsDarkMode(JSON.parse(savedIsDarkMode))
+      }
+    } catch (error) {
+      console.error('Error loading settings from localStorage:', error)
     }
   }, [])
 
   // Save memorized words to localStorage
   const saveMemorizedWords = (memorizedSet: Set<number>) => {
-    localStorage.setItem('memorizedWords', JSON.stringify(Array.from(memorizedSet)))
+    try {
+      localStorage.setItem('memorizedWords', JSON.stringify(Array.from(memorizedSet)))
+    } catch (error) {
+      console.error('Error saving memorized words to localStorage:', error)
+    }
+  }
+
+  // Save settings to localStorage
+  const saveSettingToLocalStorage = (key: string, value: any) => {
+    try {
+      localStorage.setItem(key, JSON.stringify(value))
+    } catch (error) {
+      console.error(`Error saving ${key} to localStorage:`, error)
+    }
   }
 
   // Toggle memorized status for a word
@@ -265,7 +300,9 @@ export default function Component() {
   }
 
   const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode)
+    const newDarkMode = !isDarkMode
+    setIsDarkMode(newDarkMode)
+    saveSettingToLocalStorage('isDarkMode', newDarkMode)
   }
 
   // Handle automatic Chinese display when showChinese is true
@@ -357,19 +394,40 @@ export default function Component() {
                   <Label htmlFor="show-chinese" className={`text-sm font-medium ${themeStyles.secondaryText}`}>
                     Always show Chinese characters
                   </Label>
-                  <Switch id="show-chinese" checked={showChinese} onCheckedChange={setShowChinese} />
+                  <Switch 
+                    id="show-chinese" 
+                    checked={showChinese} 
+                    onCheckedChange={(checked) => {
+                      setShowChinese(checked)
+                      saveSettingToLocalStorage('showChinese', checked)
+                    }} 
+                  />
                 </div>
                 <div className="flex items-center justify-between">
                   <Label htmlFor="show-pinyin" className={`text-sm font-medium ${themeStyles.secondaryText}`}>
                     Always show pronunciation (Pinyin)
                   </Label>
-                  <Switch id="show-pinyin" checked={showPinyin} onCheckedChange={setShowPinyin} />
+                  <Switch 
+                    id="show-pinyin" 
+                    checked={showPinyin} 
+                    onCheckedChange={(checked) => {
+                      setShowPinyin(checked)
+                      saveSettingToLocalStorage('showPinyin', checked)
+                    }} 
+                  />
                 </div>
                 <div className="flex items-center justify-between">
                   <Label htmlFor="show-korean" className={`text-sm font-medium ${themeStyles.secondaryText}`}>
                     Always show Korean meaning
                   </Label>
-                  <Switch id="show-korean" checked={showKorean} onCheckedChange={setShowKorean} />
+                  <Switch 
+                    id="show-korean" 
+                    checked={showKorean} 
+                    onCheckedChange={(checked) => {
+                      setShowKorean(checked)
+                      saveSettingToLocalStorage('showKorean', checked)
+                    }} 
+                  />
                 </div>
                 <div className="flex items-center justify-between">
                   <Label htmlFor="show-memorized" className={`text-sm font-medium ${themeStyles.secondaryText}`}>
