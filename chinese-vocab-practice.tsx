@@ -367,31 +367,31 @@ export default function Component() {
                 {/* Chinese Characters */}
                 <div className="relative">
                   {showChinese ? (
-                    <>
-                      <div className={`text-8xl font-bold ${themeStyles.mainText} mb-4`}>{currentWord.chinese}</div>
+                    <div className="flex flex-col items-center">
+                      <div className={`text-8xl font-bold ${themeStyles.mainText} mb-2`}>{currentWord.chinese}</div>
                       <Button
                         variant="outline"
                         size="icon"
-                        className={`absolute top-0 right-0 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
+                        className={`mt-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
                         onClick={speakChinese}
                       >
                         <Volume2 className="h-4 w-4" />
                       </Button>
-                    </>
+                    </div>
                   ) : (
                     <div className="flex flex-col items-center justify-center gap-4 min-h-[120px]">
                       {chineseRevealed ? (
-                        <>
-                          <div className={`text-8xl font-bold ${themeStyles.mainText} mb-4`}>{currentWord.chinese}</div>
+                        <div className="flex flex-col items-center">
+                          <div className={`text-8xl font-bold ${themeStyles.mainText} mb-2`}>{currentWord.chinese}</div>
                           <Button
                             variant="outline"
                             size="icon"
-                            className={`backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
+                            className={`mt-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
                             onClick={speakChinese}
                           >
                             <Volume2 className="h-4 w-4" />
                           </Button>
-                        </>
+                        </div>
                       ) : (
                         <Button
                           variant="outline"
