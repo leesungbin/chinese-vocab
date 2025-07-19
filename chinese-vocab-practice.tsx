@@ -179,10 +179,10 @@ export default function Component() {
       return newSet
     })
     // Reset reveal states when skipping to next word
-    setPinyinRevealed(false);
-    setKoreanRevealed(false);
-    setChineseRevealed(false);
-    setHasShownChinese(false);
+    setPinyinRevealed(showPinyin);
+    setKoreanRevealed(showKorean);
+    setChineseRevealed(showChinese);
+    setHasShownChinese(showChinese);
   }
 
   // Filter vocabulary data based on memorized words setting
@@ -203,22 +203,22 @@ export default function Component() {
 
   const nextWord = () => {
     if (filteredVocabularyData.length === 0) return;
-    
+
     setCurrentIndex((prev) => (prev + 1) % filteredVocabularyData.length)
-    setPinyinRevealed(false)
-    setKoreanRevealed(false)
-    setChineseRevealed(false)
-    setHasShownChinese(false)
+    setPinyinRevealed(showPinyin)
+    setKoreanRevealed(showKorean)
+    setChineseRevealed(showChinese)
+    setHasShownChinese(showChinese)
   }
 
   const prevWord = () => {
     if (filteredVocabularyData.length === 0) return;
-    
+
     setCurrentIndex((prev) => (prev - 1 + filteredVocabularyData.length) % filteredVocabularyData.length)
-    setPinyinRevealed(false)
-    setKoreanRevealed(false)
-    setChineseRevealed(false)
-    setHasShownChinese(false)
+    setPinyinRevealed(showPinyin)
+    setKoreanRevealed(showKorean)
+    setChineseRevealed(showChinese)
+    setHasShownChinese(showChinese)
   }
 
   // Reset current index when showMemorizedWords changes
