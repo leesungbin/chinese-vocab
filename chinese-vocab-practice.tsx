@@ -497,6 +497,28 @@ export default function Component() {
                   </div>
                 )}
               </div>
+              {/* Memorized Words Reset */}
+              <div className="flex items-center justify-between mt-6">
+                <Label className={`text-sm font-medium ${themeStyles.secondaryText}`}>Reset Memorized Words</Label>
+                <Button
+                  variant="outline"
+                  disabled={memorizedWords.size === 0}
+                  onClick={() => {
+                    const emptySet = new Set<number>();
+                    setMemorizedWords(emptySet);
+                    saveMemorizedWords(emptySet);
+                    localStorage.removeItem('memorizedWords');
+                    setCurrentIndex(0);
+                    setPinyinRevealed(showPinyin);
+                    setKoreanRevealed(showKorean);
+                    setChineseRevealed(showChinese);
+                    setHasShownChinese(showChinese);
+                  }}
+                  className={`gap-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
+                >
+                  Reset Memorized Words
+                </Button>
+              </div>
             </div>
           </div>
         )}
