@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
-import { ChevronLeft, ChevronRight, Eye, Volume2, Sun, Moon, Shuffle, Filter, ChevronDown, ChevronUp } from "lucide-react"
+import { ChevronLeft, ChevronRight, Eye, Volume2, Sun, Moon, Shuffle, Filter, ChevronDown, ChevronUp, Settings, X } from "lucide-react"
 import {isNumber} from "node:util";
 
 interface VocabItem {
@@ -245,7 +245,7 @@ export default function Component() {
       </div>
 
       <div className="max-w-2xl mx-auto relative z-10">
-        {/* Header with theme toggle */}
+        {/* Header with theme toggle and settings */}
         <div className="flex items-center justify-between mb-8">
           <div className="text-center flex-1">
             <h1 className={`text-3xl font-bold ${themeStyles.mainText} mb-2`}>Chinese Vocabulary Practice</h1>
@@ -253,112 +253,113 @@ export default function Component() {
               Practice Chinese characters with pronunciation and Korean meanings
             </p>
           </div>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={toggleTheme}
-            className={`ml-4 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
-          >
-            {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-          </Button>
-        </div>
-
-        {/* Settings */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-2">
-            <h2 className={`text-xl font-semibold ${themeStyles.mainText}`}>Settings</h2>
+          <div className="flex items-center">
             <Button
-              variant="ghost"
+              variant="outline"
               size="icon"
-              onClick={() => setSettingsOpen(!settingsOpen)}
-              className={`ml-2 ${themeStyles.mainText}`}
-              aria-label={settingsOpen ? "Collapse settings" : "Expand settings"}
+              onClick={toggleTheme}
+              className={`backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
+              aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
             >
-              {settingsOpen ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+              {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setSettingsOpen(true)}
+              className={`ml-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
+              aria-label="Open settings"
+            >
+              <Settings className="h-4 w-4" />
             </Button>
           </div>
-          {settingsOpen && (
-            <div
-              className={`backdrop-blur-md ${themeStyles.glassBackground} rounded-2xl ${themeStyles.glassBorder} shadow-xl`}
-            >
-              <div className="p-6">
-                <h3 className={`text-lg font-semibold ${themeStyles.mainText} mb-4`}>Display Settings</h3>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="show-chinese" className={`text-sm font-medium ${themeStyles.secondaryText}`}>
-                      Always show Chinese characters
-                    </Label>
-                    <Switch id="show-chinese" checked={showChinese} onCheckedChange={setShowChinese} />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="show-pinyin" className={`text-sm font-medium ${themeStyles.secondaryText}`}>
-                      Always show pronunciation (Pinyin)
-                    </Label>
-                    <Switch id="show-pinyin" checked={showPinyin} onCheckedChange={setShowPinyin} />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="show-korean" className={`text-sm font-medium ${themeStyles.secondaryText}`}>
-                      Always show Korean meaning
-                    </Label>
-                    <Switch id="show-korean" checked={showKorean} onCheckedChange={setShowKorean} />
-                  </div>
+        </div>
+
+        {/* Settings Modal */}
+        {settingsOpen && (
+          <div className="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-50">
+            <div className={`backdrop-blur-md ${themeStyles.glassBackground} rounded-2xl ${themeStyles.glassBorder} shadow-xl p-6 w-full max-w-md mx-4`}>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className={`text-xl font-semibold ${themeStyles.mainText}`}>Settings</h2>
+                <Button variant="ghost" size="icon" onClick={() => setSettingsOpen(false)} aria-label="Close settings">
+                  <X className="h-5 w-5" />
+                </Button>
+              </div>
+              {/* Display Settings */}
+              <h3 className={`text-lg font-semibold ${themeStyles.mainText} mb-4`}>Display Settings</h3>
+              <div className="space-y-4 mb-6">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="show-chinese" className={`text-sm font-medium ${themeStyles.secondaryText}`}>
+                    Always show Chinese characters
+                  </Label>
+                  <Switch id="show-chinese" checked={showChinese} onCheckedChange={setShowChinese} />
                 </div>
-
-                <h3 className={`text-lg font-semibold ${themeStyles.mainText} mb-4 mt-6`}>Word Order & Filtering</h3>
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <Button
-                      variant="outline"
-                      onClick={shuffleWords}
-                      disabled={vocabularyData.length === 0}
-                      className={`gap-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
-                    >
-                      <Shuffle className="h-4 w-4" />
-                      Shuffle Words
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={resetToOriginal}
-                      disabled={vocabularyData.length === 0 || (!isShuffled && selectedDay === null)}
-                      className={`gap-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
-                    >
-                      Reset Order
-                    </Button>
-                  </div>
-
-                  {availableDays.length > 0 && (
-                    <div className="space-y-2">
-                      <Label className={`text-sm font-medium ${themeStyles.secondaryText}`}>
-                        Filter by Day Group
-                      </Label>
-                      <div className="flex flex-wrap gap-2">
-                        <Button
-                          variant={selectedDay === null ? "default" : "outline"}
-                          size="sm"
-                          onClick={() => filterByDay(null)}
-                          className={`backdrop-blur-md ${selectedDay === null ? themeStyles.progressFill + ' text-white' : themeStyles.buttonGlass + ' ' + themeStyles.mainText} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover}`}
-                        >
-                          All Days
-                        </Button>
-                        {availableDays.map(day => (
-                          <Button
-                            key={day}
-                            variant={selectedDay === day ? "default" : "outline"}
-                            size="sm"
-                            onClick={() => filterByDay(day)}
-                            className={`backdrop-blur-md ${selectedDay === day ? themeStyles.progressFill + ' text-white' : themeStyles.buttonGlass + ' ' + themeStyles.mainText} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover}`}
-                          >
-                            Day {day}
-                          </Button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="show-pinyin" className={`text-sm font-medium ${themeStyles.secondaryText}`}>
+                    Always show pronunciation (Pinyin)
+                  </Label>
+                  <Switch id="show-pinyin" checked={showPinyin} onCheckedChange={setShowPinyin} />
+                </div>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="show-korean" className={`text-sm font-medium ${themeStyles.secondaryText}`}>
+                    Always show Korean meaning
+                  </Label>
+                  <Switch id="show-korean" checked={showKorean} onCheckedChange={setShowKorean} />
                 </div>
               </div>
+              {/* Word Order & Filtering */}
+              <h3 className={`text-lg font-semibold ${themeStyles.mainText} mb-4`}>Word Order & Filtering</h3>
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 mb-4">
+                  <Button
+                    variant="outline"
+                    onClick={shuffleWords}
+                    disabled={vocabularyData.length === 0}
+                    className={`gap-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
+                  >
+                    <Shuffle className="h-4 w-4" />
+                    Shuffle Words
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={resetToOriginal}
+                    disabled={vocabularyData.length === 0 || (!isShuffled && selectedDay === null)}
+                    className={`gap-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
+                  >
+                    Reset Order
+                  </Button>
+                </div>
+                {availableDays.length > 0 && (
+                  <div className="space-y-2">
+                    <Label className={`text-sm font-medium ${themeStyles.secondaryText}`}>Filter by Day Group</Label>
+                    <div className="flex flex-wrap gap-2">
+                      <Button
+                        variant={selectedDay === null ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => filterByDay(null)}
+                        className={`backdrop-blur-md ${selectedDay === null ? themeStyles.progressFill + ' text-white' : themeStyles.buttonGlass + ' ' + themeStyles.mainText} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover}`}
+                      >
+                        All Days
+                      </Button>
+                      {availableDays.map(day => (
+                        <Button
+                          key={day}
+                          variant={selectedDay === day ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => filterByDay(day)}
+                          className={`backdrop-blur-md ${selectedDay === day ? themeStyles.progressFill + ' text-white' : themeStyles.buttonGlass + ' ' + themeStyles.mainText} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover}`}
+                        >
+                          Day {day}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
+
 
         {/* Main Vocabulary Card */}
         <div
