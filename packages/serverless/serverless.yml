@@ -1,0 +1,74 @@
+service: chinese-vocab-serverless
+
+frameworkVersion: '4'
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: ap-northeast-2
+  stage: ${opt:stage, 'dev'}
+  environment:
+    GOOGLE_SHEETS_CREDENTIALS: ${env:GOOGLE_SHEETS_CREDENTIALS}
+    GOOGLE_SHEETS_SPREADSHEET_ID: ${env:GOOGLE_SHEETS_SPREADSHEET_ID}
+
+build:
+  esbuild:
+    bundle: true
+    minify: false
+
+functions:
+  updateSheet:
+    handler: src/handlers/updateSheet.handler
+    events:
+      - http:
+          path: /update-sheet
+          method: post
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+              - Cache-Control
+              - Pragma
+              - Expires
+            allowCredentials: false
+    timeout: 30
+    
+  getSheet:
+    handler: src/handlers/getSheet.handler
+    events:
+      - http:
+          path: /get-sheet
+          method: get
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+              - Cache-Control
+              - Pragma
+              - Expires
+            allowCredentials: false
+    timeout: 30
+
+package:
+  individually: false
+  patterns:
+    - '!.git/**'
+    - '!*.md'
+    - '!tsconfig.json'
+    - '!src/**/*.ts'
+    - '!node_modules/.cache/**'
+    - '!node_modules/@types/**'
+    - '!node_modules/**/test/**'
+    - '!node_modules/**/tests/**'
+    - '!node_modules/**/*.test.js'
+    - '!node_modules/**/*.md'

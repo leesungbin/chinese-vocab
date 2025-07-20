@@ -1,0 +1,19 @@
+credential.json
+
+# dependencies
+/node_modules
+
+# serverless
+/.serverless
+
+# env files
+.env*
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# typescript
+*.tsbuildinfo

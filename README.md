@@ -1,6 +1,6 @@
-# Chinese Vocabulary Practice
+# Chinese Vocabulary Learning App - Monorepo
 
-A modern web application for studying Chinese vocabulary, specifically designed for HSK Level 4 preparation. This interactive tool helps learners practice Chinese characters, pronunciation (Pinyin), and Korean meanings with various study modes and features.
+A monorepo containing a Next.js frontend for Chinese vocabulary practice and serverless backend for Google Sheets integration. Specifically designed for HSK Level 4 preparation with modern cloud architecture.
 
 ## Features
 
@@ -37,26 +37,53 @@ A modern web application for studying Chinese vocabulary, specifically designed 
 - **Theme Management**: next-themes
 - **Build Tool**: Next.js built-in bundler
 
-## Installation
+## Project Structure
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd chinese-vocab
-   ```
+```
+chinese-vocab/
+├── packages/
+│   ├── frontend/          # Next.js app for vocabulary practice
+│   └── serverless/        # AWS Lambda functions for Google Sheets API
+├── package.json           # Root workspace configuration
+└── pnpm-workspace.yaml    # pnpm workspace setup
+```
 
-2. **Install dependencies**
+## Getting Started
+
+1. **Install dependencies**:
    ```bash
    pnpm install
    ```
 
-3. **Run the development server**
+2. **Frontend development**:
    ```bash
+   pnpm frontend:dev
+   ```
+   Navigate to [http://localhost:3000](http://localhost:3000) to see the application.
+
+3. **Serverless development**:
+   ```bash
+   cd packages/serverless
+   cp .env.example .env
+   # Configure your Google Sheets credentials
    pnpm dev
    ```
 
-4. **Open your browser**
-   Navigate to [http://localhost:3000](http://localhost:3000) to see the application.
+## Available Scripts
+
+### Root Level
+- `pnpm build` - Build all packages
+- `pnpm dev` - Start all packages in development mode
+- `pnpm lint` - Lint all packages
+- `pnpm clean` - Clean all packages
+
+### Frontend Specific
+- `pnpm frontend:dev` - Start frontend development server
+- `pnpm frontend:build` - Build frontend for production
+
+### Serverless Specific  
+- `pnpm serverless:dev` - Start serverless development
+- `pnpm serverless:deploy` - Deploy to AWS
 
 ## Usage
 
@@ -97,25 +124,30 @@ To use your own vocabulary data:
 
 ## Development
 
-### Project Structure
-```
-chinese-vocab/
-├── app/                    # Next.js app directory
-├── components/            # Reusable UI components
-│   ├── ui/               # Base UI components (buttons, switches, etc.)
-│   └── theme-provider.tsx # Theme management
-├── hooks/                # Custom React hooks
-├── lib/                  # Utility functions
-├── public/               # Static assets
-├── styles/               # Global styles
-└── chinese-vocab-practice.tsx # Main application component
-```
+## Packages
 
-### Available Scripts
-- `pnpm dev` - Start development server
-- `pnpm build` - Build for production
-- `pnpm start` - Start production server
-- `pnpm lint` - Run ESLint
+### Frontend (`packages/frontend`)
+Next.js application with vocabulary practice features including:
+- Chinese character practice
+- Pinyin and English translations
+- Progress tracking
+- Responsive UI with Tailwind CSS
+
+### Serverless (`packages/serverless`)
+AWS Lambda functions for Google Sheets integration:
+- Read vocabulary data from Google Sheets
+- Update memorization status
+- Add/edit/delete vocabulary words
+- RESTful API endpoints
+
+## Setup Google Sheets Integration
+
+1. Create a Google Cloud project and enable Sheets API
+2. Create a service account and download credentials
+3. Share your Google Sheet with the service account email
+4. Configure environment variables in `packages/serverless/.env`
+
+See `packages/serverless/README.md` for detailed setup instructions.
 
 ## Contributing
 

@@ -1,0 +1,26 @@
+{
+  "name": "serverless",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts",
+    "deploy": "serverless deploy",
+    "remove": "serverless remove",
+    "invoke": "serverless invoke",
+    "logs": "serverless logs",
+    "clean": "rm -rf dist node_modules .serverless"
+  },
+  "dependencies": {
+    "googleapis": "^144.0.0",
+    "aws-lambda": "^1.0.7"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.145",
+    "@types/node": "^22",
+    "serverless": "^4.4.7",
+    "serverless-plugin-typescript": "^2.1.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5"
+  }
+}
