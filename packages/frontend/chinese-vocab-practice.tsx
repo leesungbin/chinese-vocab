@@ -114,7 +114,7 @@ export default function Component() {
   }
 
   // Toggle memorized status for a word
-  const toggleMemorized = async (wordId: number) => {
+  const toggleMemorized = (wordId: number) => {
     const currentWord = filteredVocabularyData.find(word => word.id === wordId);
     if (!currentWord) return;
 
@@ -133,12 +133,10 @@ export default function Component() {
       return newSet
     })
 
-    // Call API to update memorized status
-    try {
-      await vocabularyService.toggleMemorizedStatus(currentWord, willBeMemorized);
-    } catch (error) {
+    // Call API to update memorized status (asynchronously)
+    vocabularyService.toggleMemorizedStatus(currentWord, willBeMemorized).catch(error => {
       console.error('Error updating memorized status:', error);
-    }
+    });
 
     // Reset reveal states when skipping to next word
     setPinyinRevealed(showPinyin);
