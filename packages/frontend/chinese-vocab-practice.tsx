@@ -163,16 +163,14 @@ export default function Component() {
     : { id: 0, chinese: "", pinyin: "", korean: "", total: 0, day: 0 };
 
 
-  const nextWord = async () => {
+  const nextWord = () => {
     if (filteredVocabularyData.length === 0) return;
 
-    // Call increment API for the current word if it was shown
+    // Call increment API for the current word if it was shown (asynchronously)
     if (hasShownChinese && currentWord.id > 0) {
-      try {
-        await vocabularyService.incrementWordTotal(currentWord.chinese);
-      } catch (error) {
+      vocabularyService.incrementWordTotal(currentWord.chinese).catch(error => {
         console.error('Error updating word count:', error);
-      }
+      });
     }
 
     setCurrentIndex((prev) => (prev + 1) % filteredVocabularyData.length)
@@ -182,16 +180,14 @@ export default function Component() {
     setHasShownChinese(showChinese)
   }
 
-  const prevWord = async () => {
+  const prevWord = () => {
     if (filteredVocabularyData.length === 0) return;
 
-    // Call increment API for the current word if it was shown
+    // Call increment API for the current word if it was shown (asynchronously)
     if (hasShownChinese && currentWord.id > 0) {
-      try {
-        await vocabularyService.incrementWordTotal(currentWord.chinese);
-      } catch (error) {
+      vocabularyService.incrementWordTotal(currentWord.chinese).catch(error => {
         console.error('Error updating word count:', error);
-      }
+      });
     }
 
     setCurrentIndex((prev) => (prev - 1 + filteredVocabularyData.length) % filteredVocabularyData.length)
