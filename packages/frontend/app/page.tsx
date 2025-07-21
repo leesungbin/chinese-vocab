@@ -1,5 +1,5 @@
-import Component from "../chinese-vocab-practice"
+import VocabularyPractice from "@/components/vocabulary-practice/VocabularyPractice"
 
 export default function Page() {
-  return <Component />
+  return <VocabularyPractice />
 }
