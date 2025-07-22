@@ -10,6 +10,8 @@ provider:
   environment:
     GOOGLE_SHEETS_CREDENTIALS: ${env:GOOGLE_SHEETS_CREDENTIALS}
     GOOGLE_SHEETS_SPREADSHEET_ID: ${env:GOOGLE_SHEETS_SPREADSHEET_ID}
+    JWT_SECRET: ${env:JWT_SECRET}
+    GOOGLE_CLIENT_ID: ${env:GOOGLE_CLIENT_ID}
 
 build:
   esbuild:
@@ -17,6 +19,27 @@ build:
     minify: false
 
 functions:
+  auth:
+    handler: src/handlers/auth.auth
+    events:
+      - http:
+          path: /auth
+          method: post
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+              - Cache-Control
+              - Pragma
+              - Expires
+            allowCredentials: false
+    timeout: 30
+    
   updateSheet:
     handler: src/handlers/updateSheet.handler
     events:

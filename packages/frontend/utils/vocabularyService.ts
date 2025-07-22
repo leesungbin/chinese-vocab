@@ -31,12 +31,22 @@ interface ApiResponse {
 
 const API_BASE_URL = 'https://ppwyq3yin2.execute-api.ap-northeast-2.amazonaws.com/dev'
 
-const getApiHeaders = () => ({
-  'Content-Type': 'application/json',
-  'Cache-Control': 'no-cache, no-store, must-revalidate',
-  'Pragma': 'no-cache',
-  'Expires': '0',
-})
+const getApiHeaders = () => {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+    'Pragma': 'no-cache',
+    'Expires': '0',
+  }
+
+  // Add Authorization header if token exists in localStorage
+  const token = localStorage.getItem('auth-token')
+  if (token) {
+    headers.Authorization = `Bearer ${token}`
+  }
+
+  return headers
+}
 
 const getApiOptions = (method: string = 'GET', body?: object) => ({
   method,
@@ -94,7 +104,7 @@ export const vocabularyService = {
   },
 
   // Mark a word as memorized
-  async markWordAsMemorized(word: VocabItem): Promise<boolean> {
+  async markWordAsMemorized(word: VocabItem): Promise<{ success: boolean; error?: string }> {
     try {
       const response = await fetch(`${API_BASE_URL}/update-sheet`, getApiOptions('POST', {
         action: 'mark_memorized',
@@ -111,15 +121,20 @@ export const vocabularyService = {
       }))
 
       const result = await response.json()
-      return result.success
+      
+      if (!result.success && response.status === 403) {
+        return { success: false, error: result.error || 'You are not authorized to perform this action' }
+      }
+      
+      return { success: result.success, error: result.error }
     } catch (error) {
       console.error('Error marking word as memorized:', error)
-      return false
+      return { success: false, error: 'Network error occurred' }
     }
   },
 
   // Update a word (for unmarking memorized or other updates)
-  async updateWord(word: VocabItem): Promise<boolean> {
+  async updateWord(word: VocabItem): Promise<{ success: boolean; error?: string }> {
     try {
       const response = await fetch(`${API_BASE_URL}/update-sheet`, getApiOptions('POST', {
         action: 'update',
@@ -136,19 +151,24 @@ export const vocabularyService = {
       }))
 
       const result = await response.json()
-      return result.success
+      
+      if (!result.success && response.status === 403) {
+        return { success: false, error: result.error || 'You are not authorized to perform this action' }
+      }
+      
+      return { success: result.success, error: result.error }
     } catch (error) {
       console.error('Error updating word:', error)
-      return false
+      return { success: false, error: 'Network error occurred' }
     }
   },
 
   // Toggle memorized status for a word
-  async toggleMemorizedStatus(word: VocabItem, willBeMemorized: boolean): Promise<boolean> {
+  async toggleMemorizedStatus(word: VocabItem, willBeMemorized: boolean): Promise<{ success: boolean; error?: string }> {
     if (willBeMemorized) {
-      return this.markWordAsMemorized(word)
+      return await this.markWordAsMemorized(word)
     } else {
-      return this.updateWord({ ...word, memorized: false })
+      return await this.updateWord({ ...word, memorized: false })
     }
   }
 }

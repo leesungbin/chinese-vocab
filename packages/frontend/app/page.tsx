@@ -1,5 +1,5 @@
-import VocabularyPractice from "@/components/vocabulary-practice/VocabularyPractice"
+import ProtectedVocabulary from "@/components/auth/ProtectedVocabulary"
 
 export default function Page() {
-  return <VocabularyPractice />
+  return <ProtectedVocabulary />
 }

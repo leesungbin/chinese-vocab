@@ -3,6 +3,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { Eye, Volume2 } from "lucide-react"
 import type { VocabItem } from "@/utils/vocabularyService"
+import { useAuth } from "@/hooks/useAuth"
 
 interface VocabularyCardProps {
   currentWord: VocabItem
@@ -41,6 +42,7 @@ export function VocabularyCard({
   themeStyles,
   showMemorizedWords
 }: VocabularyCardProps) {
+  const { isAuthenticated } = useAuth()
 
   const speakChinese = () => {
     if ("speechSynthesis" in window) {
@@ -61,8 +63,8 @@ export function VocabularyCard({
       className={`mb-6 backdrop-blur-lg ${themeStyles.glassBackgroundStrong} rounded-3xl ${themeStyles.glassBorderStrong} shadow-2xl`}
     >
       <div className="p-8 relative">
-        {/* Memorized Checkbox */}
-        {!isLoading && vocabularyDataLength > 0 && (
+        {/* Memorized Checkbox - Only show for authenticated users */}
+        {!isLoading && vocabularyDataLength > 0 && isAuthenticated && (
           <div className="absolute top-4 right-4">
             <div className="flex items-center space-x-2">
               <Checkbox

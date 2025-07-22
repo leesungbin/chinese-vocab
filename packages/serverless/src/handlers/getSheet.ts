@@ -5,6 +5,15 @@ import { ApiResponse } from '../types';
 export const handler = async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
+  // Get origin from request headers for CORS (handle undefined headers)
+  const origin = event.headers?.origin || event.headers?.Origin || 'http://localhost:3000';
+  const allowedOrigins = [
+    'http://localhost:3000',
+    'http://localhost:3001', 
+    'https://leesungbin.github.io'
+  ];
+  const corsOrigin = allowedOrigins.includes(origin) ? origin : 'http://localhost:3000';
+
   const headers = {
     'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': '*',

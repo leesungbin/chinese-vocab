@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Sun, Moon, Settings } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Sun, Moon, Settings, AlertTriangle } from "lucide-react"
 import { useTheme } from "@/hooks/useTheme"
 import { useVocabularyData } from "@/hooks/useVocabularyData"
 import { useNavigationState } from "@/hooks/useNavigationState"
@@ -11,8 +12,18 @@ import { VocabularyCard } from "./VocabularyCard"
 import { SettingsModal } from "./SettingsModal"
 import { NavigationControls } from "./NavigationControls"
 
-export default function VocabularyPractice() {
-  const [settingsOpen, setSettingsOpen] = useState(true)
+interface VocabularyPracticeProps {
+  settingsOpen: boolean
+  setSettingsOpen: (open: boolean) => void
+}
+
+export default function VocabularyPractice({ 
+  settingsOpen, 
+  setSettingsOpen 
+}: VocabularyPracticeProps) {
+  
+  // Authorization error state
+  const [authError, setAuthError] = useState<string | null>(null)
   
   // Custom hooks
   const { isDarkMode, toggleTheme, themeStyles } = useTheme()
@@ -67,7 +78,14 @@ export default function VocabularyPractice() {
   const nextWord = () => navigateNext(filteredVocabularyData, currentWord)
   const prevWord = () => navigatePrev(filteredVocabularyData, currentWord)
   const handleRevealChinese = () => revealChinese(currentWord, updateWordTotal)
-  const handleToggleMemorized = (wordId: number) => toggleMemorized(wordId, currentWord)
+  const handleToggleMemorized = async (wordId: number) => {
+    const result = await toggleMemorized(wordId, currentWord)
+    if (!result.success && result.error) {
+      setAuthError(result.error)
+      // Clear error after 5 seconds
+      setTimeout(() => setAuthError(null), 5000)
+    }
+  }
 
   // Handle filter changes that might affect current index
   const handleFilterByDay = (day: number | null) => {
@@ -114,35 +132,18 @@ export default function VocabularyPractice() {
       </div>
 
       <div className="max-w-2xl mx-auto relative z-10">
-        {/* Header with theme toggle and settings */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="text-center flex-1">
-            <h1 className={`text-3xl font-bold ${themeStyles.mainText} mb-2`}>Chinese Vocabulary Practice</h1>
-            <p className={themeStyles.secondaryText}>
-              Practice Chinese characters with pronunciation and Korean meanings
-            </p>
-          </div>
-          <div className="flex items-center">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={toggleTheme}
-              className={`backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
-              aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
-            >
-              {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => setSettingsOpen(true)}
-              className={`ml-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
-              aria-label="Open settings"
-            >
-              <Settings className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
+        {/* Authorization Error Alert */}
+        {authError && (
+          <Alert className="mb-4 border-red-200 bg-red-50 text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-300">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertDescription>
+              {authError}
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {/* Reduced top margin since title is removed */}
+        <div className="mb-4"></div>
 
         {/* Settings Modal */}
         <SettingsModal

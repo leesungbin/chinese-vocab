@@ -1,10 +1,20 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { GoogleSheetsService } from '../services/googleSheets';
 import { UpdateRequest, ApiResponse } from '../types';
+import { validateAuthorizedUser, AuthError } from '../middleware/auth';
 
 export const handler = async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
+  // Get origin from request headers for CORS (handle undefined headers)
+  const origin = event.headers?.origin || event.headers?.Origin || 'http://localhost:3000';
+  const allowedOrigins = [
+    'http://localhost:3000',
+    'http://localhost:3001', 
+    'https://leesungbin.github.io'
+  ];
+  const corsOrigin = allowedOrigins.includes(origin) ? origin : 'http://localhost:3000';
+
   const headers = {
     'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': '*',
@@ -26,6 +36,10 @@ export const handler = async (
   }
 
   try {
+    // Validate JWT token and check authorization for all write operations
+    const user = validateAuthorizedUser(event);
+    console.log(`Authorized user: ${user.email} (${user.name})`);
+    
     if (!event.body) {
       throw new Error('Request body is required');
     }
@@ -83,6 +97,20 @@ export const handler = async (
     };
   } catch (error) {
     console.error('Error processing request:', error);
+    
+    // Handle authentication errors specifically
+    if (error instanceof AuthError) {
+      const response: ApiResponse = {
+        success: false,
+        error: error.message,
+      };
+
+      return {
+        statusCode: error.statusCode,
+        headers,
+        body: JSON.stringify(response),
+      };
+    }
     
     const response: ApiResponse = {
       success: false,

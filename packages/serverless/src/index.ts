@@ -10,7 +10,7 @@ async function main() {
     
     console.log(`Found ${words.length} vocabulary words:`);
     words.forEach((word, index) => {
-      console.log(`${index + 1}. ${word.chinese} (${word.pinyin}) - ${word.english} [${word.memorized ? 'Memorized' : 'Not memorized'}]`);
+      console.log(`${index + 1}. ${word.chinese} (${word.pinyin}) - ${word.korean} [${word.memorized ? 'Memorized' : 'Not memorized'}]`);
     });
     
   } catch (error) {

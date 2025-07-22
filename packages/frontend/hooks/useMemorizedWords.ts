@@ -4,7 +4,7 @@ import { vocabularyService, type VocabItem } from '@/utils/vocabularyService'
 export function useMemorizedWords() {
   const { memorizedWords, setMemorizedWords, resetMemorizedWords } = useMemorizedWordsStorage()
 
-  const toggleMemorized = (wordId: number, currentWord: VocabItem) => {
+  const toggleMemorized = async (wordId: number, currentWord: VocabItem): Promise<{ success: boolean; error?: string }> => {
     const wasMemorized = memorizedWords.has(wordId)
     const willBeMemorized = !wasMemorized
 
@@ -17,10 +17,23 @@ export function useMemorizedWords() {
     }
     setMemorizedWords(newSet)
 
-    // Call API to update memorized status (asynchronously)
-    vocabularyService.toggleMemorizedStatus(currentWord, willBeMemorized).catch(error => {
+    try {
+      // Call API to update memorized status
+      const result = await vocabularyService.toggleMemorizedStatus(currentWord, willBeMemorized)
+      
+      if (!result.success) {
+        // Revert local state if API call failed
+        setMemorizedWords(memorizedWords)
+        return { success: false, error: result.error }
+      }
+      
+      return { success: true }
+    } catch (error) {
+      // Revert local state on error
+      setMemorizedWords(memorizedWords)
       console.error('Error updating memorized status:', error)
-    })
+      return { success: false, error: 'Network error occurred' }
+    }
   }
 
   const resetAllMemorizedWords = () => {

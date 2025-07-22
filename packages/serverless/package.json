@@ -12,11 +12,13 @@
     "clean": "rm -rf dist node_modules .serverless"
   },
   "dependencies": {
+    "aws-lambda": "^1.0.7",
     "googleapis": "^144.0.0",
-    "aws-lambda": "^1.0.7"
+    "jsonwebtoken": "^9.0.2"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.145",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^22",
     "serverless": "^4.4.7",
     "serverless-plugin-typescript": "^2.1.5",
