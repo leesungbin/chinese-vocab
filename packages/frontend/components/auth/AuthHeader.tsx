@@ -42,7 +42,7 @@ export function AuthHeader() {
       // Initialize Google Identity Services and render the button
       if ((window as any).google && (window as any).google.accounts) {
         (window as any).google.accounts.id.initialize({
-          client_id: "62679414399-c6kehvobpt4krjr68uni413gri4sd6ib.apps.googleusercontent.com",
+          client_id: "62679414399-ffhnilqravrlgarp1hspq6q2k5vq2ig8.apps.googleusercontent.com",
           callback: signIn,
           auto_select: false,
           itp_support: true,
