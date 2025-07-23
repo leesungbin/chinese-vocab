@@ -7,11 +7,14 @@ import { AuthHeader } from './AuthHeader'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { InfoIcon, Sun, Moon, Settings } from 'lucide-react'
-import { useTheme } from '@/hooks/useTheme'
+import { useThemeStore, useThemeStyles } from '@/stores/themeStore'
 
 export default function ProtectedVocabulary() {
   const { isAuthenticated, isLoading, signIn } = useAuth()
-  const { isDarkMode, toggleTheme, themeStyles, isLoaded } = useTheme()
+  const isDarkMode = useThemeStore((state) => state.isDarkMode)
+  const toggleTheme = useThemeStore((state) => state.toggleTheme)
+  const isLoaded = useThemeStore((state) => state.isLoaded)
+  const themeStyles = useThemeStyles()
   const [settingsOpen, setSettingsOpen] = useState(false)
 
   if (isLoading || !isLoaded) {

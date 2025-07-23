@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Sun, Moon, Settings, AlertTriangle } from "lucide-react"
-import { useTheme } from "@/hooks/useTheme"
+import { useThemeStore, useThemeStyles } from "@/stores/themeStore"
 import { useVocabularyData } from "@/hooks/useVocabularyData"
 import { useNavigationState } from "@/hooks/useNavigationState"
 import { useMemorizedWords } from "@/hooks/useMemorizedWords"
@@ -27,7 +27,9 @@ export default function VocabularyPractice({
   const [authError, setAuthError] = useState<string | null>(null)
   
   // Custom hooks
-  const { isDarkMode, toggleTheme, themeStyles } = useTheme()
+  const isDarkMode = useThemeStore((state) => state.isDarkMode)
+  const toggleTheme = useThemeStore((state) => state.toggleTheme)
+  const themeStyles = useThemeStyles()
   const { 
     vocabularyData, 
     isLoading, 
