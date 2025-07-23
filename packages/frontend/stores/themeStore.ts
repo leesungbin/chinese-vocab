@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { useMemo } from 'react'
+import { useMemo, useEffect } from 'react'
 
 interface ThemeStyles {
   background: string
@@ -47,20 +47,8 @@ export const useThemeStore = create<ThemeState>()(
     }),
     {
       name: 'isDarkMode',
-      onRehydrateStorage: () => (state) => {
-        if (state) {
-          state.setIsLoaded(true)
-          
-          // Apply theme on hydration
-          if (typeof window !== 'undefined') {
-            if (state.isDarkMode) {
-              document.documentElement.classList.add('dark')
-            } else {
-              document.documentElement.classList.remove('dark')
-            }
-          }
-        }
-      },
+      // Skip initial hydration to prevent SSR mismatch
+      skipHydration: true,
     }
   )
 )
@@ -84,4 +72,24 @@ export const useThemeStyles = (): ThemeStyles => {
     buttonGlassHover: isDarkMode ? "hover:bg-white/30" : "hover:bg-white/90",
     progressFill: isDarkMode ? "bg-white" : "bg-gray-800",
   }), [isDarkMode])
+}
+
+// Hook to handle theme hydration on client side
+export const useThemeHydration = () => {
+  useEffect(() => {
+    // Rehydrate the store on client side
+    useThemeStore.persist.rehydrate()
+    
+    // Apply theme based on stored value
+    const state = useThemeStore.getState()
+    state.setIsLoaded(true)
+    
+    if (typeof window !== 'undefined') {
+      if (state.isDarkMode) {
+        document.documentElement.classList.add('dark')
+      } else {
+        document.documentElement.classList.remove('dark')
+      }
+    }
+  }, [])
 }

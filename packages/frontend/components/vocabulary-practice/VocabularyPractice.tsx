@@ -5,7 +5,19 @@ import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Sun, Moon, Settings, AlertTriangle } from "lucide-react"
 import { useThemeStore, useThemeStyles } from "@/stores/themeStore"
-import { useVocabularyData } from "@/hooks/useVocabularyData"
+import { 
+  useVocabularyData, 
+  useVocabularyLoading, 
+  useVocabularyShuffled, 
+  useSelectedDay, 
+  useAvailableDays,
+  useLoadVocabularyData,
+  useShuffleWords,
+  useFilterByDay,
+  useResetToOriginal,
+  useUpdateWordTotal,
+  useGetFilteredData
+} from "@/stores/vocabularyStore"
 import { useNavigationState } from "@/hooks/useNavigationState"
 import { useMemorizedWords } from "@/hooks/useMemorizedWords"
 import { VocabularyCard } from "./VocabularyCard"
@@ -30,18 +42,18 @@ export default function VocabularyPractice({
   const isDarkMode = useThemeStore((state) => state.isDarkMode)
   const toggleTheme = useThemeStore((state) => state.toggleTheme)
   const themeStyles = useThemeStyles()
-  const { 
-    vocabularyData, 
-    isLoading, 
-    isShuffled, 
-    selectedDay, 
-    availableDays,
-    shuffleWords,
-    filterByDay,
-    resetToOriginal,
-    getFilteredData,
-    updateWordTotal
-  } = useVocabularyData()
+  // Vocabulary store selectors
+  const vocabularyData = useVocabularyData()
+  const isLoading = useVocabularyLoading()
+  const isShuffled = useVocabularyShuffled()
+  const selectedDay = useSelectedDay()
+  const availableDays = useAvailableDays()
+  const loadVocabularyData = useLoadVocabularyData()
+  const shuffleWords = useShuffleWords()
+  const filterByDay = useFilterByDay()
+  const resetToOriginal = useResetToOriginal()
+  const getFilteredData = useGetFilteredData()
+  const updateWordTotal = useUpdateWordTotal()
   
   const {
     currentIndex,
@@ -113,6 +125,11 @@ export default function VocabularyPractice({
   useEffect(() => {
     resetCurrentIndex(filteredVocabularyData.length)
   }, [showMemorizedWords, memorizedWords, filteredVocabularyData.length, currentIndex, resetCurrentIndex])
+
+  // Load vocabulary data on mount
+  useEffect(() => {
+    loadVocabularyData()
+  }, [loadVocabularyData])
 
   // Handle automatic Chinese display
   useAutoChineseDisplay(isLoading, vocabularyData.length, currentWord, updateWordTotal)
