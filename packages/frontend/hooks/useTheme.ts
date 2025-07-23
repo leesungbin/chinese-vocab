@@ -1,4 +1,5 @@
 import { useLocalStorage } from './useLocalStorage'
+import { useEffect } from 'react'
 
 interface ThemeStyles {
   background: string
@@ -17,7 +18,18 @@ interface ThemeStyles {
 }
 
 export function useTheme() {
-  const [isDarkMode, setIsDarkMode] = useLocalStorage('isDarkMode', false)
+  const [isDarkMode, setIsDarkMode, isLoaded] = useLocalStorage('isDarkMode', false)
+
+  // Apply dark class to HTML element for Tailwind dark mode
+  useEffect(() => {
+    if (typeof window !== 'undefined' && isLoaded) {
+      if (isDarkMode) {
+        document.documentElement.classList.add('dark')
+      } else {
+        document.documentElement.classList.remove('dark')
+      }
+    }
+  }, [isDarkMode, isLoaded])
 
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode)
@@ -42,6 +54,7 @@ export function useTheme() {
   return {
     isDarkMode,
     toggleTheme,
-    themeStyles
+    themeStyles,
+    isLoaded
   }
 }

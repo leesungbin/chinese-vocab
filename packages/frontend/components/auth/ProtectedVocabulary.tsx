@@ -11,10 +11,10 @@ import { useTheme } from '@/hooks/useTheme'
 
 export default function ProtectedVocabulary() {
   const { isAuthenticated, isLoading, signIn } = useAuth()
-  const { isDarkMode, toggleTheme, themeStyles } = useTheme()
+  const { isDarkMode, toggleTheme, themeStyles, isLoaded } = useTheme()
   const [settingsOpen, setSettingsOpen] = useState(false)
 
-  if (isLoading) {
+  if (isLoading || !isLoaded) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center space-y-4">
@@ -26,12 +26,12 @@ export default function ProtectedVocabulary() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className={`min-h-screen ${themeStyles.background}`}>
       {/* Header with auth controls */}
       <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
-            <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
+            <h1 className={`text-xl font-semibold ${themeStyles.mainText}`}>
               HSK 4급 중국어 단어 암기
             </h1>
             <div className="flex items-center gap-2">

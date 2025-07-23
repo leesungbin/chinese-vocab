@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 
 export function useLocalStorage<T>(key: string, defaultValue: T) {
   const [value, setValue] = useState<T>(defaultValue)
+  const [isLoaded, setIsLoaded] = useState(false)
 
   useEffect(() => {
     try {
@@ -9,8 +10,10 @@ export function useLocalStorage<T>(key: string, defaultValue: T) {
       if (item !== null) {
         setValue(JSON.parse(item))
       }
+      setIsLoaded(true)
     } catch (error) {
       console.error(`Error loading ${key} from localStorage:`, error)
+      setIsLoaded(true)
     }
   }, [key])
 
@@ -24,7 +27,7 @@ export function useLocalStorage<T>(key: string, defaultValue: T) {
     }
   }
 
-  return [value, setStoredValue] as const
+  return [value, setStoredValue, isLoaded] as const
 }
 
 export function useMemorizedWordsStorage() {
