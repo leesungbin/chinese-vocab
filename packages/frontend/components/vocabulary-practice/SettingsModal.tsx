@@ -81,7 +81,7 @@ export function SettingsModal({
 
   return (
     <div className="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-50">
-      <div className={`backdrop-blur-md ${themeStyles.glassBackground} rounded-2xl ${themeStyles.glassBorder} shadow-xl p-6 w-full max-w-md mx-4`}>
+      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-xl p-6 w-full max-w-md mx-4">
         <div className="flex items-center justify-between mb-4">
           <h2 className={`text-xl font-semibold ${themeStyles.mainText}`}>Settings</h2>
           <Button variant="ghost" size="icon" onClick={() => setSettingsOpen(false)} aria-label="Close settings">
