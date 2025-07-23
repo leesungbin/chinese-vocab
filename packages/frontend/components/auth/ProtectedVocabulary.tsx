@@ -34,9 +34,11 @@ export default function ProtectedVocabulary() {
       <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
-            <h1 className={`text-xl font-semibold ${themeStyles.mainText}`}>
-              HSK 4급 중국어 단어 암기
-            </h1>
+            <div className="flex items-center">
+              <span className={`text-lg font-semibold ${themeStyles.mainText}`}>
+                中文单词
+              </span>
+            </div>
             <div className="flex items-center gap-2">
               <Button
                 variant="outline"
