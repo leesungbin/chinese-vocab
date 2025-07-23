@@ -12,6 +12,17 @@ provider:
     GOOGLE_SHEETS_SPREADSHEET_ID: ${env:GOOGLE_SHEETS_SPREADSHEET_ID}
     JWT_SECRET: ${env:JWT_SECRET}
     GOOGLE_CLIENT_ID: ${env:GOOGLE_CLIENT_ID}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:PutItem
+            - dynamodb:DeleteItem
+            - dynamodb:BatchWriteItem
+          Resource: 
+            - "arn:aws:dynamodb:ap-northeast-2:*:table/user-vocabulary"
 
 build:
   esbuild:
@@ -81,6 +92,32 @@ functions:
               - Expires
             allowCredentials: false
     timeout: 30
+    
+  migrateData:
+    handler: src/handlers/migrateData.handler
+    events:
+      - http:
+          path: /migrate-data
+          method: post
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+              - Cache-Control
+              - Pragma
+              - Expires
+            allowCredentials: false
+    timeout: 120
+    environment:
+      GOOGLE_SHEETS_CREDENTIALS: ${env:GOOGLE_SHEETS_CREDENTIALS}
+      GOOGLE_SHEETS_SPREADSHEET_ID: ${env:GOOGLE_SHEETS_SPREADSHEET_ID}
+      JWT_SECRET: ${env:JWT_SECRET}
+      GOOGLE_CLIENT_ID: ${env:GOOGLE_CLIENT_ID}
 
 package:
   individually: false

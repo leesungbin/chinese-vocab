@@ -5,9 +5,9 @@ export class GoogleSheetsService {
   private sheets;
   private spreadsheetId: string;
 
-  constructor() {
+  constructor(customSpreadsheetId?: string) {
     const credentials = JSON.parse(process.env.GOOGLE_SHEETS_CREDENTIALS || '{}');
-    this.spreadsheetId = process.env.GOOGLE_SHEETS_SPREADSHEET_ID || '';
+    this.spreadsheetId = customSpreadsheetId || process.env.GOOGLE_SHEETS_SPREADSHEET_ID || '';
 
     const auth = new google.auth.GoogleAuth({
       credentials,
