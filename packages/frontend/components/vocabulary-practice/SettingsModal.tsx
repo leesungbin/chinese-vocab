@@ -162,20 +162,20 @@ export function SettingsModal({
               <Label className={`text-sm font-medium ${themeStyles.secondaryText}`}>Filter by Day Group</Label>
               <div className="flex flex-wrap gap-2">
                 <Button
-                  variant={selectedDay === null ? "default" : "outline"}
+                  variant="outline"
                   size="sm"
                   onClick={() => filterByDay(null)}
-                  className={`backdrop-blur-md ${selectedDay === null ? themeStyles.progressFill + ' text-white' : themeStyles.buttonGlass + ' ' + themeStyles.mainText} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover}`}
+                  className={`backdrop-blur-md ${themeStyles.buttonGlass} ${selectedDay === null ? 'border-2 border-blue-500 text-black dark:text-white' : themeStyles.glassBorderStrong + ' ' + themeStyles.mainText} ${themeStyles.buttonGlassHover}`}
                 >
                   All Days
                 </Button>
                 {availableDays.map(day => (
                   <Button
                     key={day}
-                    variant={selectedDay === day ? "default" : "outline"}
+                    variant="outline"
                     size="sm"
                     onClick={() => filterByDay(day)}
-                    className={`backdrop-blur-md ${selectedDay === day ? themeStyles.progressFill + ' text-white' : themeStyles.buttonGlass + ' ' + themeStyles.mainText} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover}`}
+                    className={`backdrop-blur-md ${themeStyles.buttonGlass} ${selectedDay === day ? 'border-2 border-blue-500 text-black dark:text-white' : themeStyles.glassBorderStrong + ' ' + themeStyles.mainText} ${themeStyles.buttonGlassHover}`}
                   >
                     Day {day}
                   </Button>
