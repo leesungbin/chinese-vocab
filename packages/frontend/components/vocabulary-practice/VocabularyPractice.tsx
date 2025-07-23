@@ -11,6 +11,7 @@ import { useMemorizedWords } from "@/hooks/useMemorizedWords"
 import { VocabularyCard } from "./VocabularyCard"
 import { SettingsModal } from "./SettingsModal"
 import { NavigationControls } from "./NavigationControls"
+import { vocabularyService } from "@/utils/vocabularyService"
 
 interface VocabularyPracticeProps {
   settingsOpen: boolean
@@ -114,6 +115,25 @@ export default function VocabularyPractice({
   // Handle automatic Chinese display
   useAutoChineseDisplay(isLoading, vocabularyData.length, currentWord, updateWordTotal)
 
+  // Handle data migration
+  const handleMigrateData = async (spreadsheetId?: string) => {
+    try {
+      const result = await vocabularyService.migrateDataFromSheets(spreadsheetId)
+      
+      if (result.success) {
+        // Refresh the vocabulary data after successful migration
+        window.location.reload()
+      } else {
+        setAuthError(result.error || 'Migration failed')
+        setTimeout(() => setAuthError(null), 5000)
+      }
+    } catch (error) {
+      console.error('Migration error:', error)
+      setAuthError('Migration failed: ' + (error instanceof Error ? error.message : 'Unknown error'))
+      setTimeout(() => setAuthError(null), 5000)
+    }
+  }
+
   return (
     <div
       className={`min-h-screen ${themeStyles.background} p-4 relative overflow-hidden transition-colors duration-300`}
@@ -168,6 +188,7 @@ export default function VocabularyPractice({
           resetAllMemorizedWords={resetAllMemorizedWords}
           resetRevealStates={resetRevealStates}
           themeStyles={themeStyles}
+          onMigrateData={handleMigrateData}
         />
 
         {/* Main Vocabulary Card */}

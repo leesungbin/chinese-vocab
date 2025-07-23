@@ -1,7 +1,9 @@
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
-import { X, Shuffle } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { X, Shuffle, Download, Loader2 } from "lucide-react"
+import { useState } from "react"
 
 interface SettingsModalProps {
   settingsOpen: boolean
@@ -25,6 +27,7 @@ interface SettingsModalProps {
   resetAllMemorizedWords: () => void
   resetRevealStates: () => void
   themeStyles: any
+  onMigrateData?: (spreadsheetId?: string) => Promise<void>
 }
 
 export function SettingsModal({
@@ -48,12 +51,30 @@ export function SettingsModal({
   memorizedWords,
   resetAllMemorizedWords,
   resetRevealStates,
-  themeStyles
+  themeStyles,
+  onMigrateData
 }: SettingsModalProps) {
   
+  const [spreadsheetId, setSpreadsheetId] = useState('')
+  const [isMigrating, setIsMigrating] = useState(false)
+
   const handleResetMemorizedWords = () => {
     resetAllMemorizedWords()
     resetRevealStates()
+  }
+
+  const handleMigrateData = async () => {
+    if (!onMigrateData) return
+    
+    setIsMigrating(true)
+    try {
+      await onMigrateData(spreadsheetId.trim() || undefined)
+      setSpreadsheetId('')
+    } catch (error) {
+      console.error('Migration failed:', error)
+    } finally {
+      setIsMigrating(false)
+    }
   }
 
   if (!settingsOpen) return null
@@ -163,6 +184,45 @@ export function SettingsModal({
             </div>
           )}
         </div>
+
+        {/* Data Migration Section */}
+        {onMigrateData && (
+          <>
+            <h3 className={`text-lg font-semibold ${themeStyles.mainText} mb-4 mt-6`}>Data Migration</h3>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="spreadsheet-id" className={`text-sm font-medium ${themeStyles.secondaryText} mb-2 block`}>
+                  Google Sheets ID (optional - uses default if empty)
+                </Label>
+                <Input
+                  id="spreadsheet-id"
+                  value={spreadsheetId}
+                  onChange={(e) => setSpreadsheetId(e.target.value)}
+                  placeholder="Enter Google Sheets ID"
+                  disabled={isMigrating}
+                  className={`backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.mainText}`}
+                />
+              </div>
+              <Button
+                onClick={handleMigrateData}
+                disabled={isMigrating}
+                className={`w-full gap-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
+              >
+                {isMigrating ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Migrating data...
+                  </>
+                ) : (
+                  <>
+                    <Download className="h-4 w-4" />
+                    Load data from Google Sheets
+                  </>
+                )}
+              </Button>
+            </div>
+          </>
+        )}
 
         {/* Memorized Words Reset */}
         <div className="flex items-center justify-between mt-6">

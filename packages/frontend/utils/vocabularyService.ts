@@ -170,6 +170,49 @@ export const vocabularyService = {
     } else {
       return await this.updateWord({ ...word, memorized: false })
     }
+  },
+
+  // Migrate data from Google Sheets to DynamoDB
+  async migrateDataFromSheets(spreadsheetId?: string): Promise<{ success: boolean; error?: string; data?: any }> {
+    try {
+      const token = localStorage.getItem('auth-token')
+      if (!token) {
+        return { success: false, error: 'Authentication required' }
+      }
+
+      const response = await fetch(`${API_BASE_URL}/migrate-data`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          token,
+          ...(spreadsheetId && { spreadsheetId })
+        })
+      })
+
+      const result = await response.json()
+      
+      if (!response.ok) {
+        return { 
+          success: false, 
+          error: result.error || `HTTP ${response.status}: ${response.statusText}` 
+        }
+      }
+
+      return { 
+        success: result.success, 
+        error: result.error,
+        data: result.data 
+      }
+    } catch (error) {
+      console.error('Error migrating data:', error)
+      return { 
+        success: false, 
+        error: error instanceof Error ? error.message : 'Migration failed' 
+      }
+    }
   }
 }
 
