@@ -16,14 +16,6 @@ import { useAuth } from '@/hooks/useAuth'
 export function AuthHeader() {
   const { user, isAuthenticated, isLoading, signIn, signOut } = useAuth()
 
-  const handleSignIn = async () => {
-    try {
-      await signIn()
-    } catch (error) {
-      console.error('Sign in error:', error)
-    }
-  }
-
   const handleSignOut = () => {
     signOut()
   }
