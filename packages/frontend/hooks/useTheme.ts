@@ -40,7 +40,7 @@ export function useTheme() {
     decorativeBlur: isDarkMode ? "bg-white/5" : "bg-white/30",
     decorativeBlurLight: isDarkMode ? "bg-white/3" : "bg-white/20",
     mainText: isDarkMode ? "text-white" : "text-gray-900",
-    secondaryText: isDarkMode ? "text-gray-200" : "text-gray-600",
+    secondaryText: isDarkMode ? "!text-gray-200" : "!text-gray-600",
     tertiaryText: isDarkMode ? "text-gray-300" : "text-gray-500",
     glassBackground: isDarkMode ? "bg-white/10" : "bg-white/60",
     glassBackgroundStrong: isDarkMode ? "bg-white/15" : "bg-white/80",
