@@ -7,7 +7,7 @@ import { AuthHeader } from './AuthHeader'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { InfoIcon, Sun, Moon, Settings } from 'lucide-react'
-import { useThemeStore, useThemeStyles, useThemeHydration } from '@/stores/themeStore'
+import { useThemeStore, useThemeStyles } from '@/stores/themeStore'
 
 export default function ProtectedVocabulary() {
   const { isAuthenticated, isLoading, signIn } = useAuth()
@@ -16,9 +16,6 @@ export default function ProtectedVocabulary() {
   const isLoaded = useThemeStore((state) => state.isLoaded)
   const themeStyles = useThemeStyles()
   const [settingsOpen, setSettingsOpen] = useState(false)
-  
-  // Handle theme hydration on client side
-  useThemeHydration()
 
   if (isLoading || !isLoaded) {
     return (

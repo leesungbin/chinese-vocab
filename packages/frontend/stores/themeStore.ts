@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { useMemo, useEffect } from 'react'
+import { useMemo } from 'react'
 
 interface ThemeStyles {
   background: string
@@ -35,20 +35,28 @@ export const useThemeStore = create<ThemeState>()(
         set({ isDarkMode: newMode })
         
         // Apply dark class to HTML element for Tailwind dark mode
-        if (typeof window !== 'undefined') {
-          if (newMode) {
-            document.documentElement.classList.add('dark')
-          } else {
-            document.documentElement.classList.remove('dark')
-          }
+        if (newMode) {
+          document.documentElement.classList.add('dark')
+        } else {
+          document.documentElement.classList.remove('dark')
         }
       },
       setIsLoaded: (loaded: boolean) => set({ isLoaded: loaded }),
     }),
     {
       name: 'isDarkMode',
-      // Skip initial hydration to prevent SSR mismatch
-      skipHydration: true,
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          state.setIsLoaded(true)
+          
+          // Apply theme on rehydration
+          if (state.isDarkMode) {
+            document.documentElement.classList.add('dark')
+          } else {
+            document.documentElement.classList.remove('dark')
+          }
+        }
+      },
     }
   )
 )
@@ -74,22 +82,3 @@ export const useThemeStyles = (): ThemeStyles => {
   }), [isDarkMode])
 }
 
-// Hook to handle theme hydration on client side
-export const useThemeHydration = () => {
-  useEffect(() => {
-    // Rehydrate the store on client side
-    useThemeStore.persist.rehydrate()
-    
-    // Apply theme based on stored value
-    const state = useThemeStore.getState()
-    state.setIsLoaded(true)
-    
-    if (typeof window !== 'undefined') {
-      if (state.isDarkMode) {
-        document.documentElement.classList.add('dark')
-      } else {
-        document.documentElement.classList.remove('dark')
-      }
-    }
-  }, [])
-}
