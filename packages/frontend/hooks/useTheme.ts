@@ -1,5 +1,5 @@
 import { useLocalStorage } from './useLocalStorage'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 
 interface ThemeStyles {
   background: string
@@ -22,20 +22,20 @@ export function useTheme() {
 
   // Apply dark class to HTML element for Tailwind dark mode
   useEffect(() => {
-    if (typeof window !== 'undefined' && isLoaded) {
+    if (typeof window !== 'undefined') {
       if (isDarkMode) {
         document.documentElement.classList.add('dark')
       } else {
         document.documentElement.classList.remove('dark')
       }
     }
-  }, [isDarkMode, isLoaded])
+  }, [isDarkMode])
 
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode)
   }
 
-  const themeStyles: ThemeStyles = {
+  const themeStyles: ThemeStyles = useMemo(() => ({
     background: isDarkMode ? "bg-black" : "bg-gray-50",
     decorativeBlur: isDarkMode ? "bg-white/5" : "bg-white/30",
     decorativeBlurLight: isDarkMode ? "bg-white/3" : "bg-white/20",
@@ -49,7 +49,7 @@ export function useTheme() {
     buttonGlass: isDarkMode ? "bg-white/20" : "bg-white/70",
     buttonGlassHover: isDarkMode ? "hover:bg-white/30" : "hover:bg-white/90",
     progressFill: isDarkMode ? "bg-white" : "bg-gray-800",
-  }
+  }), [isDarkMode])
 
   return {
     isDarkMode,
