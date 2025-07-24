@@ -19,6 +19,7 @@ provider:
           Action:
             - dynamodb:Query
             - dynamodb:PutItem
+            - dynamodb:UpdateItem
             - dynamodb:DeleteItem
             - dynamodb:BatchWriteItem
           Resource: 
@@ -118,6 +119,49 @@ functions:
       GOOGLE_SHEETS_SPREADSHEET_ID: ${env:GOOGLE_SHEETS_SPREADSHEET_ID}
       JWT_SECRET: ${env:JWT_SECRET}
       GOOGLE_CLIENT_ID: ${env:GOOGLE_CLIENT_ID}
+
+  # New DynamoDB-based handlers
+  getVocabulary:
+    handler: src/handlers/getVocabulary.handler
+    events:
+      - http:
+          path: /get-vocabulary
+          method: get
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+              - Cache-Control
+              - Pragma
+              - Expires
+            allowCredentials: false
+    timeout: 30
+    
+  updateVocabulary:
+    handler: src/handlers/updateVocabulary.handler
+    events:
+      - http:
+          path: /update-vocabulary
+          method: post
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+              - Cache-Control
+              - Pragma
+              - Expires
+            allowCredentials: false
+    timeout: 30
 
 package:
   individually: false

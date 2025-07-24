@@ -1,5 +1,5 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
-import { DynamoDBDocumentClient, PutCommand, DeleteCommand, QueryCommand, BatchWriteCommand } from '@aws-sdk/lib-dynamodb';
+import { DynamoDBDocumentClient, PutCommand, DeleteCommand, QueryCommand, BatchWriteCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import { VocabWord } from '../types';
 import { randomUUID } from 'crypto';
 
@@ -13,7 +13,7 @@ export class DynamoService {
     this.tableName = 'user-vocabulary';
   }
 
-  async getUserVocabulary(userId: string): Promise<VocabWord[]> {
+  async getUserVocabulary(userId: string, filter?: 'memorized' | 'unmemorized'): Promise<VocabWord[]> {
     try {
       const command = new QueryCommand({
         TableName: this.tableName,
@@ -24,7 +24,7 @@ export class DynamoService {
       });
 
       const response = await this.docClient.send(command);
-      return response.Items?.map(item => ({
+      let words = response.Items?.map(item => ({
         id: parseInt(item.wordId.split('_')[1]) || 0,
         day: item.day || 0,
         chinese: item.chinese || '',
@@ -34,6 +34,15 @@ export class DynamoService {
         lastReviewed: item.lastReviewed,
         total: item.total || 0
       })) || [];
+
+      // Apply filter if specified
+      if (filter === 'memorized') {
+        words = words.filter(word => word.memorized);
+      } else if (filter === 'unmemorized') {
+        words = words.filter(word => !word.memorized);
+      }
+
+      return words;
     } catch (error) {
       console.error('Error getting user vocabulary:', error);
       throw error;
@@ -136,6 +145,73 @@ export class DynamoService {
       }
     } catch (error) {
       console.error('Error batch adding vocab words:', error);
+      throw error;
+    }
+  }
+
+  async markAsMemorized(userId: string, wordId: number): Promise<void> {
+    try {
+      const command = new UpdateCommand({
+        TableName: this.tableName,
+        Key: {
+          userId: userId,
+          wordId: `word_${wordId}`
+        },
+        UpdateExpression: 'SET memorized = :memorized, lastReviewed = :lastReviewed',
+        ExpressionAttributeValues: {
+          ':memorized': true,
+          ':lastReviewed': new Date().toISOString()
+        }
+      });
+
+      await this.docClient.send(command);
+    } catch (error) {
+      console.error('Error marking word as memorized:', error);
+      throw error;
+    }
+  }
+
+  async unmarkAsMemorized(userId: string, wordId: number): Promise<void> {
+    try {
+      const command = new UpdateCommand({
+        TableName: this.tableName,
+        Key: {
+          userId: userId,
+          wordId: `word_${wordId}`
+        },
+        UpdateExpression: 'SET memorized = :memorized, lastReviewed = :lastReviewed',
+        ExpressionAttributeValues: {
+          ':memorized': false,
+          ':lastReviewed': new Date().toISOString()
+        }
+      });
+
+      await this.docClient.send(command);
+    } catch (error) {
+      console.error('Error unmarking word as memorized:', error);
+      throw error;
+    }
+  }
+
+  async incrementTotalAndUpdateLastReviewed(userId: string, wordId: number): Promise<void> {
+    try {
+      const command = new UpdateCommand({
+        TableName: this.tableName,
+        Key: {
+          userId: userId,
+          wordId: `word_${wordId}`
+        },
+        UpdateExpression: 'SET total = if_not_exists(total, :zero) + :increment, lastReviewed = :lastReviewed',
+        ExpressionAttributeValues: {
+          ':zero': 0,
+          ':increment': 1,
+          ':lastReviewed': new Date().toISOString()
+        }
+      });
+
+      await this.docClient.send(command);
+    } catch (error) {
+      console.error('Error incrementing total count:', error);
       throw error;
     }
   }

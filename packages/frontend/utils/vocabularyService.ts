@@ -56,12 +56,23 @@ const getApiOptions = (method: string = 'GET', body?: object) => ({
 })
 
 export const vocabularyService = {
-  // Fetch all vocabulary data from the API
+  // Fetch all vocabulary data from the API (now requires authentication)
   async fetchVocabularyData(): Promise<VocabItem[]> {
     try {
-      const response = await fetch(`${API_BASE_URL}/get-sheet`, getApiOptions())
+      // Check if user is authenticated
+      const token = localStorage.getItem('auth-token')
+      if (!token) {
+        console.warn('No authentication token found - user needs to sign in')
+        return []
+      }
+
+      const response = await fetch(`${API_BASE_URL}/get-vocabulary`, getApiOptions())
       
       if (!response.ok) {
+        if (response.status === 401 || response.status === 403) {
+          console.warn('Authentication failed - user needs to sign in again')
+          return []
+        }
         throw new Error('Failed to fetch data from API')
       }
 
@@ -88,11 +99,11 @@ export const vocabularyService = {
   },
 
   // Increment the total count for a word (when viewed)
-  async incrementWordTotal(chinese: string): Promise<boolean> {
+  async incrementWordTotal(wordId: number): Promise<boolean> {
     try {
-      const response = await fetch(`${API_BASE_URL}/update-sheet`, getApiOptions('POST', {
+      const response = await fetch(`${API_BASE_URL}/update-vocabulary`, getApiOptions('POST', {
         action: 'increment_total',
-        word: { chinese }
+        word: { id: wordId }
       }))
 
       const result = await response.json()
@@ -106,18 +117,9 @@ export const vocabularyService = {
   // Mark a word as memorized
   async markWordAsMemorized(word: VocabItem): Promise<{ success: boolean; error?: string }> {
     try {
-      const response = await fetch(`${API_BASE_URL}/update-sheet`, getApiOptions('POST', {
+      const response = await fetch(`${API_BASE_URL}/update-vocabulary`, getApiOptions('POST', {
         action: 'mark_memorized',
-        word: {
-          id: word.id,
-          day: word.day,
-          chinese: word.chinese,
-          pinyin: word.pinyin,
-          korean: word.korean,
-          memorized: true,
-          total: word.total,
-          lastReviewed: new Date().toISOString()
-        }
+        word: { id: word.id }
       }))
 
       const result = await response.json()
@@ -136,18 +138,9 @@ export const vocabularyService = {
   // Update a word (for unmarking memorized or other updates)
   async updateWord(word: VocabItem): Promise<{ success: boolean; error?: string }> {
     try {
-      const response = await fetch(`${API_BASE_URL}/update-sheet`, getApiOptions('POST', {
-        action: 'update',
-        word: {
-          id: word.id,
-          day: word.day,
-          chinese: word.chinese,
-          pinyin: word.pinyin,
-          korean: word.korean,
-          memorized: word.memorized || false,
-          total: word.total,
-          lastReviewed: new Date().toISOString()
-        }
+      const response = await fetch(`${API_BASE_URL}/update-vocabulary`, getApiOptions('POST', {
+        action: 'unmark_memorized',
+        word: { id: word.id }
       }))
 
       const result = await response.json()
@@ -168,7 +161,18 @@ export const vocabularyService = {
     if (willBeMemorized) {
       return await this.markWordAsMemorized(word)
     } else {
-      return await this.updateWord({ ...word, memorized: false })
+      const response = await fetch(`${API_BASE_URL}/update-vocabulary`, getApiOptions('POST', {
+        action: 'unmark_memorized',
+        word: { id: word.id }
+      }))
+
+      const result = await response.json()
+      
+      if (!result.success && response.status === 403) {
+        return { success: false, error: result.error || 'You are not authorized to perform this action' }
+      }
+      
+      return { success: result.success, error: result.error }
     }
   },
 
