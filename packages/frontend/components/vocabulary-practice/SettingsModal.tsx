@@ -80,7 +80,7 @@ export function SettingsModal({
   if (!settingsOpen) return null
 
   return (
-    <div className="fixed inset-0 z-20 flex items-start justify-center bg-black bg-opacity-50 overflow-y-auto">
+    <div className="fixed top-0 left-0 right-0 bottom-0 z-50 flex items-start justify-center bg-black bg-opacity-50 overflow-y-auto min-h-screen w-full">
       <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-xl p-6 w-full max-w-md mx-4 my-4 md:my-8">
         <div className="flex items-center justify-between mb-4">
           <h2 className={`text-xl font-semibold ${themeStyles.mainText}`}>Settings</h2>
