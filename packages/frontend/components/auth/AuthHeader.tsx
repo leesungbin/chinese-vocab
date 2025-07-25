@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useCallback, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
@@ -15,6 +15,8 @@ import { useAuth } from '@/hooks/useAuth'
 
 export function AuthHeader() {
   const { user, isAuthenticated, isLoading, signIn, signOut } = useAuth()
+  const [googleLoaded, setGoogleLoaded] = useState(false)
+  const [googleError, setGoogleError] = useState<string | null>(null)
 
   const handleSignOut = () => {
     signOut()
@@ -26,42 +28,101 @@ export function AuthHeader() {
     )
   }
 
-  // Set up the global callback function and render Google Sign-In button
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      (window as any).handleGoogleSignIn = signIn
-      
-      // Initialize Google Identity Services and render the button
-      if ((window as any).google && (window as any).google.accounts) {
-        (window as any).google.accounts.id.initialize({
-          client_id: "62679414399-ffhnilqravrlgarp1hspq6q2k5vq2ig8.apps.googleusercontent.com",
+  const initializeGoogleSignIn = useCallback(() => {
+    if (typeof window === 'undefined') return
+
+    try {
+      if (window.google?.accounts?.id) {
+        const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID
+        if (!clientId) {
+          throw new Error('Google Client ID not configured')
+        }
+
+        window.google.accounts.id.initialize({
+          client_id: clientId,
           callback: signIn,
           auto_select: false,
           itp_support: true,
         })
-        
-        // Render the sign-in button
-        setTimeout(() => {
-          const buttonContainer = document.getElementById('google-signin-button')
-          if (buttonContainer) {
-            (window as any).google.accounts.id.renderButton(buttonContainer, {
-              type: 'standard',
-              shape: 'rectangular',
-              theme: 'outline',
-              text: 'signin_with',
-              size: 'large',
-              logo_alignment: 'left'
-            })
-          }
-        }, 100)
+
+        // Enable One Tap login for better UX
+        if (!isAuthenticated) {
+          window.google.accounts.id.prompt((notification: any) => {
+            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+              // One Tap was not displayed or was skipped, fallback to button
+              console.log('One Tap not shown:', notification.getNotDisplayedReason())
+            }
+          })
+        }
+
+        setGoogleLoaded(true)
+        setGoogleError(null)
+      } else {
+        throw new Error('Google Identity Services not loaded')
+      }
+    } catch (error) {
+      console.error('Failed to initialize Google Sign-In:', error)
+      setGoogleError(error instanceof Error ? error.message : 'Failed to load Google Sign-In')
+      setGoogleLoaded(false)
+    }
+  }, [signIn, isAuthenticated])
+
+  const renderGoogleButton = useCallback(() => {
+    if (!googleLoaded || typeof window === 'undefined') return
+
+    const buttonContainer = document.getElementById('google-signin-button')
+    if (buttonContainer && window.google?.accounts?.id) {
+      try {
+        window.google.accounts.id.renderButton(buttonContainer, {
+          type: 'standard',
+          shape: 'rectangular',
+          theme: 'outline',
+          text: 'signin_with',
+          size: 'large',
+          logo_alignment: 'left'
+        })
+      } catch (error) {
+        console.error('Failed to render Google Sign-In button:', error)
+        setGoogleError('Failed to render sign-in button')
       }
     }
-  }, [signIn])
+  }, [googleLoaded])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    // Check if Google library is already loaded
+    if (window.google?.accounts?.id) {
+      initializeGoogleSignIn()
+    } else {
+      // Wait for Google library to load
+      const checkGoogleLoaded = () => {
+        if (window.google?.accounts?.id) {
+          initializeGoogleSignIn()
+        } else {
+          setTimeout(checkGoogleLoaded, 100)
+        }
+      }
+      checkGoogleLoaded()
+    }
+  }, [initializeGoogleSignIn])
+
+  useEffect(() => {
+    if (googleLoaded) {
+      renderGoogleButton()
+    }
+  }, [googleLoaded, renderGoogleButton])
 
   if (!isAuthenticated || !user) {
     return (
       <div className="flex items-center gap-2">
-        <div id="google-signin-button" />
+        {googleError ? (
+          <div className="text-sm text-red-500">
+            Sign-in unavailable
+          </div>
+        ) : (
+          <div id="google-signin-button" />
+        )}
       </div>
     )
   }

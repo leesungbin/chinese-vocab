@@ -102,6 +102,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
     } catch (error) {
       console.error('Sign in error:', error)
+      
+      // Clear any partial auth state on error
+      setUser(null)
+      localStorage.removeItem('auth-token')
+      localStorage.removeItem('user')
+      
+      // Re-throw to allow UI components to handle the error
       throw error
     }
   }
