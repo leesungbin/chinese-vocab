@@ -3,6 +3,7 @@ import { DynamoService } from '../services/dynamoService';
 import { GoogleSheetsService } from '../services/googleSheets';
 import { ApiResponse } from '../types';
 import { validateAuthorizedUser, AuthError, validateJWT } from '../middleware/auth';
+import { allowedOrigins } from '../constants';
 
 const ANONYMOUS_SPREADSHEET_ID = '1JBGAlJ14-yKHoSNlVnogCT4Xj30SLS_jQNuZe5YLe0I';
 const ANONYMOUS_USER_ID = 'anonymous';
@@ -12,12 +13,6 @@ export const handler = async (
 ): Promise<APIGatewayProxyResult> => {
   // Get origin from request headers for CORS (handle undefined headers)
   const origin = event.headers?.origin || event.headers?.Origin || 'http://localhost:3000';
-  const allowedOrigins = [
-    'http://localhost:3000',
-    'http://localhost:3001', 
-    'https://leesungbin.github.io',
-    'https://vocab.sungbin.dev'
-  ];
   const corsOrigin = allowedOrigins.includes(origin) ? origin : 'http://localhost:3000';
 
   const headers = {

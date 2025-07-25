@@ -2,18 +2,13 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { GoogleSheetsService } from '../services/googleSheets';
 import { UpdateRequest, ApiResponse } from '../types';
 import { validateAuthorizedUser, AuthError } from '../middleware/auth';
+import { allowedOrigins } from '../constants';
 
 export const handler = async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
   // Get origin from request headers for CORS (handle undefined headers)
   const origin = event.headers?.origin || event.headers?.Origin || 'http://localhost:3000';
-  const allowedOrigins = [
-    'http://localhost:3000',
-    'http://localhost:3001', 
-    'https://leesungbin.github.io',
-    'https://vocab.sungbin.dev'
-  ];
   const corsOrigin = allowedOrigins.includes(origin) ? origin : 'http://localhost:3000';
 
   const headers = {
