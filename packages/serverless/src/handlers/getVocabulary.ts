@@ -15,7 +15,8 @@ export const handler = async (
   const allowedOrigins = [
     'http://localhost:3000',
     'http://localhost:3001', 
-    'https://leesungbin.github.io'
+    'https://leesungbin.github.io',
+    'https://vocab.sungbin.dev'
   ];
   const corsOrigin = allowedOrigins.includes(origin) ? origin : 'http://localhost:3000';
 
