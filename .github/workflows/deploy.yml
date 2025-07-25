@@ -62,6 +62,9 @@ jobs:
         run: pnpm install
       - name: Build with Next.js
         run: pnpm frontend:build
+        env:
+          NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${{ vars.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}
+          NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL }}
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
