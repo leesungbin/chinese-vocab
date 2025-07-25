@@ -31,7 +31,7 @@ interface ApiResponse {
   error?: string
 }
 
-const getApiHeaders = () => {
+const getApiHeaders = (includeOAuth: boolean = false) => {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -45,13 +45,21 @@ const getApiHeaders = () => {
     headers.Authorization = `Bearer ${token}`
   }
 
+  // Add OAuth token header if requested and available
+  if (includeOAuth) {
+    const oauthToken = localStorage.getItem('oauth-token')
+    if (oauthToken) {
+      headers['X-OAuth-Token'] = oauthToken
+    }
+  }
+
   return headers
 }
 
-const getApiOptions = (method: string = 'GET', body?: object) => ({
+const getApiOptions = (method: string = 'GET', body?: object, includeOAuth: boolean = false) => ({
   method,
   cache: 'no-cache' as RequestCache,
-  headers: getApiHeaders(),
+  headers: getApiHeaders(includeOAuth),
   ...(body && { body: JSON.stringify(body) }),
 })
 
@@ -222,24 +230,35 @@ export const vocabularyService = {
   },
 
   // Create a new Google Sheet for the user
-  async createUserSpreadsheet(): Promise<{ success: boolean; spreadsheetId?: string; error?: string; isNew?: boolean; sheetUrl?: string }> {
+  async createUserSpreadsheet(): Promise<{ success: boolean; spreadsheetId?: string; error?: string; isNew?: boolean; sheetUrl?: string; requiresReauth?: boolean }> {
     try {
       const token = localStorage.getItem('auth-token')
+      const oauthToken = localStorage.getItem('oauth-token')
+      
       if (!token) {
         return { success: false, error: 'Authentication required' }
       }
 
-      const response = await fetch(`${API_BASE_URL}/create-user-spreadsheet`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+      if (!oauthToken) {
+        return { 
+          success: false, 
+          error: 'Google Sheets permission required. Please sign in again.',
+          requiresReauth: true
         }
-      })
+      }
+
+      const response = await fetch(`${API_BASE_URL}/create-user-spreadsheet`, getApiOptions('POST', {}, true))
 
       const result = await response.json()
       
       if (!response.ok) {
+        if (result.requiresReauth) {
+          return { 
+            success: false, 
+            error: result.error || 'Re-authorization required',
+            requiresReauth: true
+          }
+        }
         return { 
           success: false, 
           error: result.error || `HTTP ${response.status}: ${response.statusText}` 

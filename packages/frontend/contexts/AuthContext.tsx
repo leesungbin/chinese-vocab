@@ -22,7 +22,7 @@ function decodeJWT(token: string): any {
 
 // Server authentication endpoint
 
-async function authenticateWithServer(googleCredential: string): Promise<{ token: string, user: User }> {
+async function authenticateWithServer(credential: string, isOAuth: boolean = false): Promise<{ token: string, user?: User }> {
   try {
     const response = await fetch(`${API_BASE_URL}/auth`, {
       method: 'POST',
@@ -31,7 +31,8 @@ async function authenticateWithServer(googleCredential: string): Promise<{ token
       },
       mode: 'cors',
       body: JSON.stringify({
-        credential: googleCredential
+        credential: credential,
+        isOAuth: isOAuth
       })
     })
     
@@ -57,6 +58,14 @@ interface User {
   image?: string
 }
 
+interface OAuthTokens {
+  access_token: string
+  refresh_token?: string
+  expires_in: number
+  scope: string
+  token_type: string
+}
+
 interface AuthContextType {
   user: User | null
   isAuthenticated: boolean
@@ -64,6 +73,7 @@ interface AuthContextType {
   signIn: (response: any) => Promise<void>
   signOut: () => void
   getToken: () => string | null
+  getOAuthToken: () => string | null
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -82,31 +92,84 @@ interface AuthProviderProps {
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [oauthTokens, setOAuthTokens] = useState<OAuthTokens | null>(null)
 
   const getToken = () => {
     return localStorage.getItem('auth-token')
   }
 
+  const getOAuthToken = () => {
+    return localStorage.getItem('oauth-token')
+  }
+
+  const fetchUserProfile = async (accessToken: string): Promise<User> => {
+    const response = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch user profile')
+    }
+    
+    const profile = await response.json()
+    return {
+      id: profile.id,
+      email: profile.email,
+      name: profile.name,
+      image: profile.picture,
+    }
+  }
+
   const signIn = async (response: any): Promise<void> => {
     try {
-      // Handle Google Sign-In response from HTML elements
-      if (response && response.credential) {
-        // Send Google credential to server for verification and JWT creation
+      console.log('signIn called with response:', response)
+      
+      // Handle OAuth 2.0 response
+      if (response && response.access_token) {
+        // Store OAuth tokens
+        const tokens: OAuthTokens = {
+          access_token: response.access_token,
+          refresh_token: response.refresh_token,
+          expires_in: response.expires_in,
+          scope: response.scope,
+          token_type: response.token_type || 'Bearer',
+        }
+        
+        setOAuthTokens(tokens)
+        localStorage.setItem('oauth-token', response.access_token)
+        localStorage.setItem('oauth-tokens', JSON.stringify(tokens))
+        
+        // Fetch user profile using OAuth token
+        const userProfile = await fetchUserProfile(response.access_token)
+        
+        // Send OAuth access token to server for JWT creation
+        const authResult = await authenticateWithServer(response.access_token, true)
+        
+        setUser(userProfile)
+        localStorage.setItem('auth-token', authResult.token)
+        localStorage.setItem('user', JSON.stringify(userProfile))
+      } else if (response && response.credential) {
+        // Fallback for old ID token flow (if still needed)
         const authResult = await authenticateWithServer(response.credential)
         
         setUser(authResult.user)
         localStorage.setItem('auth-token', authResult.token)
         localStorage.setItem('user', JSON.stringify(authResult.user))
       } else {
-        throw new Error('No credential received from Google')
+        throw new Error('No valid authentication response received')
       }
     } catch (error) {
       console.error('Sign in error:', error)
       
       // Clear any partial auth state on error
       setUser(null)
+      setOAuthTokens(null)
       localStorage.removeItem('auth-token')
       localStorage.removeItem('user')
+      localStorage.removeItem('oauth-token')
+      localStorage.removeItem('oauth-tokens')
       
       // Re-throw to allow UI components to handle the error
       throw error
@@ -115,8 +178,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const signOut = () => {
     setUser(null)
+    setOAuthTokens(null)
     localStorage.removeItem('auth-token')
     localStorage.removeItem('user')
+    localStorage.removeItem('oauth-token')
+    localStorage.removeItem('oauth-tokens')
     
     if (window.google) {
       window.google.accounts.id.disableAutoSelect()
@@ -127,6 +193,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     // Load stored user data on mount
     const storedUser = localStorage.getItem('user')
     const storedToken = localStorage.getItem('auth-token')
+    const storedOAuthTokens = localStorage.getItem('oauth-tokens')
     
     if (storedUser && storedToken) {
       try {
@@ -135,15 +202,29 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const decoded = decodeJWT(storedToken)
         if (decoded && decoded.exp && decoded.exp * 1000 > Date.now()) {
           setUser(userData)
+          
+          // Load OAuth tokens if available
+          if (storedOAuthTokens) {
+            try {
+              const tokens = JSON.parse(storedOAuthTokens)
+              setOAuthTokens(tokens)
+            } catch (error) {
+              console.error('Error loading OAuth tokens:', error)
+            }
+          }
         } else {
-          // Token expired, clear storage
+          // Token expired, clear all storage
           localStorage.removeItem('auth-token')
           localStorage.removeItem('user')
+          localStorage.removeItem('oauth-token')
+          localStorage.removeItem('oauth-tokens')
         }
       } catch (error) {
         console.error('Error loading stored user:', error)
         localStorage.removeItem('auth-token')
         localStorage.removeItem('user')
+        localStorage.removeItem('oauth-token')
+        localStorage.removeItem('oauth-tokens')
       }
     }
     
@@ -157,6 +238,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     signIn,
     signOut,
     getToken,
+    getOAuthToken,
   }
 
   return (
