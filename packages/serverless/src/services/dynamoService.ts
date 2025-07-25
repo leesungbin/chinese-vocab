@@ -5,18 +5,20 @@ import { randomUUID } from 'crypto';
 
 export class DynamoService {
   private docClient: DynamoDBDocumentClient;
-  private tableName: string;
+  private vocabularyTableName: string;
+  private spreadsheetsTableName: string;
 
   constructor() {
     const client = new DynamoDBClient({ region: 'ap-northeast-2' });
     this.docClient = DynamoDBDocumentClient.from(client);
-    this.tableName = 'user-vocabulary';
+    this.vocabularyTableName = 'user-vocabulary';
+    this.spreadsheetsTableName = 'user-spreadsheets';
   }
 
   async getUserVocabulary(userId: string, filter?: 'memorized' | 'unmemorized'): Promise<VocabWord[]> {
     try {
       const command = new QueryCommand({
-        TableName: this.tableName,
+        TableName: this.vocabularyTableName,
         KeyConditionExpression: 'userId = :userId',
         ExpressionAttributeValues: {
           ':userId': userId
@@ -74,7 +76,7 @@ export class DynamoService {
 
         const command = new BatchWriteCommand({
           RequestItems: {
-            [this.tableName]: deleteRequests
+            [this.vocabularyTableName]: deleteRequests
           }
         });
 
@@ -89,7 +91,7 @@ export class DynamoService {
   async addVocabWord(userId: string, word: VocabWord): Promise<void> {
     try {
       const command = new PutCommand({
-        TableName: this.tableName,
+        TableName: this.vocabularyTableName,
         Item: {
           userId: userId,
           wordId: `word_${word.id}`,
@@ -137,7 +139,7 @@ export class DynamoService {
 
         const command = new BatchWriteCommand({
           RequestItems: {
-            [this.tableName]: putRequests
+            [this.vocabularyTableName]: putRequests
           }
         });
 
@@ -152,7 +154,7 @@ export class DynamoService {
   async markAsMemorized(userId: string, wordId: number): Promise<void> {
     try {
       const command = new UpdateCommand({
-        TableName: this.tableName,
+        TableName: this.vocabularyTableName,
         Key: {
           userId: userId,
           wordId: `word_${wordId}`
@@ -174,7 +176,7 @@ export class DynamoService {
   async unmarkAsMemorized(userId: string, wordId: number): Promise<void> {
     try {
       const command = new UpdateCommand({
-        TableName: this.tableName,
+        TableName: this.vocabularyTableName,
         Key: {
           userId: userId,
           wordId: `word_${wordId}`
@@ -196,7 +198,7 @@ export class DynamoService {
   async incrementTotalAndUpdateLastReviewed(userId: string, wordId: number): Promise<void> {
     try {
       const command = new UpdateCommand({
-        TableName: this.tableName,
+        TableName: this.vocabularyTableName,
         Key: {
           userId: userId,
           wordId: `word_${wordId}`
@@ -212,6 +214,65 @@ export class DynamoService {
       await this.docClient.send(command);
     } catch (error) {
       console.error('Error incrementing total count:', error);
+      throw error;
+    }
+  }
+
+  // User Spreadsheets Table Methods
+  async getUserSpreadsheetId(userId: string): Promise<string | null> {
+    try {
+      const command = new QueryCommand({
+        TableName: this.spreadsheetsTableName,
+        KeyConditionExpression: 'userId = :userId',
+        ExpressionAttributeValues: {
+          ':userId': userId
+        }
+      });
+
+      const response = await this.docClient.send(command);
+      
+      if (response.Items && response.Items.length > 0) {
+        return response.Items[0].spreadsheetId || null;
+      }
+      
+      return null;
+    } catch (error) {
+      console.error('Error getting user spreadsheet ID:', error);
+      throw error;
+    }
+  }
+
+  async setUserSpreadsheetId(userId: string, spreadsheetId: string): Promise<void> {
+    try {
+      const command = new PutCommand({
+        TableName: this.spreadsheetsTableName,
+        Item: {
+          userId: userId,
+          spreadsheetId: spreadsheetId,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        }
+      });
+
+      await this.docClient.send(command);
+    } catch (error) {
+      console.error('Error setting user spreadsheet ID:', error);
+      throw error;
+    }
+  }
+
+  async deleteUserSpreadsheetId(userId: string): Promise<void> {
+    try {
+      const command = new DeleteCommand({
+        TableName: this.spreadsheetsTableName,
+        Key: {
+          userId: userId
+        }
+      });
+
+      await this.docClient.send(command);
+    } catch (error) {
+      console.error('Error deleting user spreadsheet ID:', error);
       throw error;
     }
   }

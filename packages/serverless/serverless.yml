@@ -22,8 +22,11 @@ provider:
             - dynamodb:UpdateItem
             - dynamodb:DeleteItem
             - dynamodb:BatchWriteItem
+            - dynamodb:DescribeTable
+            - dynamodb:CreateTable
           Resource: 
             - "arn:aws:dynamodb:ap-northeast-2:*:table/user-vocabulary"
+            - "arn:aws:dynamodb:ap-northeast-2:*:table/user-spreadsheets"
 
 build:
   esbuild:

@@ -108,12 +108,16 @@ export const handler = async (
     // Migrate data to DynamoDB
     await dynamoService.batchAddVocabWords(userInfo.userId, vocabularyWords);
 
+    // Save the user's spreadsheet ID for future reference
+    await dynamoService.setUserSpreadsheetId(userInfo.userId, spreadsheetId);
+
     const response: ApiResponse = {
       success: true,
       data: {
         message: `Successfully migrated ${vocabularyWords.length} vocabulary words`,
         wordCount: vocabularyWords.length,
         userId: userInfo.userId,
+        spreadsheetId: spreadsheetId,
       },
     };
 
