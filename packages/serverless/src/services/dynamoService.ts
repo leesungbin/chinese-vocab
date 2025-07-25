@@ -242,7 +242,11 @@ export class DynamoService {
     }
   }
 
-  async setUserSpreadsheetId(userId: string, spreadsheetId: string): Promise<void> {
+  async setUserSpreadsheetId(userId: string, spreadsheetId?: string): Promise<void> {
+    if (spreadsheetId === undefined) {
+      throw new Error('spreadsheetId is undefined');
+    }
+
     try {
       const command = new PutCommand({
         TableName: this.spreadsheetsTableName,
