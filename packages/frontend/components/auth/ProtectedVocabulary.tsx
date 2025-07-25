@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
+import { useRouter } from 'next/navigation'
 import VocabularyPractice from '@/components/vocabulary-practice/VocabularyPractice'
 import { AuthHeader } from './AuthHeader'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -11,11 +11,11 @@ import { useThemeStore, useThemeStyles } from '@/stores/themeStore'
 
 export default function ProtectedVocabulary() {
   const { user, isAuthenticated, isLoading, signIn } = useAuth()
+  const router = useRouter()
   const isDarkMode = useThemeStore((state) => state.isDarkMode)
   const toggleTheme = useThemeStore((state) => state.toggleTheme)
   const isLoaded = useThemeStore((state) => state.isLoaded)
   const themeStyles = useThemeStyles()
-  const [settingsOpen, setSettingsOpen] = useState(false)
 
   if (isLoading || !isLoaded) {
     return (
@@ -52,7 +52,7 @@ export default function ProtectedVocabulary() {
               <Button
                 variant="outline"
                 size="icon"
-                onClick={() => setSettingsOpen(true)}
+                onClick={() => router.push('/settings')}
                 className="backdrop-blur-md border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800"
                 aria-label="Open settings"
               >
@@ -76,8 +76,6 @@ export default function ProtectedVocabulary() {
         )}
         
         <VocabularyPractice 
-          settingsOpen={settingsOpen}
-          setSettingsOpen={setSettingsOpen}
           userId={user?.id || null}
         />
       </div>

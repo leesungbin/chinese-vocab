@@ -22,19 +22,14 @@ import {
 import { useNavigationState } from "@/hooks/useNavigationState"
 import { useMemorizedWords } from "@/hooks/useMemorizedWords"
 import { VocabularyCard } from "./VocabularyCard"
-import { SettingsModal } from "./SettingsModal"
 import { NavigationControls } from "./NavigationControls"
 import { vocabularyService } from "@/utils/vocabularyService"
 
 interface VocabularyPracticeProps {
-  settingsOpen: boolean
-  setSettingsOpen: (open: boolean) => void
   userId?: string | null
 }
 
 export default function VocabularyPractice({ 
-  settingsOpen, 
-  setSettingsOpen,
   userId 
 }: VocabularyPracticeProps) {
   
@@ -192,32 +187,6 @@ export default function VocabularyPractice({
 
         {/* Reduced top margin since title is removed */}
         <div className="mb-4"></div>
-
-        {/* Settings Modal */}
-        <SettingsModal
-          settingsOpen={settingsOpen}
-          setSettingsOpen={setSettingsOpen}
-          showChinese={showChinese}
-          setShowChinese={setShowChinese}
-          showPinyin={showPinyin}
-          setShowPinyin={setShowPinyin}
-          showKorean={showKorean}
-          setShowKorean={setShowKorean}
-          showMemorizedWords={showMemorizedWords}
-          setShowMemorizedWords={setShowMemorizedWords}
-          vocabularyDataLength={vocabularyData.length}
-          shuffleWords={handleShuffleWords}
-          resetToOriginal={handleResetToOriginal}
-          isShuffled={isShuffled}
-          selectedDay={selectedDay}
-          availableDays={availableDays}
-          filterByDay={handleFilterByDay}
-          memorizedWords={memorizedWords}
-          resetAllMemorizedWords={resetAllMemorizedWords}
-          resetRevealStates={resetRevealStates}
-          themeStyles={themeStyles}
-          onMigrateData={handleMigrateData}
-        />
 
         {/* Main Vocabulary Card */}
         <VocabularyCard
