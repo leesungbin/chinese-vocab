@@ -16,7 +16,7 @@ export interface SheetData {
 
 export interface UpdateRequest {
   word: VocabWord;
-  action: 'add' | 'update' | 'delete' | 'mark_memorized' | 'increment_total';
+  action: 'add' | 'update' | 'delete' | 'mark_memorized' | 'unmark_memorized' | 'increment_total';
 }
 
 export interface ApiResponse<T = any> {
