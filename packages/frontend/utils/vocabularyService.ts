@@ -221,6 +221,47 @@ export const vocabularyService = {
     }
   },
 
+  // Create a new Google Sheet for the user
+  async createUserSpreadsheet(): Promise<{ success: boolean; spreadsheetId?: string; error?: string; isNew?: boolean; sheetUrl?: string }> {
+    try {
+      const token = localStorage.getItem('auth-token')
+      if (!token) {
+        return { success: false, error: 'Authentication required' }
+      }
+
+      const response = await fetch(`${API_BASE_URL}/create-user-spreadsheet`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      })
+
+      const result = await response.json()
+      
+      if (!response.ok) {
+        return { 
+          success: false, 
+          error: result.error || `HTTP ${response.status}: ${response.statusText}` 
+        }
+      }
+
+      return { 
+        success: result.success, 
+        spreadsheetId: result.spreadsheetId,
+        error: result.error,
+        isNew: result.isNew,
+        sheetUrl: result.sheetUrl
+      }
+    } catch (error) {
+      console.error('Error creating user spreadsheet:', error)
+      return { 
+        success: false, 
+        error: error instanceof Error ? error.message : 'Failed to create spreadsheet' 
+      }
+    }
+  },
+
   // Migrate data from Google Sheets to DynamoDB
   async migrateDataFromSheets(spreadsheetId?: string): Promise<{ success: boolean; error?: string; data?: any }> {
     try {

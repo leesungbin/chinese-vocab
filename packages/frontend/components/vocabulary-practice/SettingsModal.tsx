@@ -2,7 +2,8 @@ import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
-import { X, Shuffle, Download, Loader2, ExternalLink } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { X, Shuffle, Download, Loader2, ExternalLink, Plus, AlertTriangle } from "lucide-react"
 import { useState, useEffect } from "react"
 import { vocabularyService } from "@/utils/vocabularyService"
 
@@ -59,21 +60,79 @@ export function SettingsModal({
   const [spreadsheetId, setSpreadsheetId] = useState('')
   const [isMigrating, setIsMigrating] = useState(false)
   const [isLoadingSpreadsheetId, setIsLoadingSpreadsheetId] = useState(false)
+  const [isCreatingSpreadsheet, setIsCreatingSpreadsheet] = useState(false)
+  const [hasTriedAutoCreate, setHasTriedAutoCreate] = useState(false)
+  const [createSpreadsheetError, setCreateSpreadsheetError] = useState<string | null>(null)
 
   const handleResetMemorizedWords = () => {
     resetAllMemorizedWords()
     resetRevealStates()
   }
 
-  // Load user's current spreadsheet ID when modal opens
+  const getErrorMessage = (error: string): { title: string; message: string; suggestion: string } => {
+    if (error.includes('Drive storage quota has been exceeded')) {
+      return {
+        title: 'Google Drive Storage Full',
+        message: 'Your Google Drive storage is full and cannot create new files.',
+        suggestion: 'Please free up space in your Google Drive or upgrade your storage plan, then try again.'
+      }
+    }
+    
+    if (error.includes('permission') || error.includes('Permission')) {
+      return {
+        title: 'Permission Error',
+        message: 'Unable to create spreadsheet due to permission restrictions.',
+        suggestion: 'Please check your Google account permissions and try again.'
+      }
+    }
+    
+    if (error.includes('quota') || error.includes('Quota')) {
+      return {
+        title: 'API Quota Exceeded',
+        message: 'Google Sheets API quota has been exceeded.',
+        suggestion: 'Please try again later or contact support if the issue persists.'
+      }
+    }
+    
+    if (error.includes('network') || error.includes('Network') || error.includes('Failed to fetch')) {
+      return {
+        title: 'Network Error',
+        message: 'Unable to connect to Google Sheets service.',
+        suggestion: 'Please check your internet connection and try again.'
+      }
+    }
+    
+    // Default error message
+    return {
+      title: 'Spreadsheet Creation Failed',
+      message: 'An unexpected error occurred while creating your personal Google Sheet.',
+      suggestion: 'You can manually enter your Google Sheets ID below or try again later.'
+    }
+  }
+
+  // Load user's current spreadsheet ID when modal opens, and auto-create if needed
   useEffect(() => {
     const loadSpreadsheetId = async () => {
-      if (settingsOpen && !spreadsheetId) {
+      if (settingsOpen && !spreadsheetId && !hasTriedAutoCreate) {
         setIsLoadingSpreadsheetId(true)
         try {
           const result = await vocabularyService.getUserSpreadsheetId()
           if (result.success && result.spreadsheetId) {
             setSpreadsheetId(result.spreadsheetId)
+            setHasTriedAutoCreate(true)
+          } else {
+            // No existing spreadsheet - check if user is authenticated
+            const token = localStorage.getItem('auth-token')
+            if (token && !hasTriedAutoCreate) {
+              // User is authenticated but has no spreadsheet - auto-create one
+              setIsLoadingSpreadsheetId(false)
+              try {
+                await handleCreateSpreadsheet()
+              } catch (error) {
+                console.error('Auto-create spreadsheet failed:', error)
+              }
+              return
+            }
           }
         } catch (error) {
           console.error('Failed to load spreadsheet ID:', error)
@@ -84,7 +143,7 @@ export function SettingsModal({
     }
 
     loadSpreadsheetId()
-  }, [settingsOpen, spreadsheetId])
+  }, [settingsOpen, spreadsheetId, hasTriedAutoCreate])
 
   const handleMigrateData = async () => {
     if (!onMigrateData) return
@@ -97,6 +156,40 @@ export function SettingsModal({
       console.error('Migration failed:', error)
     } finally {
       setIsMigrating(false)
+    }
+  }
+
+  const handleCreateSpreadsheet = async () => {
+    setIsCreatingSpreadsheet(true)
+    setCreateSpreadsheetError(null) // Clear any previous errors
+    
+    try {
+      const result = await vocabularyService.createUserSpreadsheet()
+      
+      if (result.success && result.spreadsheetId) {
+        setSpreadsheetId(result.spreadsheetId)
+        setHasTriedAutoCreate(true)
+        setCreateSpreadsheetError(null) // Clear any errors on success
+        
+        // Show success message if it's a new sheet
+        if (result.isNew) {
+          console.log('Successfully created your personal Google Sheet!')
+        }
+      } else {
+        // Handle API errors
+        const errorMessage = result.error || 'Unknown error occurred'
+        setCreateSpreadsheetError(errorMessage)
+        setHasTriedAutoCreate(true)
+        console.error('Failed to create spreadsheet:', errorMessage)
+      }
+    } catch (error) {
+      // Handle network/unexpected errors
+      const errorMessage = error instanceof Error ? error.message : 'Network error occurred'
+      setCreateSpreadsheetError(errorMessage)
+      setHasTriedAutoCreate(true)
+      console.error('Error creating spreadsheet:', error)
+    } finally {
+      setIsCreatingSpreadsheet(false)
     }
   }
 
@@ -124,6 +217,34 @@ export function SettingsModal({
             <X className="h-5 w-5" />
           </Button>
         </div>
+
+        {/* Error Dialog for Spreadsheet Creation */}
+        {createSpreadsheetError && (
+          <Alert className="mb-6 border-red-200 bg-red-50 text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-300">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertDescription>
+              <div className="space-y-2">
+                <div className="font-semibold">
+                  {getErrorMessage(createSpreadsheetError).title}
+                </div>
+                <div>
+                  {getErrorMessage(createSpreadsheetError).message}
+                </div>
+                <div className="text-sm opacity-90">
+                  {getErrorMessage(createSpreadsheetError).suggestion}
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCreateSpreadsheetError(null)}
+                  className="mt-2 h-7 text-xs border-red-300 text-red-700 hover:bg-red-100 dark:border-red-700 dark:text-red-300 dark:hover:bg-red-900"
+                >
+                  Dismiss
+                </Button>
+              </div>
+            </AlertDescription>
+          </Alert>
+        )}
 
         {/* Display Settings */}
         <h3 className={`text-lg font-semibold ${themeStyles.mainText} mb-4`}>Display Settings</h3>
@@ -228,22 +349,26 @@ export function SettingsModal({
             <div className="space-y-4">
               <div>
                 <Label htmlFor="spreadsheet-id" className={`text-sm font-medium ${themeStyles.secondaryText} mb-2 block`}>
-                  Google Sheets ID (optional - uses default if empty)
+                  {isCreatingSpreadsheet ? "Creating your personal Google Sheet..." : "Google Sheets ID (optional - uses default if empty)"}
                 </Label>
                 <div className="flex gap-2">
                   <Input
                     id="spreadsheet-id"
                     value={spreadsheetId}
                     onChange={(e) => setSpreadsheetId(e.target.value)}
-                    placeholder={isLoadingSpreadsheetId ? "Loading..." : "Enter Google Sheets ID"}
-                    disabled={isMigrating || isLoadingSpreadsheetId}
+                    placeholder={
+                      isCreatingSpreadsheet ? "Creating your personal sheet..." : 
+                      isLoadingSpreadsheetId ? "Loading..." : 
+                      "Enter Google Sheets ID"
+                    }
+                    disabled={isMigrating || isLoadingSpreadsheetId || isCreatingSpreadsheet}
                     className={`flex-1 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.mainText}`}
                   />
                   <Button
                     variant="outline"
                     size="icon"
                     onClick={handleGoToGoogleSheet}
-                    disabled={isMigrating || isLoadingSpreadsheetId}
+                    disabled={isMigrating || isLoadingSpreadsheetId || isCreatingSpreadsheet}
                     className={`backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
                     aria-label="Open Google Sheet"
                     title="Open Google Sheet in new tab"
@@ -252,6 +377,18 @@ export function SettingsModal({
                   </Button>
                 </div>
               </div>
+              
+              {/* Show create button if authenticated user has no spreadsheet and auto-create failed/not tried */}
+              {!spreadsheetId && hasTriedAutoCreate && !isCreatingSpreadsheet && localStorage.getItem('auth-token') && (
+                <Button
+                  onClick={handleCreateSpreadsheet}
+                  disabled={isCreatingSpreadsheet}
+                  className={`w-full gap-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
+                >
+                  <Plus className="h-4 w-4" />
+                  Create Personal Google Sheet
+                </Button>
+              )}
               <Button
                 onClick={handleMigrateData}
                 disabled={isMigrating}

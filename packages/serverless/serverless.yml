@@ -237,6 +237,30 @@ functions:
     environment:
       GOOGLE_SHEETS_CREDENTIALS: ${env:GOOGLE_SHEETS_CREDENTIALS}
       GOOGLE_SHEETS_SPREADSHEET_ID: ${env:GOOGLE_SHEETS_SPREADSHEET_ID}
+  
+  createUserSpreadsheet:
+    handler: src/handlers/createUserSpreadsheet.createUserSpreadsheet
+    events:
+      - http:
+          path: /create-user-spreadsheet
+          method: post
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+              - Cache-Control
+              - Pragma
+              - Expires
+            allowCredentials: false
+    timeout: 60
+    environment:
+      GOOGLE_SHEETS_CREDENTIALS: ${env:GOOGLE_SHEETS_CREDENTIALS}
+      GOOGLE_SHEETS_SPREADSHEET_ID: ${env:GOOGLE_SHEETS_SPREADSHEET_ID}
     
 
 package:
