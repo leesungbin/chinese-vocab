@@ -97,6 +97,16 @@ export class GoogleSheetsOAuthService {
         },
       })
 
+      // Share the spreadsheet with the service account as editor
+      await this.drive.permissions.create({
+        fileId: spreadsheetId,
+        resource: {
+          role: 'writer',
+          type: 'user',
+          emailAddress: 'chinese-vocab@chinese-vocab-466512.iam.gserviceaccount.com'
+        }
+      })
+
       return {
         spreadsheetId: spreadsheetId!,
         spreadsheetUrl: spreadsheetUrl!,

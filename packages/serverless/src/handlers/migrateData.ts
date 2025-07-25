@@ -86,8 +86,8 @@ export const handler = async (
     const sheetsService = new GoogleSheetsService(spreadsheetId);
     const dynamoService = new DynamoService();
 
-    // Get vocabulary data from Google Sheets
-    const range = 'Sheet1!A:H';
+    // Get vocabulary data from Google Sheets (new format only)
+    const range = 'Vocabulary!A2:E';  // Skip header row, only 5 columns
     const vocabularyWords = await sheetsService.getVocabWords(range);
 
     if (vocabularyWords.length === 0) {

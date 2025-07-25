@@ -17,7 +17,7 @@ export class GoogleSheetsService {
     this.sheets = google.sheets({ version: 'v4', auth });
   }
 
-  async getVocabWords(range: string = 'Sheet1!A:H'): Promise<VocabWord[]> {
+  async getVocabWords(range: string = 'Vocabulary!A2:E'): Promise<VocabWord[]> {
     try {
       const response = await this.sheets.spreadsheets.values.get({
         spreadsheetId: this.spreadsheetId,
@@ -26,18 +26,16 @@ export class GoogleSheetsService {
 
       const rows = response.data.values || [];
       
-      // Skip header row if it exists
-      const dataRows = rows.slice(1);
-      
-      return dataRows.map((row, index) => ({
+      // New format: id, day, chinese, pinyin, korean (5 columns)
+      return rows.map((row, index) => ({
         id: parseInt(row[0]) || index + 1,
         day: parseInt(row[1]) || 0,
         chinese: row[2] || '',
         pinyin: row[3] || '',
         korean: row[4] || '',
-        memorized: row[5] === 'true' || row[5] === 'TRUE' || row[5] === true,
-        lastReviewed: row[6] || undefined,
-        total: parseInt(row[7]) || 0,
+        memorized: false, // Default for new format
+        lastReviewed: undefined,
+        total: 0, // Default for new format
       }));
     } catch (error) {
       console.error('Error fetching vocab words:', error);
