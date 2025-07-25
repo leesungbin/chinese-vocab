@@ -12,6 +12,7 @@ import {
   useSelectedDay, 
   useAvailableDays,
   useLoadVocabularyData,
+  useCheckAndReloadForUser,
   useShuffleWords,
   useFilterByDay,
   useResetToOriginal,
@@ -28,11 +29,13 @@ import { vocabularyService } from "@/utils/vocabularyService"
 interface VocabularyPracticeProps {
   settingsOpen: boolean
   setSettingsOpen: (open: boolean) => void
+  userId?: string | null
 }
 
 export default function VocabularyPractice({ 
   settingsOpen, 
-  setSettingsOpen 
+  setSettingsOpen,
+  userId 
 }: VocabularyPracticeProps) {
   
   // Authorization error state
@@ -49,6 +52,7 @@ export default function VocabularyPractice({
   const selectedDay = useSelectedDay()
   const availableDays = useAvailableDays()
   const loadVocabularyData = useLoadVocabularyData()
+  const checkAndReloadForUser = useCheckAndReloadForUser()
   const shuffleWords = useShuffleWords()
   const filterByDay = useFilterByDay()
   const resetToOriginal = useResetToOriginal()
@@ -129,7 +133,12 @@ export default function VocabularyPractice({
   // Load vocabulary data on mount
   useEffect(() => {
     loadVocabularyData()
-  }, [loadVocabularyData])
+  }, []) // Empty dependency array for initial load only
+
+  // Check for user changes and reload vocabulary if needed
+  useEffect(() => {
+    checkAndReloadForUser(userId)
+  }, [userId]) // Only depend on userId changes
 
   // Handle automatic Chinese display
   useAutoChineseDisplay(isLoading, vocabularyData.length, currentWord, updateWordTotal)

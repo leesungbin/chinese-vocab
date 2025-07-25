@@ -9,13 +9,17 @@ interface VocabularyState {
   isLoading: boolean
   error: string | null
   
+  // User state tracking
+  currentUserId: string | null
+  
   // Filter and shuffle state
   isShuffled: boolean
   selectedDay: number | null
   availableDays: number[]
   
   // Actions
-  loadVocabularyData: () => Promise<void>
+  loadVocabularyData: (forceReload?: boolean) => Promise<void>
+  checkAndReloadForUser: (userId: string | null) => Promise<void>
   shuffleWords: () => void
   filterByDay: (day: number | null) => void
   resetToOriginal: () => void
@@ -29,18 +33,35 @@ export const useVocabularyStore = create<VocabularyState>((set, get) => ({
   // Initial state
   originalData: [],
   vocabularyData: [],
-  isLoading: true,
+  isLoading: false,
   error: null,
+  currentUserId: null,
   isShuffled: false,
   selectedDay: null,
   availableDays: [],
 
   // Load vocabulary data from API
-  loadVocabularyData: async () => {
+  loadVocabularyData: async (forceReload = false) => {
+    const { isLoading } = get()
+    
+    console.log(`loadVocabularyData: isLoading=${isLoading}, forceReload=${forceReload}`)
+    
+    // Prevent multiple simultaneous loads unless forced
+    if (isLoading && !forceReload) {
+      console.log('Skipping load - already loading and not forced')
+      return
+    }
+    
+    console.log('Starting vocabulary data load...')
     set({ isLoading: true, error: null })
     
     try {
       const data = await vocabularyService.fetchVocabularyData()
+      console.log(`Received ${data.length} vocabulary items`)
+      
+      // Determine current user ID (authenticated user ID or 'anonymous')
+      const token = localStorage.getItem('auth-token')
+      const currentUserId = token ? JSON.parse(localStorage.getItem('user') || '{}').id || 'authenticated' : 'anonymous'
       
       if (data.length > 0) {
         // Extract unique days from the data
@@ -48,15 +69,19 @@ export const useVocabularyStore = create<VocabularyState>((set, get) => ({
           .filter(e => typeof e === 'number')
           .sort((a, b) => a - b)
         
+        console.log(`Setting vocabulary data: ${data.length} items, currentUserId: ${currentUserId}`)
         set({
           originalData: data,
           vocabularyData: data,
           availableDays: days,
+          currentUserId,
           isLoading: false,
           error: null
         })
       } else {
+        console.log('No vocabulary data received')
         set({
+          currentUserId,
           isLoading: false,
           error: 'No vocabulary data found'
         })
@@ -67,6 +92,21 @@ export const useVocabularyStore = create<VocabularyState>((set, get) => ({
         isLoading: false,
         error: error instanceof Error ? error.message : 'Failed to load vocabulary data'
       })
+    }
+  },
+
+  // Check if user has changed and reload vocabulary if needed
+  checkAndReloadForUser: async (userId: string | null) => {
+    const { currentUserId, isLoading } = get()
+    const effectiveUserId = userId || 'anonymous'
+    
+    console.log(`checkAndReloadForUser: currentUserId=${currentUserId}, effectiveUserId=${effectiveUserId}, isLoading=${isLoading}`)
+    
+    // Only reload if the user has actually changed and we have a previous user ID
+    // Also don't trigger if already loading
+    if (currentUserId !== null && currentUserId !== effectiveUserId && !isLoading) {
+      console.log(`User changed from ${currentUserId} to ${effectiveUserId}, reloading vocabulary...`)
+      await get().loadVocabularyData(true)
     }
   },
 
@@ -143,6 +183,7 @@ export const useAvailableDays = () => useVocabularyStore(state => state.availabl
 
 // Individual action selectors - avoids object creation
 export const useLoadVocabularyData = () => useVocabularyStore(state => state.loadVocabularyData)
+export const useCheckAndReloadForUser = () => useVocabularyStore(state => state.checkAndReloadForUser)
 export const useShuffleWords = () => useVocabularyStore(state => state.shuffleWords)
 export const useFilterByDay = () => useVocabularyStore(state => state.filterByDay)
 export const useResetToOriginal = () => useVocabularyStore(state => state.resetToOriginal)

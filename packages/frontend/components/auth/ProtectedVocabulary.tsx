@@ -10,7 +10,7 @@ import { InfoIcon, Sun, Moon, Settings } from 'lucide-react'
 import { useThemeStore, useThemeStyles } from '@/stores/themeStore'
 
 export default function ProtectedVocabulary() {
-  const { isAuthenticated, isLoading, signIn } = useAuth()
+  const { user, isAuthenticated, isLoading, signIn } = useAuth()
   const isDarkMode = useThemeStore((state) => state.isDarkMode)
   const toggleTheme = useThemeStore((state) => state.toggleTheme)
   const isLoaded = useThemeStore((state) => state.isLoaded)
@@ -78,6 +78,7 @@ export default function ProtectedVocabulary() {
         <VocabularyPractice 
           settingsOpen={settingsOpen}
           setSettingsOpen={setSettingsOpen}
+          userId={user?.id || null}
         />
       </div>
     </div>
