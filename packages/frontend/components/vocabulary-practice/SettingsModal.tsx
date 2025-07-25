@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
-import { X, Shuffle, Download, Loader2 } from "lucide-react"
+import { X, Shuffle, Download, Loader2, ExternalLink } from "lucide-react"
 import { useState, useEffect } from "react"
 import { vocabularyService } from "@/utils/vocabularyService"
 
@@ -97,6 +97,19 @@ export function SettingsModal({
       console.error('Migration failed:', error)
     } finally {
       setIsMigrating(false)
+    }
+  }
+
+  const handleGoToGoogleSheet = () => {
+    const currentSpreadsheetId = spreadsheetId.trim()
+    if (currentSpreadsheetId) {
+      // Open user's specific Google Sheet
+      window.open(`https://docs.google.com/spreadsheets/d/${currentSpreadsheetId}/edit`, '_blank')
+    } else {
+      // If no spreadsheet ID, show a message or use default anonymous sheet
+      // Using the anonymous sheet ID as fallback
+      const anonymousSheetId = '1JBGAlJ14-yKHoSNlVnogCT4Xj30SLS_jQNuZe5YLe0I'
+      window.open(`https://docs.google.com/spreadsheets/d/${anonymousSheetId}/edit`, '_blank')
     }
   }
 
@@ -217,14 +230,27 @@ export function SettingsModal({
                 <Label htmlFor="spreadsheet-id" className={`text-sm font-medium ${themeStyles.secondaryText} mb-2 block`}>
                   Google Sheets ID (optional - uses default if empty)
                 </Label>
-                <Input
-                  id="spreadsheet-id"
-                  value={spreadsheetId}
-                  onChange={(e) => setSpreadsheetId(e.target.value)}
-                  placeholder={isLoadingSpreadsheetId ? "Loading..." : "Enter Google Sheets ID"}
-                  disabled={isMigrating || isLoadingSpreadsheetId}
-                  className={`backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.mainText}`}
-                />
+                <div className="flex gap-2">
+                  <Input
+                    id="spreadsheet-id"
+                    value={spreadsheetId}
+                    onChange={(e) => setSpreadsheetId(e.target.value)}
+                    placeholder={isLoadingSpreadsheetId ? "Loading..." : "Enter Google Sheets ID"}
+                    disabled={isMigrating || isLoadingSpreadsheetId}
+                    className={`flex-1 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.mainText}`}
+                  />
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={handleGoToGoogleSheet}
+                    disabled={isMigrating || isLoadingSpreadsheetId}
+                    className={`backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
+                    aria-label="Open Google Sheet"
+                    title="Open Google Sheet in new tab"
+                  >
+                    <ExternalLink className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
               <Button
                 onClick={handleMigrateData}

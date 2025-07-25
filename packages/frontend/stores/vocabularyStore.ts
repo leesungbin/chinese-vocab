@@ -44,20 +44,15 @@ export const useVocabularyStore = create<VocabularyState>((set, get) => ({
   loadVocabularyData: async (forceReload = false) => {
     const { isLoading } = get()
     
-    console.log(`loadVocabularyData: isLoading=${isLoading}, forceReload=${forceReload}`)
-    
     // Prevent multiple simultaneous loads unless forced
     if (isLoading && !forceReload) {
-      console.log('Skipping load - already loading and not forced')
       return
     }
     
-    console.log('Starting vocabulary data load...')
     set({ isLoading: true, error: null })
     
     try {
       const data = await vocabularyService.fetchVocabularyData()
-      console.log(`Received ${data.length} vocabulary items`)
       
       // Determine current user ID (authenticated user ID or 'anonymous')
       const token = localStorage.getItem('auth-token')
@@ -69,7 +64,6 @@ export const useVocabularyStore = create<VocabularyState>((set, get) => ({
           .filter(e => typeof e === 'number')
           .sort((a, b) => a - b)
         
-        console.log(`Setting vocabulary data: ${data.length} items, currentUserId: ${currentUserId}`)
         set({
           originalData: data,
           vocabularyData: data,
@@ -79,7 +73,6 @@ export const useVocabularyStore = create<VocabularyState>((set, get) => ({
           error: null
         })
       } else {
-        console.log('No vocabulary data received')
         set({
           currentUserId,
           isLoading: false,
@@ -100,12 +93,9 @@ export const useVocabularyStore = create<VocabularyState>((set, get) => ({
     const { currentUserId, isLoading } = get()
     const effectiveUserId = userId || 'anonymous'
     
-    console.log(`checkAndReloadForUser: currentUserId=${currentUserId}, effectiveUserId=${effectiveUserId}, isLoading=${isLoading}`)
-    
     // Only reload if the user has actually changed and we have a previous user ID
     // Also don't trigger if already loading
     if (currentUserId !== null && currentUserId !== effectiveUserId && !isLoading) {
-      console.log(`User changed from ${currentUserId} to ${effectiveUserId}, reloading vocabulary...`)
       await get().loadVocabularyData(true)
     }
   },
