@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Sun, Moon, Settings, AlertTriangle } from "lucide-react"
+import { Label } from "@/components/ui/label"
+import { Sun, Moon, Settings, AlertTriangle, Shuffle } from "lucide-react"
 import { useThemeStore, useThemeStyles } from "@/stores/themeStore"
 import { 
   useVocabularyData, 
@@ -187,6 +188,60 @@ export default function VocabularyPractice({
 
         {/* Reduced top margin since title is removed */}
         <div className="mb-4"></div>
+
+        {/* Word Order & Filtering Controls */}
+        {!isLoading && vocabularyData.length > 0 && (
+          <div className={`backdrop-blur-md ${themeStyles.glassBackground} rounded-2xl ${themeStyles.glassBorder} p-4 mb-6`}>
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <Button
+                  variant="outline"
+                  onClick={handleShuffleWords}
+                  disabled={vocabularyData.length === 0}
+                  className={`gap-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
+                >
+                  <Shuffle className="h-4 w-4" />
+                  Shuffle Words
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={handleResetToOriginal}
+                  disabled={vocabularyData.length === 0 || (!isShuffled && selectedDay === null)}
+                  className={`gap-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
+                >
+                  Reset Order
+                </Button>
+              </div>
+              
+              {availableDays.length > 0 && (
+                <div className="space-y-2">
+                  <Label className={`text-sm font-medium ${themeStyles.secondaryText}`}>Filter by Day Group</Label>
+                  <div className="flex flex-wrap gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleFilterByDay(null)}
+                      className={`backdrop-blur-md ${themeStyles.buttonGlass} ${selectedDay === null ? 'border-2 border-blue-500 text-black dark:text-white' : themeStyles.glassBorderStrong + ' ' + themeStyles.mainText} ${themeStyles.buttonGlassHover}`}
+                    >
+                      All Days
+                    </Button>
+                    {availableDays.map(day => (
+                      <Button
+                        key={day}
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleFilterByDay(day)}
+                        className={`backdrop-blur-md ${themeStyles.buttonGlass} ${selectedDay === day ? 'border-2 border-blue-500 text-black dark:text-white' : themeStyles.glassBorderStrong + ' ' + themeStyles.mainText} ${themeStyles.buttonGlassHover}`}
+                      >
+                        Day {day}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Main Vocabulary Card */}
         <VocabularyCard

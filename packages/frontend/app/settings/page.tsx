@@ -5,21 +5,12 @@ import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { ArrowLeft, Shuffle, Download, Loader2, ExternalLink, Plus, AlertTriangle } from "lucide-react"
+import { ArrowLeft, Download, Loader2, ExternalLink, Plus, AlertTriangle } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useRouter } from 'next/navigation'
 import { vocabularyService } from "@/utils/vocabularyService"
 import { useThemeStore, useThemeStyles } from "@/stores/themeStore"
 import { useAuth } from "@/hooks/useAuth"
-import { 
-  useVocabularyData, 
-  useVocabularyShuffled, 
-  useSelectedDay, 
-  useAvailableDays,
-  useShuffleWords,
-  useFilterByDay,
-  useResetToOriginal
-} from "@/stores/vocabularyStore"
 import { useNavigationState } from "@/hooks/useNavigationState"
 import { useMemorizedWords } from "@/hooks/useMemorizedWords"
 
@@ -29,15 +20,6 @@ export default function SettingsPage() {
   const isDarkMode = useThemeStore((state) => state.isDarkMode)
   const toggleTheme = useThemeStore((state) => state.toggleTheme)
   const themeStyles = useThemeStyles()
-  
-  // Vocabulary store hooks
-  const vocabularyData = useVocabularyData()
-  const isShuffled = useVocabularyShuffled()
-  const selectedDay = useSelectedDay()
-  const availableDays = useAvailableDays()
-  const shuffleWords = useShuffleWords()
-  const filterByDay = useFilterByDay()
-  const resetToOriginal = useResetToOriginal()
   
   // Navigation state hooks for display settings
   const {
@@ -212,17 +194,6 @@ export default function SettingsPage() {
     }
   }
 
-  const handleShuffle = () => {
-    shuffleWords()
-  }
-
-  const handleResetOrder = () => {
-    resetToOriginal()
-  }
-
-  const handleFilterByDay = (day: number | null) => {
-    filterByDay(day)
-  }
 
   return (
     <div className={`min-h-screen ${themeStyles.background} p-4`}>
@@ -317,58 +288,6 @@ export default function SettingsPage() {
             </div>
           </section>
 
-          {/* Word Order & Filtering */}
-          <section>
-            <h2 className={`text-lg font-semibold ${themeStyles.mainText} mb-4`}>Word Order & Filtering</h2>
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <Button
-                  variant="outline"
-                  onClick={handleShuffle}
-                  disabled={vocabularyData.length === 0}
-                  className={`gap-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
-                >
-                  <Shuffle className="h-4 w-4" />
-                  Shuffle Words
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={handleResetOrder}
-                  disabled={vocabularyData.length === 0 || (!isShuffled && selectedDay === null)}
-                  className={`gap-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
-                >
-                  Reset Order
-                </Button>
-              </div>
-              
-              {availableDays.length > 0 && (
-                <div className="space-y-2">
-                  <Label className={`text-sm font-medium ${themeStyles.secondaryText}`}>Filter by Day Group</Label>
-                  <div className="flex flex-wrap gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleFilterByDay(null)}
-                      className={`backdrop-blur-md ${themeStyles.buttonGlass} ${selectedDay === null ? 'border-2 border-blue-500 text-black dark:text-white' : themeStyles.glassBorderStrong + ' ' + themeStyles.mainText} ${themeStyles.buttonGlassHover}`}
-                    >
-                      All Days
-                    </Button>
-                    {availableDays.map(day => (
-                      <Button
-                        key={day}
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleFilterByDay(day)}
-                        className={`backdrop-blur-md ${themeStyles.buttonGlass} ${selectedDay === day ? 'border-2 border-blue-500 text-black dark:text-white' : themeStyles.glassBorderStrong + ' ' + themeStyles.mainText} ${themeStyles.buttonGlassHover}`}
-                      >
-                        Day {day}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </section>
 
           {/* Data Migration Section */}
           {isAuthenticated && (
