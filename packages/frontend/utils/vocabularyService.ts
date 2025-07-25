@@ -176,6 +176,38 @@ export const vocabularyService = {
     }
   },
 
+  // Get user's current spreadsheet ID
+  async getUserSpreadsheetId(): Promise<{ success: boolean; spreadsheetId?: string; error?: string }> {
+    try {
+      const token = localStorage.getItem('auth-token')
+      if (!token) {
+        return { success: false, error: 'Authentication required' }
+      }
+
+      const response = await fetch(`${API_BASE_URL}/get-user-spreadsheet`, getApiOptions())
+      
+      if (!response.ok) {
+        if (response.status === 401 || response.status === 403) {
+          return { success: false, error: 'Authentication failed' }
+        }
+        throw new Error('Failed to fetch user spreadsheet ID')
+      }
+
+      const result = await response.json()
+      return { 
+        success: result.success, 
+        spreadsheetId: result.spreadsheetId,
+        error: result.error 
+      }
+    } catch (error) {
+      console.error('Error fetching user spreadsheet ID:', error)
+      return { 
+        success: false, 
+        error: error instanceof Error ? error.message : 'Failed to fetch spreadsheet ID' 
+      }
+    }
+  },
+
   // Migrate data from Google Sheets to DynamoDB
   async migrateDataFromSheets(spreadsheetId?: string): Promise<{ success: boolean; error?: string; data?: any }> {
     try {

@@ -165,6 +165,27 @@ functions:
               - Expires
             allowCredentials: false
     timeout: 30
+    
+  getUserSpreadsheet:
+    handler: src/handlers/getUserSpreadsheet.getUserSpreadsheet
+    events:
+      - http:
+          path: /get-user-spreadsheet
+          method: get
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+              - Cache-Control
+              - Pragma
+              - Expires
+            allowCredentials: false
+    timeout: 30
 
 package:
   individually: false

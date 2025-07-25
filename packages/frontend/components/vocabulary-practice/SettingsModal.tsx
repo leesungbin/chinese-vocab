@@ -3,7 +3,8 @@ import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { X, Shuffle, Download, Loader2 } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { vocabularyService } from "@/utils/vocabularyService"
 
 interface SettingsModalProps {
   settingsOpen: boolean
@@ -57,11 +58,33 @@ export function SettingsModal({
   
   const [spreadsheetId, setSpreadsheetId] = useState('')
   const [isMigrating, setIsMigrating] = useState(false)
+  const [isLoadingSpreadsheetId, setIsLoadingSpreadsheetId] = useState(false)
 
   const handleResetMemorizedWords = () => {
     resetAllMemorizedWords()
     resetRevealStates()
   }
+
+  // Load user's current spreadsheet ID when modal opens
+  useEffect(() => {
+    const loadSpreadsheetId = async () => {
+      if (settingsOpen && !spreadsheetId) {
+        setIsLoadingSpreadsheetId(true)
+        try {
+          const result = await vocabularyService.getUserSpreadsheetId()
+          if (result.success && result.spreadsheetId) {
+            setSpreadsheetId(result.spreadsheetId)
+          }
+        } catch (error) {
+          console.error('Failed to load spreadsheet ID:', error)
+        } finally {
+          setIsLoadingSpreadsheetId(false)
+        }
+      }
+    }
+
+    loadSpreadsheetId()
+  }, [settingsOpen, spreadsheetId])
 
   const handleMigrateData = async () => {
     if (!onMigrateData) return
@@ -198,8 +221,8 @@ export function SettingsModal({
                   id="spreadsheet-id"
                   value={spreadsheetId}
                   onChange={(e) => setSpreadsheetId(e.target.value)}
-                  placeholder="Enter Google Sheets ID"
-                  disabled={isMigrating}
+                  placeholder={isLoadingSpreadsheetId ? "Loading..." : "Enter Google Sheets ID"}
+                  disabled={isMigrating || isLoadingSpreadsheetId}
                   className={`backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.mainText}`}
                 />
               </div>
