@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'export',
-  basePath: process.env.GITHUB_ACTIONS ? '/chinese-vocab' : '',
+  basePath: '',
   trailingSlash: true,
   eslint: {
     ignoreDuringBuilds: true,
