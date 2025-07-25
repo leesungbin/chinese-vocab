@@ -55,48 +55,6 @@ functions:
             allowCredentials: false
     timeout: 30
     
-  updateSheet:
-    handler: src/handlers/updateSheet.handler
-    events:
-      - http:
-          path: /update-sheet
-          method: post
-          cors:
-            origin: '*'
-            headers:
-              - Content-Type
-              - X-Amz-Date
-              - Authorization
-              - X-Api-Key
-              - X-Amz-Security-Token
-              - X-Amz-User-Agent
-              - Cache-Control
-              - Pragma
-              - Expires
-            allowCredentials: false
-    timeout: 30
-    
-  getSheet:
-    handler: src/handlers/getSheet.handler
-    events:
-      - http:
-          path: /get-sheet
-          method: get
-          cors:
-            origin: '*'
-            headers:
-              - Content-Type
-              - X-Amz-Date
-              - Authorization
-              - X-Api-Key
-              - X-Amz-Security-Token
-              - X-Amz-User-Agent
-              - Cache-Control
-              - Pragma
-              - Expires
-            allowCredentials: false
-    timeout: 30
-    
   migrateData:
     handler: src/handlers/migrateData.handler
     events:
@@ -214,30 +172,6 @@ functions:
       GOOGLE_SHEETS_CREDENTIALS: ${env:GOOGLE_SHEETS_CREDENTIALS}
       GOOGLE_SHEETS_SPREADSHEET_ID: ${env:GOOGLE_SHEETS_SPREADSHEET_ID}
     
-  refreshAnonymousVocab:
-    handler: src/handlers/refreshAnonymousData.refreshAnonymousData
-    events:
-      - http:
-          path: /refresh-anonymous-data
-          method: post
-          cors:
-            origin: '*'
-            headers:
-              - Content-Type
-              - X-Amz-Date
-              - Authorization
-              - X-Api-Key
-              - X-Amz-Security-Token
-              - X-Amz-User-Agent
-              - Cache-Control
-              - Pragma
-              - Expires
-            allowCredentials: false
-    timeout: 30
-    environment:
-      GOOGLE_SHEETS_CREDENTIALS: ${env:GOOGLE_SHEETS_CREDENTIALS}
-      GOOGLE_SHEETS_SPREADSHEET_ID: ${env:GOOGLE_SHEETS_SPREADSHEET_ID}
-  
   createUserSpreadsheet:
     handler: src/handlers/createUserSpreadsheet.createUserSpreadsheet
     events:
