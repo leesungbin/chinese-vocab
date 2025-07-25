@@ -74,6 +74,24 @@ export default function ProtectedVocabulary() {
           userId={user?.id || null}
         />
       </div>
+
+      {/* Footer */}
+      <footer className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 mt-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="text-center">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              © 2025 Seongbin Lee
+              <br/>
+              <a 
+                href="/privacy-policy" 
+                className="ml-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline"
+              >
+                Privacy Policy
+              </a>
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }
