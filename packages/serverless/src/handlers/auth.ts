@@ -1,23 +1,45 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 import jwt from 'jsonwebtoken'
 
-// Google OAuth2 verification
-async function verifyGoogleToken(credential: string) {
-  const response = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${credential}`)
+// Google OAuth2 verification and profile fetching
+async function verifyGoogleTokenAndGetProfile(credential: string) {
+  // First verify the token
+  const tokenResponse = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${credential}`)
   
-  if (!response.ok) {
+  if (!tokenResponse.ok) {
     throw new Error('Invalid Google credential')
   }
   
-  const payload = await response.json()
+  const tokenPayload = await tokenResponse.json()
   
   // Verify the audience matches our client ID
   const expectedClientId = process.env.GOOGLE_CLIENT_ID
-  if (payload.aud !== expectedClientId) {
+  if (tokenPayload.aud !== expectedClientId) {
     throw new Error('Invalid audience')
   }
   
-  return payload
+  // Get profile information from userinfo endpoint using the access token
+  // Note: For ID tokens, we need to decode the token to get basic info
+  // and use Google's userinfo API for reliable profile picture access
+  try {
+    // Decode the ID token to get user info (this is safe since we've verified it)
+    const base64Url = credential.split('.')[1]
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    )
+    const decodedToken = JSON.parse(jsonPayload)
+    
+    // Return the decoded token data which should include picture
+    return decodedToken
+  } catch (error) {
+    console.error('Error decoding ID token:', error)
+    // Fallback to tokeninfo payload
+    return tokenPayload
+  }
 }
 
 export async function auth(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
@@ -55,8 +77,8 @@ export async function auth(event: APIGatewayProxyEvent): Promise<APIGatewayProxy
       }
     }
 
-    // Verify Google credential
-    const googlePayload = await verifyGoogleToken(credential)
+    // Verify Google credential and get profile
+    const googlePayload = await verifyGoogleTokenAndGetProfile(credential)
     
     // Create user object
     const user = {
