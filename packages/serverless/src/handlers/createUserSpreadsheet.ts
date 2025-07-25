@@ -42,32 +42,19 @@ export async function createUserSpreadsheet(event: APIGatewayProxyEvent): Promis
       }
     }
 
-    // Check if user already has a spreadsheet
-    const existingSpreadsheetId = await dynamoService.getUserSpreadsheetId(user.userId)
-    if (existingSpreadsheetId) {
-      return {
-        statusCode: 200,
-        headers: corsHeaders,
-        body: JSON.stringify({
-          success: true,
-          spreadsheetId: existingSpreadsheetId,
-          message: 'User already has a spreadsheet',
-          isNew: false,
-          sheetUrl: `https://docs.google.com/spreadsheets/d/${existingSpreadsheetId}/edit`
-        }),
-      }
-    }
+    // Always create a new spreadsheet (removed existing spreadsheet check)
 
     // Create Google Sheets service with user's OAuth token
     const sheetsService = new GoogleSheetsOAuthService(oauthToken)
 
-    // Create spreadsheet title
-    const spreadsheetTitle = `Chinese Vocabulary - ${user.name}`
+    // Create spreadsheet title with timestamp to ensure uniqueness
+    const timestamp = new Date().toISOString().split('T')[0]
+    const spreadsheetTitle = `Chinese Vocabulary - ${user.name} - ${timestamp}`
 
     // Create the spreadsheet using OAuth
     const { spreadsheetId, spreadsheetUrl } = await sheetsService.createSpreadsheet(spreadsheetTitle)
 
-    // Store the spreadsheet ID in DynamoDB
+    // Update the user's spreadsheet ID in DynamoDB (overwrite existing if any)
     await dynamoService.setUserSpreadsheetId(user.userId, spreadsheetId)
 
     return {
@@ -98,7 +85,11 @@ export async function createUserSpreadsheet(event: APIGatewayProxyEvent): Promis
     }
 
     // Handle specific OAuth errors
-    if (error instanceof Error && error.message.includes('insufficient authentication scopes')) {
+    if (error instanceof Error && (
+      error.message.includes('insufficient authentication scopes') ||
+      error.message.includes('invalid_grant') ||
+      error.message.includes('invalid_token')
+    )) {
       return {
         statusCode: 403,
         headers: corsHeaders,

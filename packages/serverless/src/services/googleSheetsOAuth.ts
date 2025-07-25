@@ -40,19 +40,31 @@ export class GoogleSheetsOAuthService {
       const spreadsheetId = createResponse.data.spreadsheetId
       const spreadsheetUrl = createResponse.data.spreadsheetUrl
 
-      // Add headers to the sheet
+      // Get the actual sheet ID from the creation response
+      const firstSheet = createResponse.data.sheets?.[0]
+      const sheetId = firstSheet?.properties?.sheetId
+
+      if (!sheetId && sheetId !== 0) {
+        throw new Error('Failed to get sheet ID from created spreadsheet')
+      }
+
+      // Add headers and default vocabulary rows to the sheet
       await this.sheets.spreadsheets.values.update({
         spreadsheetId,
-        range: 'Vocabulary!A1:F1',
-        valueInputOption: 'RAW',
+        range: 'Vocabulary!A1:E5',
+        valueInputOption: 'USER_ENTERED',
         resource: {
           values: [
-            ['Chinese', 'Pinyin', 'English', 'Level', 'Date Added', 'Study Status']
+            ['id', 'day', 'chinese', 'pinyin', 'korean'],
+            ['=ROW()-1', 1, '丈夫', 'zhàngfu', '남편'],
+            ['=ROW()-1', 1, '阿姨', 'āyí', '이모 / 아주머니'],
+            ['=ROW()-1', 2, '叔叔', 'shūshu', '삼촌 / 아저씨'],
+            ['=ROW()-1', 2, '邻居', 'línjū', '이웃']
           ],
         },
       })
 
-      // Format the header row
+      // Format the header row using the correct sheet ID
       await this.sheets.spreadsheets.batchUpdate({
         spreadsheetId,
         resource: {
@@ -60,11 +72,11 @@ export class GoogleSheetsOAuthService {
             {
               repeatCell: {
                 range: {
-                  sheetId: 0,
+                  sheetId: sheetId,
                   startRowIndex: 0,
                   endRowIndex: 1,
                   startColumnIndex: 0,
-                  endColumnIndex: 6,
+                  endColumnIndex: 5,
                 },
                 cell: {
                   userEnteredFormat: {
