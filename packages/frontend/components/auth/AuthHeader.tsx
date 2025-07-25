@@ -74,7 +74,6 @@ export function AuthHeader() {
             return
           }
 
-          console.log('OAuth response received:', response)
 
           try {
             await signIn(response)

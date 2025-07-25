@@ -27,7 +27,6 @@ export async function createUserSpreadsheet(event: APIGatewayProxyEvent): Promis
   try {
     // Validate JWT token and get user info
     const user = validateJWT(event)
-    console.log(`Creating spreadsheet for user: ${user.email} (${user.name})`)
 
     // Get OAuth token from header
     const oauthToken = event.headers['X-OAuth-Token'] || event.headers['x-oauth-token']
@@ -66,13 +65,10 @@ export async function createUserSpreadsheet(event: APIGatewayProxyEvent): Promis
     const spreadsheetTitle = `Chinese Vocabulary - ${user.name}`
 
     // Create the spreadsheet using OAuth
-    console.log('Creating new spreadsheet with OAuth...')
     const { spreadsheetId, spreadsheetUrl } = await sheetsService.createSpreadsheet(spreadsheetTitle)
-    console.log(`Created new spreadsheet: ${spreadsheetId}`)
 
     // Store the spreadsheet ID in DynamoDB
     await dynamoService.setUserSpreadsheetId(user.userId, spreadsheetId)
-    console.log(`Stored spreadsheet ID for user ${user.userId}`)
 
     return {
       statusCode: 200,

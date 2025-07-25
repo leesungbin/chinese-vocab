@@ -124,7 +124,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const signIn = async (response: any): Promise<void> => {
     try {
-      console.log('signIn called with response:', response)
       
       // Handle OAuth 2.0 response
       if (response && response.access_token) {
