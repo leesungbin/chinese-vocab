@@ -56,17 +56,30 @@ const getApiOptions = (method: string = 'GET', body?: object) => ({
 })
 
 export const vocabularyService = {
-  // Fetch all vocabulary data from the API (now requires authentication)
+  // Fetch all vocabulary data from the API
   async fetchVocabularyData(): Promise<VocabItem[]> {
     try {
       // Check if user is authenticated
       const token = localStorage.getItem('auth-token')
+      
+      let response: Response
       if (!token) {
-        console.warn('No authentication token found - user needs to sign in')
-        return []
+        // For anonymous users, use the anonymous vocabulary endpoint
+        console.log('No authentication token found - loading anonymous vocabulary')
+        response = await fetch(`${API_BASE_URL}/get-anonymous-vocabulary`, {
+          method: 'GET',
+          cache: 'no-cache' as RequestCache,
+          headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0',
+          },
+        })
+      } else {
+        // For authenticated users, use the regular endpoint
+        response = await fetch(`${API_BASE_URL}/get-vocabulary`, getApiOptions())
       }
-
-      const response = await fetch(`${API_BASE_URL}/get-vocabulary`, getApiOptions())
       
       if (!response.ok) {
         if (response.status === 401 || response.status === 403) {

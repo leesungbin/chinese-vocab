@@ -276,4 +276,49 @@ export class DynamoService {
       throw error;
     }
   }
+
+  async clearUserVocabulary(userId: string): Promise<void> {
+    try {
+      // First query to get all items for the user
+      const queryCommand = new QueryCommand({
+        TableName: this.vocabularyTableName,
+        KeyConditionExpression: 'userId = :userId',
+        ExpressionAttributeValues: {
+          ':userId': userId
+        }
+      });
+
+      const response = await this.docClient.send(queryCommand);
+      
+      if (response.Items && response.Items.length > 0) {
+        // Delete items in batches of 25 (DynamoDB limit)
+        const batchSize = 25;
+        for (let i = 0; i < response.Items.length; i += batchSize) {
+          const batch = response.Items.slice(i, i + batchSize);
+          
+          const deleteRequests = batch.map(item => ({
+            DeleteRequest: {
+              Key: {
+                userId: item.userId,
+                wordId: item.wordId
+              }
+            }
+          }));
+
+          const batchCommand = new BatchWriteCommand({
+            RequestItems: {
+              [this.vocabularyTableName]: deleteRequests
+            }
+          });
+
+          await this.docClient.send(batchCommand);
+        }
+        
+        console.log(`Cleared ${response.Items.length} vocabulary items for user ${userId}`);
+      }
+    } catch (error) {
+      console.error('Error clearing user vocabulary:', error);
+      throw error;
+    }
+  }
 }

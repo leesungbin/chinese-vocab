@@ -144,6 +144,9 @@ functions:
               - Expires
             allowCredentials: false
     timeout: 30
+    environment:
+      GOOGLE_SHEETS_CREDENTIALS: ${env:GOOGLE_SHEETS_CREDENTIALS}
+      GOOGLE_SHEETS_SPREADSHEET_ID: ${env:GOOGLE_SHEETS_SPREADSHEET_ID}
     
   updateVocabulary:
     handler: src/handlers/updateVocabulary.handler
@@ -186,9 +189,58 @@ functions:
               - Expires
             allowCredentials: false
     timeout: 30
+    
+  getAnonymousVocabulary:
+    handler: src/handlers/getAnonymousVocabulary.getAnonymousVocabulary
+    events:
+      - http:
+          path: /get-anonymous-vocabulary
+          method: get
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+              - Cache-Control
+              - Pragma
+              - Expires
+            allowCredentials: false
+    timeout: 30
+    environment:
+      GOOGLE_SHEETS_CREDENTIALS: ${env:GOOGLE_SHEETS_CREDENTIALS}
+      GOOGLE_SHEETS_SPREADSHEET_ID: ${env:GOOGLE_SHEETS_SPREADSHEET_ID}
+    
+  refreshAnonymousVocab:
+    handler: src/handlers/refreshAnonymousData.refreshAnonymousData
+    events:
+      - http:
+          path: /refresh-anonymous-data
+          method: post
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+              - Cache-Control
+              - Pragma
+              - Expires
+            allowCredentials: false
+    timeout: 30
+    environment:
+      GOOGLE_SHEETS_CREDENTIALS: ${env:GOOGLE_SHEETS_CREDENTIALS}
+      GOOGLE_SHEETS_SPREADSHEET_ID: ${env:GOOGLE_SHEETS_SPREADSHEET_ID}
+    
 
 package:
-  individually: false
+  individually: true
   patterns:
     - '!.git/**'
     - '!*.md'
