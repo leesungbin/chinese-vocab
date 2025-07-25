@@ -1,171 +1,292 @@
-# 중국어 단어 암기장 - Monorepo
+# 중국어 단어 암기장 (Chinese Vocabulary Memory Book)
 
-A monorepo containing a Next.js frontend for Chinese vocabulary practice and serverless backend for Google Sheets integration. Specifically designed for HSK Level 4 preparation with modern cloud architecture.
+A comprehensive Chinese vocabulary learning application built with Next.js and AWS serverless architecture. Features user authentication, personal vocabulary management, and seamless Google Sheets integration for vocabulary data management.
 
-## Features
+## 🌟 Features
 
-### 🎯 Core Learning Features
+### 📚 Core Learning Features
 - **Interactive Vocabulary Cards**: Study Chinese characters with progressive reveal system
-- **Pronunciation Support**: Built-in text-to-speech for Chinese characters
 - **Multi-language Support**: Chinese characters, Pinyin pronunciation, and Korean meanings
-- **Progressive Learning**: Choose what to show/hide (Chinese, Pinyin, Korean) based on your study needs
+- **Text-to-Speech**: Built-in pronunciation support for Chinese characters
+- **Progressive Learning**: Customizable display settings (Chinese, Pinyin, Korean)
+- **Memorization Tracking**: Mark words as memorized with visual indicators
 
-### 📚 Study Modes
+### 🎯 Study Tools
 - **Shuffle Mode**: Randomize word order for varied practice sessions
-- **Day-based Filtering**: Study specific groups of words organized by day
-- **Sequential Learning**: Navigate through vocabulary in order with previous/next controls
-- **Progress Tracking**: Visual progress bar showing current position in vocabulary set
+- **Day-based Filtering**: Study specific groups organized by learning days
+- **Sequential Navigation**: Previous/Next controls with progress tracking
+- **Word Order Controls**: Reset to original order or maintain shuffle state
+- **Progress Visualization**: Current position indicator and completion tracking
 
-### 🎨 User Experience
-- **Dark/Light Theme**: Toggle between themes for comfortable studying in any environment
-- **Responsive Design**: Works seamlessly on desktop and mobile devices
-- **Glass Morphism UI**: Modern, elegant interface with backdrop blur effects
-- **Smooth Animations**: Polished transitions and interactions
+### 👤 User Management
+- **Google OAuth Authentication**: Secure login with Google accounts
+- **Anonymous Mode**: Practice without account for casual users
+- **User-specific Data**: Personal vocabulary progress and memorization status
+- **Automatic Sync**: Seamless switching between anonymous and authenticated modes
 
-### 📊 Data Management
-- **Google Sheets Integration**: Vocabulary data is fetched from Google Sheets for easy management
-- **Real-time Updates**: Data is loaded dynamically from the cloud
-- **Flexible Data Structure**: Supports additional fields like study frequency tracking
+### 🔧 Google Sheets Integration
+- **Dynamic Data Loading**: Vocabulary fetched from Google Sheets in real-time
+- **Automatic Sheet Creation**: Personal sheets created automatically for new users
+- **Permission Management**: Automatic editor permissions for users and service account
+- **Data Migration**: Transfer data between different Google Sheets
+- **Error Handling**: Comprehensive error messages for sheet operations
 
-## Tech Stack
+### 🎨 User Interface
+- **Modern Design**: Glass morphism UI with backdrop blur effects
+- **Dark/Light Theme**: System-aware theme with manual toggle
+- **Responsive Layout**: Optimized for desktop and mobile devices
+- **Accessible Controls**: Keyboard navigation and screen reader support
+- **Settings Page**: Dedicated `/settings` route for configuration
 
-- **Framework**: Next.js 15.2.4 with React 19
+## 🛠️ Tech Stack
+
+### Frontend
+- **Framework**: Next.js 15.4.2 with React 19
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS with custom glass morphism effects
-- **UI Components**: Radix UI primitives
+- **UI Components**: Radix UI primitives with shadcn/ui
 - **Icons**: Lucide React
-- **Theme Management**: next-themes
-- **Build Tool**: Next.js built-in bundler
+- **State Management**: Zustand for vocabulary and theme state
+- **Authentication**: Google OAuth 2.0
+- **Theme Management**: next-themes with system preference detection
 
-## Project Structure
+### Backend & Infrastructure
+- **Runtime**: AWS Lambda (Node.js)
+- **API**: AWS API Gateway with CORS support
+- **Database**: Amazon DynamoDB for user data
+- **Authentication**: JWT tokens with Google OAuth
+- **External APIs**: Google Sheets API v4, Google Drive API v3
+- **Deployment**: Serverless Framework
+- **Environment**: AWS Cloud with environment-specific configurations
+
+## 📁 Project Structure
 
 ```
 chinese-vocab/
 ├── packages/
-│   ├── frontend/          # Next.js app for vocabulary practice
-│   └── serverless/        # AWS Lambda functions for Google Sheets API
-├── package.json           # Root workspace configuration
-└── pnpm-workspace.yaml    # pnpm workspace setup
+│   ├── frontend/                    # Next.js Application
+│   │   ├── app/                     # Next.js 15 App Router
+│   │   │   ├── layout.tsx           # Root layout with metadata
+│   │   │   ├── page.tsx             # Main vocabulary practice page
+│   │   │   └── settings/            # Settings page route
+│   │   ├── components/              # React Components
+│   │   │   ├── auth/                # Authentication components
+│   │   │   ├── ui/                  # Reusable UI components (shadcn/ui)
+│   │   │   └── vocabulary-practice/ # Vocabulary-specific components
+│   │   ├── contexts/                # React contexts (Auth)
+│   │   ├── hooks/                   # Custom React hooks
+│   │   ├── stores/                  # Zustand stores
+│   │   ├── utils/                   # Utility functions
+│   │   └── config/                  # Configuration files
+│   │
+│   └── serverless/                  # AWS Lambda Backend
+│       ├── src/
+│       │   ├── handlers/            # Lambda function handlers
+│       │   │   ├── getVocabulary.ts         # Fetch vocabulary data
+│       │   │   ├── getAnonymousVocabulary.ts # Anonymous user data
+│       │   │   ├── createUserSpreadsheet.ts # Auto-create user sheets
+│       │   │   └── refreshAnonymousData.ts  # Refresh anonymous data
+│       │   ├── services/            # Service layer
+│       │   │   └── dynamoService.ts # DynamoDB operations
+│       │   └── middleware/          # Authentication middleware
+│       ├── serverless.yml           # Serverless Framework configuration
+│       └── .env                     # Environment variables
+│
+├── package.json                     # Root workspace configuration
+└── pnpm-workspace.yaml             # pnpm workspace setup
 ```
 
-## Getting Started
+## 🚀 Getting Started
 
-1. **Install dependencies**:
+### Prerequisites
+- Node.js 18+ 
+- pnpm package manager
+- AWS CLI configured (for serverless deployment)
+- Google Cloud Platform account (for Sheets API)
+
+### Installation
+
+1. **Clone the repository**:
+   ```bash
+   git clone <repository-url>
+   cd chinese-vocab
+   ```
+
+2. **Install dependencies**:
    ```bash
    pnpm install
    ```
 
-2. **Frontend development**:
+3. **Environment Setup**:
    ```bash
-   pnpm frontend:dev
-   ```
-   Navigate to [http://localhost:3000](http://localhost:3000) to see the application.
-
-3. **Serverless development**:
-   ```bash
-   cd packages/serverless
+   # Frontend environment
+   cd packages/frontend
+   cp .env.example .env.local
+   # Configure NEXT_PUBLIC_API_URL and other frontend variables
+   
+   # Serverless environment  
+   cd ../serverless
    cp .env.example .env
-   # Configure your Google Sheets credentials
-   pnpm dev
+   # Configure AWS, Google Sheets API, and JWT credentials
    ```
 
-## Available Scripts
+4. **Development**:
+   ```bash
+   # Start frontend development server
+   pnpm frontend:dev
+   # Navigate to http://localhost:3000
+   
+   # Deploy serverless functions (in separate terminal)
+   pnpm serverless:deploy
+   ```
+
+## 📜 Available Scripts
 
 ### Root Level
+- `pnpm install` - Install all dependencies
 - `pnpm build` - Build all packages
-- `pnpm dev` - Start all packages in development mode
-- `pnpm lint` - Lint all packages
 - `pnpm clean` - Clean all packages
 
-### Frontend Specific
-- `pnpm frontend:dev` - Start frontend development server
-- `pnpm frontend:build` - Build frontend for production
-
-### Serverless Specific  
-- `pnpm serverless:dev` - Start serverless development
-- `pnpm serverless:deploy` - Deploy to AWS
-
-## Usage
-
-### Basic Navigation
-- Use **Previous/Next** buttons to navigate through vocabulary
-- Click the **progress bar** to see your current position
-- Use **theme toggle** (sun/moon icon) to switch between light and dark modes
-
-### Study Controls
-1. **Display Settings**: Toggle what information is always visible
-   - Always show Chinese characters
-   - Always show Pinyin pronunciation
-   - Always show Korean meanings
-
-2. **Word Order & Filtering**:
-   - **Shuffle Words**: Randomize the order of vocabulary for varied practice
-   - **Reset Order**: Return to original order and clear all filters
-   - **Day Filters**: Study specific day groups (appears when day data is available)
-
-### Learning Modes
-- **Progressive Reveal**: When auto-display is off, use reveal buttons to gradually show information
-- **Audio Practice**: Click the volume icon to hear Chinese pronunciation
-- **Filtered Study**: Focus on specific day groups for targeted learning
-
-## Data Source
-
-The application fetches vocabulary data from a Google Sheets document. The expected data format includes:
-- **Chinese**: Chinese characters
-- **Pinyin**: Pronunciation guide
-- **Korean**: Korean meaning/translation
-- **Day**: Day group number for filtering (optional)
-- **Total**: Study frequency tracking (optional)
-
-To use your own vocabulary data:
-1. Create a Google Sheets document with the required columns
-2. Make the sheet publicly accessible
-3. Update the `spreadsheetId` in the `fetchVocabularyData` function in `chinese-vocab-practice.tsx`
-
-## Development
-
-## Packages
-
 ### Frontend (`packages/frontend`)
-Next.js application with vocabulary practice features including:
-- Chinese character practice
-- Pinyin and English translations
-- Progress tracking
-- Responsive UI with Tailwind CSS
+- `pnpm dev` - Start development server (port 3000)
+- `pnpm build` - Build for production
+- `pnpm start` - Start production server
+- `pnpm lint` - Run ESLint
 
 ### Serverless (`packages/serverless`)
-AWS Lambda functions for Google Sheets integration:
-- Read vocabulary data from Google Sheets
-- Update memorization status
-- Add/edit/delete vocabulary words
-- RESTful API endpoints
+- `pnpm deploy` - Deploy to AWS with Serverless Framework
+- `pnpm deploy:dev` - Deploy to development environment
+- `pnpm remove` - Remove deployed stack from AWS
+- `pnpm logs` - View AWS Lambda logs
 
-## Setup Google Sheets Integration
+## 💡 Usage Guide
 
-1. Create a Google Cloud project and enable Sheets API
-2. Create a service account and download credentials
-3. Share your Google Sheet with the service account email
-4. Configure environment variables in `packages/serverless/.env`
+### Authentication
+- **Anonymous Mode**: Start practicing immediately without signing in
+- **Google Sign-In**: Click "Sign in with Google" for personalized features
+- **Automatic Sync**: Seamlessly switch between anonymous and authenticated modes
 
-See `packages/serverless/README.md` for detailed setup instructions.
+### Vocabulary Practice
+1. **Navigation Controls**:
+   - Use **Previous/Next** buttons to navigate through vocabulary
+   - View **progress indicator** showing current position
+   - **Theme toggle** (sun/moon icon) for comfortable studying
 
-## Contributing
+2. **Word Order & Filtering** (Main Interface):
+   - **Shuffle Words**: Randomize vocabulary order for varied practice
+   - **Reset Order**: Return to original sequence and clear filters
+   - **Day Filters**: Study specific day groups when available
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+3. **Progressive Learning**:
+   - **Reveal Controls**: Click to show Chinese, Pinyin, or Korean meanings
+   - **Text-to-Speech**: Click speaker icon for pronunciation
+   - **Memorization**: Mark words as memorized with checkmark button
 
-## License
+### Settings Page (`/settings`)
+- **Display Preferences**: Toggle auto-display for Chinese, Pinyin, Korean
+- **Show Memorized Words**: Choose whether to include memorized vocabulary
+- **Google Sheets Management**: 
+  - View/edit your personal Google Sheet
+  - Migrate data between sheets
+  - Automatic sheet creation for new users
+- **Memorized Words Reset**: Clear all memorization progress
 
-This project is created for personal HSK Level 4 study purposes.
+### Google Sheets Integration
+- **Automatic Setup**: Personal sheets created automatically for authenticated users
+- **Real-time Sync**: Vocabulary data loads from Google Sheets dynamically  
+- **Permission Management**: Automatic editor permissions for seamless access
+- **Error Handling**: Comprehensive error messages for troubleshooting
 
-## Acknowledgments
+## 📊 Data Management
 
-- Initial UI design generated with [v0.dev](https://v0.dev/) by Vercel
-- Built with [Next.js](https://nextjs.org/)
-- UI components from [Radix UI](https://www.radix-ui.com/) and [shadcn/ui](https://ui.shadcn.com/)
-- Icons from [Lucide](https://lucide.dev/)
-- Styled with [Tailwind CSS](https://tailwindcss.com/)
-- Package management with [pnpm](https://pnpm.io/)
+### Google Sheets Format
+The application expects vocabulary data in Google Sheets with these columns:
+- **Chinese**: Chinese characters (汉字)
+- **Pinyin**: Romanized pronunciation with tone marks
+- **Korean**: Korean translation/meaning
+- **Day**: Learning day group number (for filtering)
+
+### Data Flow
+1. **Anonymous Users**: Read from default anonymous Google Sheet
+2. **Authenticated Users**: Personal Google Sheets automatically created
+3. **Data Migration**: Transfer between sheets via settings page
+4. **Real-time Updates**: Changes reflected immediately in the application
+
+## ⚙️ Configuration & Deployment
+
+### Environment Variables
+
+#### Frontend (`.env.local`)
+```bash
+NEXT_PUBLIC_API_URL=https://your-api-gateway-url/dev
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=your-google-oauth-client-id
+```
+
+#### Serverless (`.env`)
+```bash
+# AWS Configuration
+AWS_REGION=ap-northeast-2
+AWS_PROFILE=your-aws-profile
+
+# Google APIs
+GOOGLE_SHEETS_CREDENTIALS={"type":"service_account",...}
+GOOGLE_CLIENT_ID=your-google-oauth-client-id
+GOOGLE_CLIENT_SECRET=your-google-oauth-client-secret
+
+# Authentication
+JWT_SECRET=your-jwt-secret-key
+
+# DynamoDB
+DYNAMODB_TABLE_NAME=chinese-vocab-users
+```
+
+### AWS Setup
+1. **Configure AWS CLI** with appropriate credentials
+2. **Create DynamoDB Table**: `chinese-vocab-users` with `userId` as partition key
+3. **Deploy Serverless Functions**:
+   ```bash
+   cd packages/serverless
+   pnpm deploy
+   ```
+
+### Google Cloud Setup
+1. **Enable APIs**: Google Sheets API v4, Google Drive API v3
+2. **Create Service Account**: Download credentials JSON
+3. **OAuth 2.0 Client**: For frontend authentication
+4. **Share Anonymous Sheet**: With service account email as editor
+
+## 🤝 Contributing
+
+1. **Fork the repository** and clone locally
+2. **Create feature branch**: `git checkout -b feature/amazing-feature`
+3. **Make changes** following the existing code style
+4. **Test thoroughly** on both frontend and serverless components
+5. **Commit changes**: `git commit -m 'feat: add amazing feature'`
+6. **Push to branch**: `git push origin feature/amazing-feature`
+7. **Open Pull Request** with detailed description
+
+### Development Guidelines
+- Use TypeScript for type safety
+- Follow React best practices and hooks patterns
+- Maintain responsive design principles
+- Test authentication flows (anonymous ↔ authenticated)
+- Ensure Google Sheets integration works correctly
+
+## 📝 License
+
+This project is created for personal Chinese vocabulary learning purposes. Feel free to use and modify for educational purposes.
+
+## 🙏 Acknowledgments
+
+- **UI Framework**: [Next.js](https://nextjs.org/) with App Router
+- **UI Components**: [Radix UI](https://www.radix-ui.com/) primitives via [shadcn/ui](https://ui.shadcn.com/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/) with custom glass morphism
+- **Icons**: [Lucide React](https://lucide.dev/) for consistent iconography
+- **State Management**: [Zustand](https://zustand.docs.pmnd.rs/) for lightweight state
+- **Authentication**: Google OAuth 2.0 integration
+- **Infrastructure**: AWS Lambda + API Gateway + DynamoDB
+- **Package Management**: [pnpm](https://pnpm.io/) for efficient dependency management
+
+---
+
+**Built with ❤️ for Chinese language learners**
