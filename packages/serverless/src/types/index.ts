@@ -24,3 +24,10 @@ export interface ApiResponse<T = any> {
   data?: T;
   error?: string;
 }
+
+export interface UserInfo {
+  id: string
+  email: string
+  name: string
+  picture: string
+}

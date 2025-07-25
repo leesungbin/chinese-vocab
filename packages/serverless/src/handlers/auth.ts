@@ -1,5 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 import jwt from 'jsonwebtoken'
+import {UserInfo} from "../types";
 
 // Google OAuth2 verification and profile fetching
 async function verifyGoogleTokenAndGetProfile(credential: string, isOAuth: boolean = false) {
@@ -17,7 +18,7 @@ async function verifyGoogleTokenAndGetProfile(credential: string, isOAuth: boole
       throw new Error('Invalid Google OAuth token')
     }
 
-    const userInfo = await userInfoResponse.json()
+    const userInfo = await userInfoResponse.json() as UserInfo
     
     return {
       sub: userInfo.id,
@@ -33,7 +34,7 @@ async function verifyGoogleTokenAndGetProfile(credential: string, isOAuth: boole
       throw new Error('Invalid Google credential')
     }
     
-    const tokenPayload = await tokenResponse.json()
+    const tokenPayload = await tokenResponse.json() as { aud: string }
     
     // Verify the audience matches our client ID
     const expectedClientId = process.env.GOOGLE_CLIENT_ID
