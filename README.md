@@ -1,4 +1,4 @@
-# Chinese Vocabulary Learning App - Monorepo
+# 중국어 단어 암기장 - Monorepo
 
 A monorepo containing a Next.js frontend for Chinese vocabulary practice and serverless backend for Google Sheets integration. Specifically designed for HSK Level 4 preparation with modern cloud architecture.
 

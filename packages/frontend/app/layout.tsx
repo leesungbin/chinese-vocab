@@ -4,8 +4,8 @@ import Script from 'next/script'
 import { AuthProvider } from '@/contexts/AuthContext'
 
 export const metadata: Metadata = {
-  title: 'HSK 4급 중국어 단어 암기',
-  description: 'HSK 4급 중국어 단어 암기',
+  title: '중국어 단어 암기장',
+  description: '중국어 단어 암기장',
   generator: 'Lee Seongbin',
 }
 

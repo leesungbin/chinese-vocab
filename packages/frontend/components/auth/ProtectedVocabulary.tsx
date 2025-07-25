@@ -31,14 +31,9 @@ export default function ProtectedVocabulary() {
   return (
     <div className={`min-h-screen ${themeStyles.background}`}>
       {/* Header with auth controls */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+      <div className="bg-white dark:bg-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center">
-              <span className={`text-lg font-semibold ${themeStyles.mainText}`}>
-                中文单词
-              </span>
-            </div>
+          <div className="flex justify-end items-center py-4">
             <div className="flex items-center gap-2">
               <Button
                 variant="outline"
