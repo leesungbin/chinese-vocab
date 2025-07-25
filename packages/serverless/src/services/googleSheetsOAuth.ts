@@ -97,11 +97,11 @@ export class GoogleSheetsOAuthService {
         },
       })
 
-      // Share the spreadsheet with the service account as editor
+      // Share the spreadsheet with the service account as reader
       await this.drive.permissions.create({
         fileId: spreadsheetId,
         resource: {
-          role: 'writer',
+          role: 'reader',
           type: 'user',
           emailAddress: 'chinese-vocab@chinese-vocab-466512.iam.gserviceaccount.com'
         }
