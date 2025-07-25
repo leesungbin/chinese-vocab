@@ -1,0 +1,1 @@
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://sdf1no1aa0.execute-api.ap-northeast-2.amazonaws.com/dev'

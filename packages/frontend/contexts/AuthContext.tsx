@@ -1,6 +1,7 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
+import { API_BASE_URL } from '@/config/api'
 
 // Simple JWT decode function for client-side use
 function decodeJWT(token: string): any {
@@ -20,24 +21,33 @@ function decodeJWT(token: string): any {
 }
 
 // Server authentication endpoint
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://ppwyq3yin2.execute-api.ap-northeast-2.amazonaws.com/dev'
 
 async function authenticateWithServer(googleCredential: string): Promise<{ token: string, user: User }> {
-  const response = await fetch(`${API_BASE_URL}/auth`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      credential: googleCredential
+  try {
+    const response = await fetch(`${API_BASE_URL}/auth`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      mode: 'cors',
+      body: JSON.stringify({
+        credential: googleCredential
+      })
     })
-  })
-  
-  if (!response.ok) {
-    throw new Error('Authentication failed')
+    
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`Authentication failed: ${response.status} ${errorText}`)
+    }
+    
+    return await response.json()
+  } catch (error) {
+    console.error('Authentication error:', error)
+    if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+      throw new Error('Unable to connect to authentication server. Please check your internet connection.')
+    }
+    throw error
   }
-  
-  return await response.json()
 }
 
 interface User {

@@ -1,3 +1,5 @@
+import { API_BASE_URL } from '@/config/api'
+
 interface VocabItem {
   chinese: string
   pinyin: string
@@ -28,8 +30,6 @@ interface ApiResponse {
   }
   error?: string
 }
-
-const API_BASE_URL = 'https://ppwyq3yin2.execute-api.ap-northeast-2.amazonaws.com/dev'
 
 const getApiHeaders = () => {
   const headers: Record<string, string> = {
