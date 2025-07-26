@@ -71,7 +71,11 @@ export function VocabularyCard({
 
   return (
     <div
-      className={`mb-6 backdrop-blur-lg ${themeStyles.glassBackgroundStrong} rounded-3xl ${themeStyles.glassBorderStrong} shadow-2xl`}
+      className={`mb-6 backdrop-blur-lg ${themeStyles.glassBackgroundStrong} rounded-3xl ${themeStyles.glassBorderStrong} w-full max-w-4xl mx-auto`}
+      style={{ 
+        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.05)',
+        filter: 'drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1))'
+      }}
     >
       <div className="p-8 relative">
         {/* Memorized Checkbox - Only show for authenticated users */}

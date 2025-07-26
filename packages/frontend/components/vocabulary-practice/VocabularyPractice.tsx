@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Label } from "@/components/ui/label"
-import { Sun, Moon, Settings, AlertTriangle, Shuffle } from "lucide-react"
+import { Sun, Moon, Settings, AlertTriangle, Shuffle, ChevronDown, ChevronUp } from "lucide-react"
 import { useThemeStore, useThemeStyles } from "@/stores/themeStore"
 import { 
   useVocabularyData, 
@@ -36,6 +36,9 @@ export default function VocabularyPractice({
   
   // Authorization error state
   const [authError, setAuthError] = useState<string | null>(null)
+  
+  // Filter collapse state
+  const [isFilterCollapsed, setIsFilterCollapsed] = useState(false)
   
   // Custom hooks
   const isDarkMode = useThemeStore((state) => state.isDarkMode)
@@ -175,7 +178,7 @@ export default function VocabularyPractice({
         ></div>
       </div>
 
-      <div className="max-w-5xl mx-auto relative z-10 flex flex-col h-full">
+      <div className="w-full max-w-6xl mx-auto relative z-10 flex flex-col h-full">
         {/* Authorization Error Alert */}
         {authError && (
           <Alert className="mb-2 border-red-200 bg-red-50 text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-300 flex-shrink-0">
@@ -212,28 +215,40 @@ export default function VocabularyPractice({
               
               {availableDays.length > 0 && (
                 <div className="space-y-2">
-                  <Label className={`text-sm font-medium ${themeStyles.secondaryText}`}>Filter by Day Group</Label>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex items-center justify-between">
+                    <Label className={`text-sm font-medium ${themeStyles.secondaryText}`}>Filter by Day Group</Label>
                     <Button
-                      variant="outline"
+                      variant="ghost"
                       size="sm"
-                      onClick={() => handleFilterByDay(null)}
-                      className={`backdrop-blur-md ${themeStyles.buttonGlass} ${selectedDay === null ? 'border-2 border-blue-500 text-black dark:text-white' : themeStyles.glassBorderStrong + ' ' + themeStyles.mainText} ${themeStyles.buttonGlassHover}`}
+                      onClick={() => setIsFilterCollapsed(!isFilterCollapsed)}
+                      className={`p-1 h-6 w-6 ${themeStyles.mainText} hover:bg-white/20`}
                     >
-                      All Days
+                      {isFilterCollapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
                     </Button>
-                    {availableDays.map(day => (
+                  </div>
+                  {!isFilterCollapsed && (
+                    <div className="flex flex-wrap gap-2">
                       <Button
-                        key={day}
                         variant="outline"
                         size="sm"
-                        onClick={() => handleFilterByDay(day)}
-                        className={`backdrop-blur-md ${themeStyles.buttonGlass} ${selectedDay === day ? 'border-2 border-blue-500 text-black dark:text-white' : themeStyles.glassBorderStrong + ' ' + themeStyles.mainText} ${themeStyles.buttonGlassHover}`}
+                        onClick={() => handleFilterByDay(null)}
+                        className={`backdrop-blur-md ${themeStyles.buttonGlass} ${selectedDay === null ? 'border-2 border-blue-500 text-black dark:text-white' : themeStyles.glassBorderStrong + ' ' + themeStyles.mainText} ${themeStyles.buttonGlassHover}`}
                       >
-                        Day {day}
+                        All Days
                       </Button>
-                    ))}
-                  </div>
+                      {availableDays.map(day => (
+                        <Button
+                          key={day}
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleFilterByDay(day)}
+                          className={`backdrop-blur-md ${themeStyles.buttonGlass} ${selectedDay === day ? 'border-2 border-blue-500 text-black dark:text-white' : themeStyles.glassBorderStrong + ' ' + themeStyles.mainText} ${themeStyles.buttonGlassHover}`}
+                        >
+                          Day {day}
+                        </Button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -241,7 +256,7 @@ export default function VocabularyPractice({
         )}
 
         {/* Main Content Area */}
-        <div className="flex-1 flex flex-col min-h-0">
+        <div className="flex-1 flex flex-col min-h-0 px-5">
           <VocabularyCard
             currentWord={currentWord}
             isLoading={isLoading}
