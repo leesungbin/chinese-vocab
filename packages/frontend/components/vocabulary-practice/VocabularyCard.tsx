@@ -121,15 +121,15 @@ export function VocabularyCard({
             <div className="relative">
               {showChinese ? (
                 <div className="flex flex-col items-center">
-                  <div className={`${getFontSizeForChinese(currentWord.chinese)} font-bold ${themeStyles.mainText} mb-2 whitespace-nowrap`}>{currentWord.chinese}</div>
                   <Button
                     variant="outline"
                     size="icon"
-                    className={`mt-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
+                    className={`m-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
                     onClick={speakChinese}
                   >
                     <Volume2 className="h-4 w-4" />
                   </Button>
+                  <div className={`${getFontSizeForChinese(currentWord.chinese)} font-bold ${themeStyles.mainText} mb-2 whitespace-nowrap h-32`}>{currentWord.chinese}</div>
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center gap-4 min-h-[120px]">
