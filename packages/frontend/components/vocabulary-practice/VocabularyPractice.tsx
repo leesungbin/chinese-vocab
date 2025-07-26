@@ -133,7 +133,7 @@ export default function VocabularyPractice({
 
   // Check for user changes and reload vocabulary if needed
   useEffect(() => {
-    checkAndReloadForUser(userId)
+    checkAndReloadForUser(userId ?? null)
   }, [userId]) // Only depend on userId changes
 
   // Handle automatic Chinese display
