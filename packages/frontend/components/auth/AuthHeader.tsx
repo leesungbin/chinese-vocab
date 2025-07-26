@@ -10,13 +10,23 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { LogOut, User } from 'lucide-react'
+import { LogOut, User, BookOpen, CheckCircle } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
+import { useVocabularyData } from '@/stores/vocabularyStore'
+import { useMemorizedWords } from '@/hooks/useMemorizedWords'
 
 export function AuthHeader() {
   const { user, isAuthenticated, isLoading, signIn, signOut } = useAuth()
   const [googleLoaded, setGoogleLoaded] = useState(false)
   const [googleError, setGoogleError] = useState<string | null>(null)
+  
+  // Get vocabulary data and memorized words for statistics
+  const vocabularyData = useVocabularyData()
+  const { memorizedWords } = useMemorizedWords()
+  
+  // Calculate statistics
+  const totalWords = vocabularyData.length
+  const memorizedCount = memorizedWords.size
 
   const handleSignOut = () => {
     signOut()
@@ -160,6 +170,26 @@ export function AuthHeader() {
           <p className="text-xs text-muted-foreground">{user.email}</p>
         </div>
         <DropdownMenuSeparator />
+        
+        {/* Word Statistics */}
+        <div className="px-2 py-2">
+          <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
+            <div className="flex items-center gap-1">
+              <BookOpen className="h-3 w-3" />
+              <span>Total Words</span>
+            </div>
+            <span className="font-medium">{totalWords}</span>
+          </div>
+          <div className="flex items-center justify-between text-xs text-muted-foreground">
+            <div className="flex items-center gap-1">
+              <CheckCircle className="h-3 w-3" />
+              <span>Memorized</span>
+            </div>
+            <span className="font-medium">{memorizedCount}</span>
+          </div>
+        </div>
+        <DropdownMenuSeparator />
+        
         <DropdownMenuItem onClick={handleSignOut}>
           <LogOut className="mr-2 h-4 w-4" />
           Sign out
