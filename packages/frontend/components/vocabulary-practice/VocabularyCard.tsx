@@ -58,14 +58,45 @@ export function VocabularyCard({
   const speakChinese = () => {
     if ("speechSynthesis" in window) {
       const utterance = new SpeechSynthesisUtterance(currentWord.chinese)
-      utterance.lang = "zh-CN"
-      // Select an available Chinese-language voice if present
-      const voices = speechSynthesis.getVoices()
-      const zhVoice = voices.find(v => v.lang.startsWith("zh"))
-      if (zhVoice) {
-        utterance.voice = zhVoice
+      
+      // Wait for voices to load if they haven't already
+      const setVoiceAndSpeak = () => {
+        const voices = speechSynthesis.getVoices()
+        
+        // Try to find Chinese voices in order of preference
+        const chineseVoice = voices.find(v => 
+          v.lang === "zh-CN" || 
+          v.lang === "zh" || 
+          v.lang.startsWith("zh-") ||
+          v.name.toLowerCase().includes("chinese") ||
+          v.name.toLowerCase().includes("mandarin")
+        )
+        
+        if (chineseVoice) {
+          utterance.voice = chineseVoice
+          utterance.lang = chineseVoice.lang
+        } else {
+          // Fallback: explicitly set language even without specific voice
+          utterance.lang = "zh-CN"
+        }
+        
+        // Additional settings for better pronunciation
+        utterance.rate = 0.8 // Slower for better pronunciation
+        utterance.pitch = 1.0
+        utterance.volume = 1.0
+        
+        speechSynthesis.speak(utterance)
       }
-      speechSynthesis.speak(utterance)
+      
+      // If voices are already loaded, use them immediately
+      if (speechSynthesis.getVoices().length > 0) {
+        setVoiceAndSpeak()
+      } else {
+        // Wait for voices to load (especially important on mobile)
+        speechSynthesis.addEventListener('voiceschanged', setVoiceAndSpeak, { once: true })
+        // Fallback timeout in case voiceschanged doesn't fire
+        setTimeout(setVoiceAndSpeak, 100)
+      }
     }
   }
 
