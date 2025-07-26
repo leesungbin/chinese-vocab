@@ -64,7 +64,7 @@ export const useThemeStore = create<ThemeState>()(
 // Hook to get theme styles based on current theme state
 export const useThemeStyles = (): ThemeStyles => {
   const isDarkMode = useThemeStore((state) => state.isDarkMode)
-  
+
   return useMemo(() => ({
     background: isDarkMode ? "bg-black" : "bg-gray-50",
     decorativeBlur: isDarkMode ? "bg-white/5" : "bg-white/30",
@@ -78,7 +78,7 @@ export const useThemeStyles = (): ThemeStyles => {
     glassBorderStrong: isDarkMode ? "border-white/30" : "border-white/60",
     buttonGlass: isDarkMode ? "bg-white/20" : "bg-white/70",
     buttonGlassHover: isDarkMode ? "hover:bg-white/30" : "hover:bg-white/90",
-    progressFill: isDarkMode ? "bg-white" : "bg-blue-600",
+    progressFill: isDarkMode ? "bg-white" : "bg-black",
   }), [isDarkMode])
 }
 

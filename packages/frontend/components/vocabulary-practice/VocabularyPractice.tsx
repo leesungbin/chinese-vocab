@@ -290,20 +290,6 @@ export default function VocabularyPractice({
               />
             </div>
           )}
-
-          {/* Loading Progress Bar */}
-          {isLoading && (
-            <div className="mt-4 flex-shrink-0">
-              <div
-                className={`rounded-full h-4 border overflow-hidden shadow-lg ${isDarkMode ? 'bg-gray-800 border-gray-600' : 'bg-gray-200 border-gray-300'}`}
-              >
-                <div
-                  className={`${themeStyles.progressFill} h-full rounded-full animate-pulse`}
-                  style={{ width: '60%' }}
-                ></div>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>
