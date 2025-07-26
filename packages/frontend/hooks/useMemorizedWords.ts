@@ -1,8 +1,10 @@
 import { useMemorizedWordsStorage } from './useLocalStorage'
 import { vocabularyService, type VocabItem } from '@/utils/vocabularyService'
+import { useVocabularyData } from '@/stores/vocabularyStore'
 
 export function useMemorizedWords() {
   const { memorizedWords, setMemorizedWords, resetMemorizedWords } = useMemorizedWordsStorage()
+  const vocabularyData = useVocabularyData()
 
   const toggleMemorized = async (wordId: number, currentWord: VocabItem): Promise<{ success: boolean; error?: string }> => {
     const wasMemorized = memorizedWords.has(wordId)
@@ -40,9 +42,34 @@ export function useMemorizedWords() {
     resetMemorizedWords()
   }
 
+  const resetMemorizedWordsByDay = (day: number) => {
+    // Get all word IDs for the specified day
+    const wordsInDay = vocabularyData
+      .filter(word => word.day === day)
+      .map(word => word.id)
+    
+    // Create a new set excluding words from the specified day
+    const newMemorizedSet = new Set(memorizedWords)
+    wordsInDay.forEach(wordId => {
+      newMemorizedSet.delete(wordId)
+    })
+    
+    setMemorizedWords(newMemorizedSet)
+  }
+
+  const getMemorizedWordCountByDay = (day: number): number => {
+    const wordsInDay = vocabularyData
+      .filter(word => word.day === day)
+      .map(word => word.id)
+    
+    return wordsInDay.filter(wordId => memorizedWords.has(wordId)).length
+  }
+
   return {
     memorizedWords,
     toggleMemorized,
-    resetAllMemorizedWords
+    resetAllMemorizedWords,
+    resetMemorizedWordsByDay,
+    getMemorizedWordCountByDay
   }
 }

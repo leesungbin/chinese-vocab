@@ -13,6 +13,7 @@ import { useThemeStore, useThemeStyles } from "@/stores/themeStore"
 import { useAuth } from "@/hooks/useAuth"
 import { useNavigationState } from "@/hooks/useNavigationState"
 import { useMemorizedWords } from "@/hooks/useMemorizedWords"
+import { useAvailableDays, useVocabularyData } from "@/stores/vocabularyStore"
 
 export default function SettingsPage() {
   const router = useRouter()
@@ -35,7 +36,11 @@ export default function SettingsPage() {
   } = useNavigationState()
   
   // Memorized words hooks
-  const { memorizedWords, resetAllMemorizedWords } = useMemorizedWords()
+  const { memorizedWords, resetAllMemorizedWords, resetMemorizedWordsByDay, getMemorizedWordCountByDay } = useMemorizedWords()
+  
+  // Vocabulary data hooks
+  const availableDays = useAvailableDays()
+  const vocabularyData = useVocabularyData()
   
   // State management (moved from SettingsModal)
   const [spreadsheetId, setSpreadsheetId] = useState('')
@@ -360,16 +365,52 @@ export default function SettingsPage() {
 
           {/* Memorized Words Reset */}
           <section>
-            <div className="flex items-center justify-between">
-              <Label className={`text-sm font-medium ${themeStyles.secondaryText}`}>Reset Memorized Words</Label>
-              <Button
-                variant="outline"
-                disabled={memorizedWords.size === 0}
-                onClick={handleResetMemorizedWords}
-                className={`gap-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
-              >
-                Reset Memorized Words
-              </Button>
+            <h2 className={`text-lg font-semibold ${themeStyles.mainText} mb-4`}>Reset Memorized Words</h2>
+            <div className="space-y-4">
+              {/* Reset All */}
+              <div className="flex items-center justify-between">
+                <Label className={`text-sm font-medium ${themeStyles.secondaryText}`}>Reset All Memorized Words</Label>
+                <Button
+                  variant="outline"
+                  disabled={memorizedWords.size === 0}
+                  onClick={handleResetMemorizedWords}
+                  className={`gap-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
+                >
+                  Reset All ({memorizedWords.size})
+                </Button>
+              </div>
+
+              {/* Reset by Day */}
+              {availableDays.length > 0 && (
+                <div className="space-y-3">
+                  <Label className={`text-sm font-medium ${themeStyles.secondaryText}`}>Reset by Day Group</Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {availableDays.map(day => {
+                      const memorizedInDay = getMemorizedWordCountByDay(day)
+                      const totalInDay = vocabularyData.filter(word => word.day === day).length
+                      return (
+                        <div key={day} className="flex items-center justify-between p-2 rounded-lg bg-gray-50 dark:bg-gray-800">
+                          <div className="flex flex-col">
+                            <span className={`text-sm font-medium ${themeStyles.mainText}`}>Day {day}</span>
+                            <span className={`text-xs ${themeStyles.secondaryText}`}>
+                              {memorizedInDay}/{totalInDay} memorized
+                            </span>
+                          </div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={memorizedInDay === 0}
+                            onClick={() => resetMemorizedWordsByDay(day)}
+                            className={`gap-1 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
+                          >
+                            Reset ({memorizedInDay})
+                          </Button>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
           </section>
         </div>
