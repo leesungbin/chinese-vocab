@@ -160,7 +160,7 @@ export default function VocabularyPractice({
 
   return (
     <div
-      className={`min-h-screen ${themeStyles.background} p-4 relative overflow-hidden transition-colors duration-300`}
+      className={`h-full ${themeStyles.background} p-4 relative overflow-hidden transition-colors duration-300 flex flex-col`}
     >
       {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden">
@@ -175,10 +175,10 @@ export default function VocabularyPractice({
         ></div>
       </div>
 
-      <div className="max-w-2xl mx-auto relative z-10">
+      <div className="max-w-5xl mx-auto relative z-10 flex flex-col h-full">
         {/* Authorization Error Alert */}
         {authError && (
-          <Alert className="mb-4 border-red-200 bg-red-50 text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-300">
+          <Alert className="mb-2 border-red-200 bg-red-50 text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-300 flex-shrink-0">
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
               {authError}
@@ -186,12 +186,9 @@ export default function VocabularyPractice({
           </Alert>
         )}
 
-        {/* Reduced top margin since title is removed */}
-        <div className="mb-4"></div>
-
         {/* Word Order & Filtering Controls */}
         {!isLoading && vocabularyData.length > 0 && (
-          <div className={`backdrop-blur-md ${themeStyles.glassBackground} rounded-2xl ${themeStyles.glassBorder} p-4 mb-6`}>
+          <div className={`backdrop-blur-md ${themeStyles.glassBackground} rounded-2xl ${themeStyles.glassBorder} p-3 mb-4 flex-shrink-0`}>
             <div className="space-y-4">
               <div className="flex items-center gap-3">
                 <Button
@@ -243,50 +240,57 @@ export default function VocabularyPractice({
           </div>
         )}
 
-        {/* Main Vocabulary Card */}
-        <VocabularyCard
-          currentWord={currentWord}
-          isLoading={isLoading}
-          vocabularyDataLength={filteredVocabularyData.length}
-          memorizedWords={memorizedWords}
-          showChinese={showChinese}
-          showPinyin={showPinyin}
-          showKorean={showKorean}
-          pinyinRevealed={pinyinRevealed}
-          setPinyinRevealed={setPinyinRevealed}
-          koreanRevealed={koreanRevealed}
-          setKoreanRevealed={setKoreanRevealed}
-          chineseRevealed={chineseRevealed}
-          handleRevealChinese={handleRevealChinese}
-          toggleMemorized={handleToggleMemorized}
-          themeStyles={themeStyles}
-          showMemorizedWords={showMemorizedWords}
-        />
-
-        {/* Navigation */}
-        {!isLoading && filteredVocabularyData.length > 0 && (
-          <NavigationControls
-            currentIndex={currentIndex}
-            filteredDataLength={filteredVocabularyData.length}
-            memorizedWords={memorizedWords}
-            showMemorizedWords={showMemorizedWords}
-            nextWord={nextWord}
-            prevWord={prevWord}
-            themeStyles={themeStyles}
-          />
-        )}
-
-        {/* Loading Progress Bar */}
-        {isLoading && (
-          <div
-            className={`backdrop-blur-md ${themeStyles.glassBackground} rounded-full h-3 ${themeStyles.glassBorder} overflow-hidden`}
-          >
-            <div
-              className={`${themeStyles.progressFill} h-full rounded-full animate-pulse`}
-              style={{ width: '30%' }}
-            ></div>
+        {/* Main Content Area */}
+        <div className="flex-1 flex flex-col min-h-0">
+          {/* Main Vocabulary Card */}
+          <div className="flex-1">
+            <VocabularyCard
+              currentWord={currentWord}
+              isLoading={isLoading}
+              vocabularyDataLength={filteredVocabularyData.length}
+              memorizedWords={memorizedWords}
+              showChinese={showChinese}
+              showPinyin={showPinyin}
+              showKorean={showKorean}
+              pinyinRevealed={pinyinRevealed}
+              setPinyinRevealed={setPinyinRevealed}
+              koreanRevealed={koreanRevealed}
+              setKoreanRevealed={setKoreanRevealed}
+              chineseRevealed={chineseRevealed}
+              handleRevealChinese={handleRevealChinese}
+              toggleMemorized={handleToggleMemorized}
+              themeStyles={themeStyles}
+              showMemorizedWords={showMemorizedWords}
+            />
           </div>
-        )}
+
+          {/* Navigation */}
+          {!isLoading && filteredVocabularyData.length > 0 && (
+            <div className="flex-shrink-0 mt-4">
+              <NavigationControls
+                currentIndex={currentIndex}
+                filteredDataLength={filteredVocabularyData.length}
+                memorizedWords={memorizedWords}
+                showMemorizedWords={showMemorizedWords}
+                nextWord={nextWord}
+                prevWord={prevWord}
+                themeStyles={themeStyles}
+              />
+            </div>
+          )}
+
+          {/* Loading Progress Bar */}
+          {isLoading && (
+            <div
+              className={`backdrop-blur-md ${themeStyles.glassBackground} rounded-full h-3 ${themeStyles.glassBorder} overflow-hidden flex-shrink-0`}
+            >
+              <div
+                className={`${themeStyles.progressFill} h-full rounded-full animate-pulse`}
+                style={{ width: '30%' }}
+              ></div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

@@ -29,9 +29,9 @@ export default function ProtectedVocabulary() {
   }
 
   return (
-    <div className={`min-h-screen ${themeStyles.background}`}>
+    <div className={`h-screen flex flex-col ${themeStyles.background}`}>
       {/* Header with auth controls */}
-      <div className="bg-white dark:bg-gray-800">
+      <div className="bg-white dark:bg-gray-800 flex-shrink-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-end items-center py-4">
             <div className="flex items-center gap-2">
@@ -60,31 +60,35 @@ export default function ProtectedVocabulary() {
       </div>
 
       {/* Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        {!isAuthenticated && (
-          <Alert className="mb-6">
-            <InfoIcon className="h-4 w-4" />
-            <AlertDescription>
-              You can view vocabulary words, but you need to sign in with Google to save your progress and mark words as memorized.
-            </AlertDescription>
-          </Alert>
-        )}
-        
-        <VocabularyPractice 
-          userId={user?.id || null}
-        />
+      <div className="flex-1 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 h-full">
+          {!isAuthenticated && (
+            <Alert className="mb-6">
+              <InfoIcon className="h-4 w-4" />
+              <AlertDescription>
+                You can view vocabulary words, but you need to sign in with Google to save your progress and mark words as memorized.
+              </AlertDescription>
+            </Alert>
+          )}
+          
+          <div className="h-full">
+            <VocabularyPractice 
+              userId={user?.id || null}
+            />
+          </div>
+        </div>
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 mt-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <footer className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex-shrink-0">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="text-center">
             <p className="text-sm text-gray-500 dark:text-gray-400">
               © 2025 Seongbin Lee
-              <br/>
+              <span className="mx-2">•</span>
               <a 
                 href="/privacy-policy" 
-                className="ml-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline"
+                className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline"
               >
                 Privacy Policy
               </a>
