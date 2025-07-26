@@ -78,7 +78,7 @@ export const useThemeStyles = (): ThemeStyles => {
     glassBorderStrong: isDarkMode ? "border-white/30" : "border-white/60",
     buttonGlass: isDarkMode ? "bg-white/20" : "bg-white/70",
     buttonGlassHover: isDarkMode ? "hover:bg-white/30" : "hover:bg-white/90",
-    progressFill: isDarkMode ? "bg-white" : "bg-gray-800",
+    progressFill: isDarkMode ? "bg-white" : "bg-blue-600",
   }), [isDarkMode])
 }
 

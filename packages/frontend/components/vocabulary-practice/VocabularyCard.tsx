@@ -44,6 +44,17 @@ export function VocabularyCard({
 }: VocabularyCardProps) {
   const { isAuthenticated } = useAuth()
 
+  // Calculate font size based on Chinese text length
+  const getFontSizeForChinese = (text: string) => {
+    const length = text.length
+    if (length <= 2) return 'text-8xl' // Very large for 1-2 characters
+    if (length <= 4) return 'text-7xl' // Large for 3-4 characters
+    if (length <= 6) return 'text-6xl' // Medium-large for 5-6 characters
+    if (length <= 8) return 'text-5xl' // Medium for 7-8 characters
+    if (length <= 12) return 'text-4xl' // Small-medium for 9-12 characters
+    return 'text-3xl' // Small for longer text
+  }
+
   const speakChinese = () => {
     if ("speechSynthesis" in window) {
       const utterance = new SpeechSynthesisUtterance(currentWord.chinese)
@@ -106,7 +117,7 @@ export function VocabularyCard({
             <div className="relative">
               {showChinese ? (
                 <div className="flex flex-col items-center">
-                  <div className={`text-8xl font-bold ${themeStyles.mainText} mb-2`}>{currentWord.chinese}</div>
+                  <div className={`${getFontSizeForChinese(currentWord.chinese)} font-bold ${themeStyles.mainText} mb-2 whitespace-nowrap overflow-hidden text-ellipsis max-w-full`}>{currentWord.chinese}</div>
                   <Button
                     variant="outline"
                     size="icon"
@@ -120,7 +131,7 @@ export function VocabularyCard({
                 <div className="flex flex-col items-center justify-center gap-4 min-h-[120px]">
                   {chineseRevealed ? (
                     <div className="flex flex-col items-center">
-                      <div className={`text-8xl font-bold ${themeStyles.mainText} mb-2`}>{currentWord.chinese}</div>
+                      <div className={`${getFontSizeForChinese(currentWord.chinese)} font-bold ${themeStyles.mainText} mb-2 whitespace-nowrap overflow-hidden text-ellipsis max-w-full`}>{currentWord.chinese}</div>
                       <Button
                         variant="outline"
                         size="icon"

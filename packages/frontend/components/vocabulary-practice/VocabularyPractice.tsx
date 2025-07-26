@@ -188,7 +188,7 @@ export default function VocabularyPractice({
 
         {/* Word Order & Filtering Controls */}
         {!isLoading && vocabularyData.length > 0 && (
-          <div className={`backdrop-blur-md ${themeStyles.glassBackground} rounded-2xl ${themeStyles.glassBorder} p-3 mb-4 flex-shrink-0`}>
+          <div className={`backdrop-blur-md ${themeStyles.glassBackground} rounded-2xl ${themeStyles.glassBorder} mb-2 flex-shrink-0`}>
             <div className="space-y-4">
               <div className="flex items-center gap-3">
                 <Button
@@ -242,27 +242,24 @@ export default function VocabularyPractice({
 
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col min-h-0">
-          {/* Main Vocabulary Card */}
-          <div className="flex-1">
-            <VocabularyCard
-              currentWord={currentWord}
-              isLoading={isLoading}
-              vocabularyDataLength={filteredVocabularyData.length}
-              memorizedWords={memorizedWords}
-              showChinese={showChinese}
-              showPinyin={showPinyin}
-              showKorean={showKorean}
-              pinyinRevealed={pinyinRevealed}
-              setPinyinRevealed={setPinyinRevealed}
-              koreanRevealed={koreanRevealed}
-              setKoreanRevealed={setKoreanRevealed}
-              chineseRevealed={chineseRevealed}
-              handleRevealChinese={handleRevealChinese}
-              toggleMemorized={handleToggleMemorized}
-              themeStyles={themeStyles}
-              showMemorizedWords={showMemorizedWords}
-            />
-          </div>
+          <VocabularyCard
+            currentWord={currentWord}
+            isLoading={isLoading}
+            vocabularyDataLength={filteredVocabularyData.length}
+            memorizedWords={memorizedWords}
+            showChinese={showChinese}
+            showPinyin={showPinyin}
+            showKorean={showKorean}
+            pinyinRevealed={pinyinRevealed}
+            setPinyinRevealed={setPinyinRevealed}
+            koreanRevealed={koreanRevealed}
+            setKoreanRevealed={setKoreanRevealed}
+            chineseRevealed={chineseRevealed}
+            handleRevealChinese={handleRevealChinese}
+            toggleMemorized={handleToggleMemorized}
+            themeStyles={themeStyles}
+            showMemorizedWords={showMemorizedWords}
+          />
 
           {/* Navigation */}
           {!isLoading && filteredVocabularyData.length > 0 && (
@@ -281,13 +278,15 @@ export default function VocabularyPractice({
 
           {/* Loading Progress Bar */}
           {isLoading && (
-            <div
-              className={`backdrop-blur-md ${themeStyles.glassBackground} rounded-full h-3 ${themeStyles.glassBorder} overflow-hidden flex-shrink-0`}
-            >
+            <div className="mt-4 flex-shrink-0">
               <div
-                className={`${themeStyles.progressFill} h-full rounded-full animate-pulse`}
-                style={{ width: '30%' }}
-              ></div>
+                className={`rounded-full h-4 border overflow-hidden shadow-lg ${isDarkMode ? 'bg-gray-800 border-gray-600' : 'bg-gray-200 border-gray-300'}`}
+              >
+                <div
+                  className={`${themeStyles.progressFill} h-full rounded-full animate-pulse`}
+                  style={{ width: '60%' }}
+                ></div>
+              </div>
             </div>
           )}
         </div>
