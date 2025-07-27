@@ -6,7 +6,7 @@ import VocabularyPractice from '@/components/vocabulary-practice/VocabularyPract
 import { AuthHeader } from './AuthHeader'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
-import { InfoIcon, Sun, Moon, Settings } from 'lucide-react'
+import { InfoIcon, Sun, Moon, Settings, HelpCircle } from 'lucide-react'
 import { useThemeStore, useThemeStyles } from '@/stores/themeStore'
 
 export default function ProtectedVocabulary() {
@@ -52,6 +52,15 @@ export default function ProtectedVocabulary() {
                 aria-label="Open settings"
               >
                 <Settings className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => router.push('/help')}
+                className="backdrop-blur-md border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800"
+                aria-label="Open help"
+              >
+                <HelpCircle className="h-4 w-4" />
               </Button>
               <AuthHeader />
             </div>

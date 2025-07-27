@@ -1,9 +1,10 @@
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
-import { Eye, Volume2 } from "lucide-react"
+import { Eye, Volume2, HelpCircle } from "lucide-react"
 import type { VocabItem } from "@/utils/vocabularyService"
 import { useAuth } from "@/hooks/useAuth"
+import { useRouter } from "next/navigation"
 
 interface VocabularyCardProps {
   currentWord: VocabItem
@@ -43,6 +44,7 @@ export function VocabularyCard({
   showMemorizedWords
 }: VocabularyCardProps) {
   const { isAuthenticated } = useAuth()
+  const router = useRouter()
 
   // Calculate font size based on Chinese text length
   const getFontSizeForChinese = (text: string) => {
@@ -153,28 +155,50 @@ export function VocabularyCard({
               {showChinese ? (
                 <div className="flex flex-col items-center">
                   <div className={`${getFontSizeForChinese(currentWord.chinese)} font-bold ${themeStyles.mainText} mb-2 whitespace-nowrap h-32`}>{currentWord.chinese}</div>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className={`m-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
-                    onClick={speakChinese}
-                  >
-                    <Volume2 className="h-4 w-4" />
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className={`backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
+                      onClick={speakChinese}
+                    >
+                      <Volume2 className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className={`backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
+                      onClick={() => router.push('/help#galaxy-tts-guide')}
+                      title="갤럭시 중국어 음성 설정 도움말"
+                    >
+                      <HelpCircle className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center gap-4 min-h-[120px]">
                   {chineseRevealed ? (
                     <div className="flex flex-col items-center">
                       <div className={`${getFontSizeForChinese(currentWord.chinese)} font-bold ${themeStyles.mainText} mb-2 whitespace-nowrap`}>{currentWord.chinese}</div>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className={`mt-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
-                        onClick={speakChinese}
-                      >
-                        <Volume2 className="h-4 w-4" />
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className={`backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
+                          onClick={speakChinese}
+                        >
+                          <Volume2 className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className={`backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
+                          onClick={() => router.push('/help#galaxy-tts-guide')}
+                          title="갤럭시 중국어 음성 설정 도움말"
+                        >
+                          <HelpCircle className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
                   ) : (
                     <Button
