@@ -32,7 +32,7 @@ export default function ProtectedVocabulary() {
     <div className={`h-screen flex flex-col ${themeStyles.background}`}>
       {/* Header with auth controls */}
       <div className="bg-white dark:bg-gray-800 flex-shrink-0">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
           <div className="flex justify-end items-center py-4">
             <div className="flex items-center gap-2">
               <Button
@@ -60,8 +60,8 @@ export default function ProtectedVocabulary() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 h-full">
+      <div className="flex-1 overflow-y-auto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           {!isAuthenticated && (
             <Alert className="mb-6">
               <InfoIcon className="h-4 w-4" />
@@ -70,12 +70,10 @@ export default function ProtectedVocabulary() {
               </AlertDescription>
             </Alert>
           )}
-          
-          <div className="h-full">
-            <VocabularyPractice 
-              userId={user?.id || null}
-            />
-          </div>
+
+          <VocabularyPractice
+            userId={user?.id || null}
+          />
         </div>
       </div>
 
