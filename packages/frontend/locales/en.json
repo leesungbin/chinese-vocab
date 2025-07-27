@@ -1,0 +1,156 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "signIn": "Sign In",
+    "signOut": "Sign Out",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "reset": "Reset",
+    "complete": "Complete",
+    "next": "Next",
+    "previous": "Previous",
+    "back": "Back",
+    "topOfPage": "Back to Top",
+    "dismiss": "Dismiss"
+  },
+  "navigation": {
+    "settings": "Settings",
+    "help": "Help",
+    "privacyPolicy": "Privacy Policy",
+    "tableOfContents": "Table of Contents"
+  },
+  "theme": {
+    "darkMode": "Dark mode",
+    "switchToLight": "Switch to light mode",
+    "switchToDark": "Switch to dark mode"
+  },
+  "language": {
+    "korean": "한국어",
+    "english": "English",
+    "changeLanguage": "Change Language"
+  },
+  "settings": {
+    "title": "Settings",
+    "appearanceLanguage": "Appearance & Language",
+    "displaySettings": "Display Settings",
+    "showChinese": "Always show Chinese characters",
+    "showPinyin": "Always show pronunciation (Pinyin)",
+    "showKorean": "Always show Korean meaning",
+    "showMemorized": "Show memorized words",
+    "dataMigration": "Data Migration",
+    "spreadsheetId": "Google Sheets ID (optional - uses default if empty)",
+    "creatingSheet": "Creating your personal Google Sheet...",
+    "loadData": "Load data from Google Sheets",
+    "migratingData": "Migrating data...",
+    "createPersonalSheet": "Create Personal Google Sheet",
+    "openGoogleSheet": "Open Google Sheet",
+    "resetMemorizedWords": "Reset Memorized Words",
+    "resetAll": "Reset All Memorized Words",
+    "resetByDay": "Reset by Day Group",
+    "memorizedCount": " memorized",
+    "errors": {
+      "storageQuota": "Google Drive Storage Full",
+      "storageQuotaMessage": "Your Google Drive storage is full and cannot create new files.",
+      "storageQuotaSuggestion": "Please free up space in your Google Drive or upgrade your storage plan, then try again.",
+      "permission": "Permission Error",
+      "permissionMessage": "Unable to create spreadsheet due to permission restrictions.",
+      "permissionSuggestion": "Please check your Google account permissions and try again.",
+      "quota": "API Quota Exceeded",
+      "quotaMessage": "Google Sheets API quota has been exceeded.",
+      "quotaSuggestion": "Please try again later or contact support if the issue persists.",
+      "network": "Network Error",
+      "networkMessage": "Unable to connect to Google Sheets service.",
+      "networkSuggestion": "Please check your internet connection and try again.",
+      "createFailed": "Spreadsheet Creation Failed",
+      "createFailedMessage": "An unexpected error occurred while creating your personal Google Sheet.",
+      "createFailedSuggestion": "You can manually enter your Google Sheets ID below or try again later."
+    }
+  },
+  "vocabulary": {
+    "showChinese": "Show Chinese Characters",
+    "showPinyin": "Show Pinyin",
+    "showKorean": "Show Korean Meaning",
+    "shuffleWords": "Shuffle Words",
+    "memorized": "Memorized",
+    "notMemorized": "Not Memorized",
+    "previousWord": "Previous Word",
+    "nextWord": "Next Word",
+    "dayFilter": "Day Filter",
+    "allDays": "All Days",
+    "day": "Day"
+  },
+  "help": {
+    "title": "Help",
+    "gettingStarted": "Getting Started",
+    "basicUsage": "Basic Usage",
+    "navigation": "Word Navigation",
+    "authentication": "Login & Progress Saving",
+    "galaxyTtsGuide": "Galaxy Chinese Voice Setup (Must Read!)",
+    "welcomeMessage": "Welcome to the Chinese Vocabulary Flashcard App! This app helps you learn Chinese words through interactive flashcards.",
+    "noLoginRequired": "You can start learning immediately without logging in. Google login allows you to save your learning progress.",
+    "viewWords": "View Words",
+    "viewWordsDesc": "Click the \"Show Chinese Characters\" button to view the Chinese characters.",
+    "listenPronunciation": "Listen to Pronunciation", 
+    "listenPronunciationDesc": "Click the speaker button (🔊) to hear the Chinese pronunciation.",
+    "markMemorized": "Mark as Memorized",
+    "markMemorizedDesc": "Click the checkbox to mark words as memorized. (Login required)",
+    "navigationButtons": "Previous/Next Buttons",
+    "navigationButtonsDesc": "Use the previous/next buttons at the bottom of the screen to navigate through words.",
+    "shuffleWords": "Shuffle Words",
+    "shuffleWordsDesc": "Use the \"Shuffle Words\" button to randomize the word order.",
+    "dayFilter": "Day Filter",
+    "dayFilterDesc": "Use the Day filter if you want to study words from a specific day only.",
+    "googleLogin": "Google Login",
+    "googleLoginDesc": "Click the \"Sign in with Google\" button at the top right of the screen.",
+    "personalSheet": "Personal Vocabulary Sheet Creation",
+    "personalSheetDesc": "After logging in, your personal Google Sheets will be automatically created when you first access the settings page.",
+    "autoCreationProcessTitle": "Auto-creation process",
+    "autoCreationProcess": "Login → Visit Settings Page → Auto-create Google Sheets → Sync vocabulary data",
+    "permissionRequest": "Permission Request Guide",
+    "permissionRequestDesc": "Why we request Google Sheets and Google Drive permissions during login:",
+    "sheetsPermission": "To import vocabulary data from the specified sheet in settings to the app's database",
+    "drivePermission": "To securely access the specified sheet file",
+    "privacyProtection": "Privacy Protection:",
+    "privacyPoints": [
+      "We only access the Google Sheet file with the ID specified in settings",
+      "We do not access other Google Drive files or sheets",
+      "All data is processed only within your personal Google account"
+    ],
+    "galaxyGuide": {
+      "title": "Galaxy Chinese Voice Setup Guide",
+      "description": "For Chinese pronunciation to work properly on Galaxy phones, Chinese language pack must be installed.",
+      "step1": {
+        "title": "Open Galaxy Settings App",
+        "description": "Find and touch the Settings (⚙️) app on your home screen.",
+        "details": "The Settings app is usually in the app drawer or on the home screen."
+      },
+      "step2": {
+        "title": "General Management → Language and Input",
+        "description": "In Settings, find 'General Management' and touch it, then select 'Language and Input'.",
+        "details": "Depending on your device, it might be 'General' or 'Language and Region' menu."
+      },
+      "step3": {
+        "title": "Add Language",
+        "description": "In the language list, touch 'Add Language' or '+' button.",
+        "details": "Make sure Korean is currently set up."
+      },
+      "step4": {
+        "title": "Add Chinese (Simplified)",
+        "description": "Find and add '中文(简体)' or 'Chinese (Simplified, China)' from the language list.",
+        "details": "After adding, both Korean and Chinese (Simplified) should appear in the language list."
+      },
+      "helpText": "Tip:",
+      "stepPrefix": "Step",
+      "summary": "Complete Process Summary:",
+      "completionNote": "After completing the setup, restart the app and Chinese pronunciation will work normally.",
+      "step": "Step"
+    },
+    "saveProgress": "Login with your Google account to automatically save your learning progress and memorized words."
+  },
+  "auth": {
+    "signInWithGoogle": "Sign in with Google",
+    "signedInAs": "Signed in as:",
+    "signOut": "Sign Out"
+  }
+}

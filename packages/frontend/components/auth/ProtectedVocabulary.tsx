@@ -6,8 +6,10 @@ import VocabularyPractice from '@/components/vocabulary-practice/VocabularyPract
 import { AuthHeader } from './AuthHeader'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
-import { InfoIcon, Sun, Moon, Settings, HelpCircle } from 'lucide-react'
+import { InfoIcon, Sun, Moon, Settings, HelpCircle, Languages } from 'lucide-react'
 import { useThemeStore, useThemeStyles } from '@/stores/themeStore'
+import { useLanguageStore, type Language } from '@/stores/languageStore'
+import { useTranslation } from '@/hooks/useTranslation'
 
 export default function ProtectedVocabulary() {
   const { user, isAuthenticated, isLoading, signIn } = useAuth()
@@ -16,13 +18,17 @@ export default function ProtectedVocabulary() {
   const toggleTheme = useThemeStore((state) => state.toggleTheme)
   const isLoaded = useThemeStore((state) => state.isLoaded)
   const themeStyles = useThemeStyles()
+  
+  const language = useLanguageStore((state) => state.language)
+  const setLanguage = useLanguageStore((state) => state.setLanguage)
+  const { t } = useTranslation()
 
   if (isLoading || !isLoaded) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center space-y-4">
           <div className="w-8 h-8 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin mx-auto" />
-          <p className="text-gray-600 dark:text-gray-400">Loading...</p>
+          <p className="text-gray-600 dark:text-gray-400">{t('common.loading')}</p>
         </div>
       </div>
     )
@@ -40,9 +46,19 @@ export default function ProtectedVocabulary() {
                 size="icon"
                 onClick={toggleTheme}
                 className="backdrop-blur-md border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800"
-                aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+                aria-label={isDarkMode ? t('theme.switchToLight') : t('theme.switchToDark')}
               >
                 {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setLanguage(language === 'ko' ? 'en' : 'ko')}
+                className="backdrop-blur-md border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 gap-1"
+                aria-label={t('language.changeLanguage')}
+              >
+                <Languages className="h-4 w-4" />
+                {language === 'ko' ? 'EN' : '한'}
               </Button>
               <Button
                 variant="outline"

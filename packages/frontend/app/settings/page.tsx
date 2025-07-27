@@ -5,11 +5,14 @@ import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { ArrowLeft, Download, Loader2, ExternalLink, Plus, AlertTriangle } from "lucide-react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { ArrowLeft, Download, Loader2, ExternalLink, Plus, AlertTriangle, Languages } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useRouter } from 'next/navigation'
 import { vocabularyService } from "@/utils/vocabularyService"
 import { useThemeStore, useThemeStyles } from "@/stores/themeStore"
+import { useLanguageStore, type Language } from "@/stores/languageStore"
+import { useTranslation } from "@/hooks/useTranslation"
 import { useAuth } from "@/hooks/useAuth"
 import { useNavigationState } from "@/hooks/useNavigationState"
 import { useMemorizedWords } from "@/hooks/useMemorizedWords"
@@ -21,6 +24,10 @@ export default function SettingsPage() {
   const isDarkMode = useThemeStore((state) => state.isDarkMode)
   const toggleTheme = useThemeStore((state) => state.toggleTheme)
   const themeStyles = useThemeStyles()
+  
+  const language = useLanguageStore((state) => state.language)
+  const setLanguage = useLanguageStore((state) => state.setLanguage)
+  const { t } = useTranslation()
   
   // Navigation state hooks for display settings
   const {
@@ -214,7 +221,7 @@ export default function SettingsPage() {
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
-          <h1 className={`text-2xl font-bold ${themeStyles.mainText}`}>Settings</h1>
+          <h1 className={`text-2xl font-bold ${themeStyles.mainText}`}>{t('settings.title')}</h1>
         </div>
 
         <div className={`backdrop-blur-md ${themeStyles.glassBackground} rounded-2xl ${themeStyles.glassBorder} p-6 space-y-8`}>
@@ -246,13 +253,47 @@ export default function SettingsPage() {
             </Alert>
           )}
 
+          {/* Theme and Language Settings */}
+          <section>
+            <h2 className={`text-lg font-semibold ${themeStyles.mainText} mb-4`}>{t('settings.appearanceLanguage')}</h2>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="dark-mode" className={`text-sm font-medium ${themeStyles.secondaryText}`}>
+                  {t('theme.darkMode')}
+                </Label>
+                <Switch 
+                  id="dark-mode" 
+                  checked={isDarkMode} 
+                  onCheckedChange={toggleTheme}
+                />
+              </div>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="language" className={`text-sm font-medium ${themeStyles.secondaryText}`}>
+                  {t('language.changeLanguage')}
+                </Label>
+                <Select value={language} onValueChange={(value: Language) => setLanguage(value)}>
+                  <SelectTrigger className={`w-32 backdrop-blur-md ${themeStyles.glassBorderStrong} ${themeStyles.mainText} bg-white/80 dark:bg-gray-800/80`}>
+                    <div className="flex items-center gap-2">
+                      <Languages className="h-4 w-4" />
+                      <SelectValue />
+                    </div>
+                  </SelectTrigger>
+                  <SelectContent className={`backdrop-blur-md ${themeStyles.glassBackground} ${themeStyles.glassBorder}`}>
+                    <SelectItem value="ko">{t('language.korean')}</SelectItem>
+                    <SelectItem value="en">{t('language.english')}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </section>
+
           {/* Display Settings */}
           <section>
-            <h2 className={`text-lg font-semibold ${themeStyles.mainText} mb-4`}>Display Settings</h2>
+            <h2 className={`text-lg font-semibold ${themeStyles.mainText} mb-4`}>{t('settings.displaySettings')}</h2>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <Label htmlFor="show-chinese" className={`text-sm font-medium ${themeStyles.secondaryText}`}>
-                  Always show Chinese characters
+                  {t('settings.showChinese')}
                 </Label>
                 <Switch 
                   id="show-chinese" 
@@ -262,7 +303,7 @@ export default function SettingsPage() {
               </div>
               <div className="flex items-center justify-between">
                 <Label htmlFor="show-pinyin" className={`text-sm font-medium ${themeStyles.secondaryText}`}>
-                  Always show pronunciation (Pinyin)
+                  {t('settings.showPinyin')}
                 </Label>
                 <Switch 
                   id="show-pinyin" 
@@ -272,7 +313,7 @@ export default function SettingsPage() {
               </div>
               <div className="flex items-center justify-between">
                 <Label htmlFor="show-korean" className={`text-sm font-medium ${themeStyles.secondaryText}`}>
-                  Always show Korean meaning
+                  {t('settings.showKorean')}
                 </Label>
                 <Switch 
                   id="show-korean" 
@@ -282,7 +323,7 @@ export default function SettingsPage() {
               </div>
               <div className="flex items-center justify-between">
                 <Label htmlFor="show-memorized" className={`text-sm font-medium ${themeStyles.secondaryText}`}>
-                  Show memorized words
+                  {t('settings.showMemorized')}
                 </Label>
                 <Switch 
                   id="show-memorized" 
@@ -297,11 +338,11 @@ export default function SettingsPage() {
           {/* Data Migration Section */}
           {isAuthenticated && (
             <section>
-              <h2 className={`text-lg font-semibold ${themeStyles.mainText} mb-4`}>Data Migration</h2>
+              <h2 className={`text-lg font-semibold ${themeStyles.mainText} mb-4`}>{t('settings.dataMigration')}</h2>
               <div className="space-y-4">
                 <div>
                   <Label htmlFor="spreadsheet-id" className={`text-sm font-medium ${themeStyles.secondaryText} mb-2 block`}>
-                    {isCreatingSpreadsheet ? "Creating your personal Google Sheet..." : "Google Sheets ID (optional - uses default if empty)"}
+                    {isCreatingSpreadsheet ? t('settings.creatingSheet') : t('settings.spreadsheetId')}
                   </Label>
                   <div className="flex gap-2">
                     <Input
@@ -309,9 +350,9 @@ export default function SettingsPage() {
                       value={spreadsheetId}
                       onChange={(e) => setSpreadsheetId(e.target.value)}
                       placeholder={
-                        isCreatingSpreadsheet ? "Creating your personal sheet..." : 
-                        isLoadingSpreadsheetId ? "Loading..." : 
-                        "Enter Google Sheets ID"
+                        isCreatingSpreadsheet ? t('settings.creatingSheet') : 
+                        isLoadingSpreadsheetId ? t('common.loading') : 
+                        t('settings.spreadsheetId')
                       }
                       disabled={isMigrating || isLoadingSpreadsheetId || isCreatingSpreadsheet}
                       className={`flex-1 backdrop-blur-md ${themeStyles.glassBorderStrong} ${themeStyles.mainText} bg-white/80 dark:bg-gray-800/80 placeholder:text-gray-500 dark:placeholder:text-gray-400`}
@@ -338,7 +379,7 @@ export default function SettingsPage() {
                     className={`w-full gap-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
                   >
                     <Plus className="h-4 w-4" />
-                    Create Personal Google Sheet
+                    {t('settings.createPersonalSheet')}
                   </Button>
                 )}
                 
@@ -350,12 +391,12 @@ export default function SettingsPage() {
                   {isMigrating ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      Migrating data...
+                      {t('settings.migratingData')}
                     </>
                   ) : (
                     <>
                       <Download className="h-4 w-4" />
-                      Load data from Google Sheets
+                      {t('settings.loadData')}
                     </>
                   )}
                 </Button>
@@ -365,25 +406,25 @@ export default function SettingsPage() {
 
           {/* Memorized Words Reset */}
           <section>
-            <h2 className={`text-lg font-semibold ${themeStyles.mainText} mb-4`}>Reset Memorized Words</h2>
+            <h2 className={`text-lg font-semibold ${themeStyles.mainText} mb-4`}>{t('settings.resetMemorizedWords')}</h2>
             <div className="space-y-4">
               {/* Reset All */}
               <div className="flex items-center justify-between">
-                <Label className={`text-sm font-medium ${themeStyles.secondaryText}`}>Reset All Memorized Words</Label>
+                <Label className={`text-sm font-medium ${themeStyles.secondaryText}`}>{t('settings.resetAll')}</Label>
                 <Button
                   variant="outline"
                   disabled={memorizedWords.size === 0}
                   onClick={handleResetMemorizedWords}
                   className={`gap-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
                 >
-                  Reset All ({memorizedWords.size})
+                  {t('settings.resetAll')} ({memorizedWords.size})
                 </Button>
               </div>
 
               {/* Reset by Day */}
               {availableDays.length > 0 && (
                 <div className="space-y-3">
-                  <Label className={`text-sm font-medium ${themeStyles.secondaryText}`}>Reset by Day Group</Label>
+                  <Label className={`text-sm font-medium ${themeStyles.secondaryText}`}>{t('settings.resetByDay')}</Label>
                   <div className="grid grid-cols-2 gap-2">
                     {availableDays.map(day => {
                       const memorizedInDay = getMemorizedWordCountByDay(day)
@@ -391,9 +432,9 @@ export default function SettingsPage() {
                       return (
                         <div key={day} className="flex items-center justify-between p-2 rounded-lg bg-gray-50 dark:bg-gray-800">
                           <div className="flex flex-col">
-                            <span className={`text-sm font-medium ${themeStyles.mainText}`}>Day {day}</span>
+                            <span className={`text-sm font-medium ${themeStyles.mainText}`}>{t('vocabulary.day')} {day}</span>
                             <span className={`text-xs ${themeStyles.secondaryText}`}>
-                              {memorizedInDay}/{totalInDay} memorized
+                              {memorizedInDay}/{totalInDay}{t('settings.memorizedCount')}
                             </span>
                           </div>
                           <Button
@@ -403,7 +444,7 @@ export default function SettingsPage() {
                             onClick={() => resetMemorizedWordsByDay(day)}
                             className={`gap-1 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
                           >
-                            Reset ({memorizedInDay})
+                            {t('common.reset')} ({memorizedInDay})
                           </Button>
                         </div>
                       )

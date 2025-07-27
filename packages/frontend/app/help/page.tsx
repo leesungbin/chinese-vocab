@@ -7,11 +7,13 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowLeft, Smartphone, Settings, Globe, Volume2, CheckCircle, Eye, Navigation, Users, BookOpen, HelpCircle, Play, Home } from 'lucide-react'
 import { useThemeStyles } from '@/stores/themeStore'
+import { useTranslation } from '@/hooks/useTranslation'
 
 function HelpPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const themeStyles = useThemeStyles()
+  const { t } = useTranslation()
   const [currentStep, setCurrentStep] = useState(1)
   const totalSteps = 4
 
@@ -28,28 +30,28 @@ function HelpPageContent() {
 
   const galaxySteps = [
     {
-      title: "갤럭시 설정 앱 열기",
-      description: "홈 화면에서 설정(⚙️) 앱을 찾아 터치합니다.",
+      title: t('help.galaxyGuide.step1.title'),
+      description: t('help.galaxyGuide.step1.description'),
       icon: <Settings className="h-6 w-6" />,
-      details: "설정 앱은 보통 앱 드로어나 홈 화면에 있습니다."
+      details: t('help.galaxyGuide.step1.details'),
     },
     {
-      title: "일반 관리 → 언어 및 입력",
-      description: "설정에서 '일반 관리'를 찾아 터치한 후, '언어 및 입력'을 선택합니다.",
+      title: t('help.galaxyGuide.step2.title'),
+      description: t('help.galaxyGuide.step2.description'),
       icon: <Globe className="h-6 w-6" />,
-      details: "기기에 따라 '일반' 또는 '언어 및 지역' 메뉴일 수 있습니다."
+      details: t('help.galaxyGuide.step2.details'),
     },
     {
-      title: "언어 추가하기",
-      description: "언어 목록에서 '언어 추가' 또는 '+' 버튼을 터치합니다.",
+      title: t('help.galaxyGuide.step3.title'),
+      description: t('help.galaxyGuide.step3.description'),
       icon: <Smartphone className="h-6 w-6" />,
-      details: "현재 한국어가 설정되어 있는지 확인하세요."
+      details: t('help.galaxyGuide.step3.details'),
     },
     {
-      title: "중국어(간체) 추가",
-      description: "언어 목록에서 '中文(简体)' 또는 '중국어(간체, 중국)'을 찾아 추가합니다.",
+      title: t('help.galaxyGuide.step4.title'),
+      description: t('help.galaxyGuide.step4.description'),
       icon: <Volume2 className="h-6 w-6" />,
-      details: "추가 후 언어 목록에 한국어와 중국어(간체)가 모두 표시되어야 합니다."
+      details: t('help.galaxyGuide.step4.details'),
     }
   ]
 
@@ -67,7 +69,7 @@ function HelpPageContent() {
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <h1 className={`text-3xl font-bold ${themeStyles.mainText}`}>
-            도움말
+            {t('help.title')}
           </h1>
         </div>
 
@@ -76,7 +78,7 @@ function HelpPageContent() {
           <CardHeader>
             <CardTitle className={`flex items-center gap-2 ${themeStyles.mainText}`}>
               <BookOpen className="h-5 w-5" />
-              목차
+              {t('navigation.tableOfContents')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -86,35 +88,35 @@ function HelpPageContent() {
                 className={`flex items-center gap-3 p-3 rounded-lg hover:${themeStyles.glassBackground} transition-colors ${themeStyles.mainText}`}
               >
                 <Play className="h-4 w-4" />
-                시작하기
+                {t('help.gettingStarted')}
               </a>
               <a 
                 href="#basic-usage" 
                 className={`flex items-center gap-3 p-3 rounded-lg hover:${themeStyles.glassBackground} transition-colors ${themeStyles.mainText}`}
               >
                 <Eye className="h-4 w-4" />
-                기본 사용법
+                {t('help.basicUsage')}
               </a>
               <a 
                 href="#navigation" 
                 className={`flex items-center gap-3 p-3 rounded-lg hover:${themeStyles.glassBackground} transition-colors ${themeStyles.mainText}`}
               >
                 <Navigation className="h-4 w-4" />
-                단어 탐색하기
+                {t('help.navigation')}
               </a>
               <a 
                 href="#authentication" 
                 className={`flex items-center gap-3 p-3 rounded-lg hover:${themeStyles.glassBackground} transition-colors ${themeStyles.mainText}`}
               >
                 <Users className="h-4 w-4" />
-                로그인 및 진도 저장
+                {t('help.authentication')}
               </a>
               <a 
                 href="#galaxy-tts-guide" 
                 className={`flex items-center gap-3 p-3 rounded-lg hover:${themeStyles.glassBackground} transition-colors ${themeStyles.mainText} border-l-4 border-orange-500`}
               >
                 <Smartphone className="h-4 w-4" />
-                갤럭시 중국어 음성 설정 (필독!)
+                {t('help.galaxyTtsGuide')}
               </a>
             </div>
           </CardContent>
@@ -126,17 +128,17 @@ function HelpPageContent() {
             <CardHeader>
               <CardTitle className={`flex items-center gap-2 ${themeStyles.mainText}`}>
                 <Play className="h-5 w-5" />
-                시작하기
+                {t('help.gettingStarted')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className={themeStyles.mainText}>
-                중국어 단어 암기장에 오신 것을 환영합니다! 이 앱은 중국어 단어 학습을 도와주는 플래시카드 앱입니다.
+                {t('help.welcomeMessage')}
               </p>
               <Alert>
                 <HelpCircle className="h-4 w-4" />
                 <AlertDescription>
-                  로그인 없이도 바로 학습을 시작할 수 있습니다. Google 로그인을 하면 학습 진도를 저장할 수 있어요.
+                  {t('help.noLoginRequired')}
                 </AlertDescription>
               </Alert>
             </CardContent>
@@ -149,27 +151,27 @@ function HelpPageContent() {
             <CardHeader>
               <CardTitle className={`flex items-center gap-2 ${themeStyles.mainText}`}>
                 <Eye className="h-5 w-5" />
-                기본 사용법
+                {t('help.basicUsage')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-3">
                 <div className={`p-4 rounded-lg ${themeStyles.glassBackground} ${themeStyles.glassBorder}`}>
-                  <h4 className={`font-semibold ${themeStyles.mainText} mb-2`}>단어 보기</h4>
+                  <h4 className={`font-semibold ${themeStyles.mainText} mb-2`}>{t('help.viewWords')}</h4>
                   <p className={themeStyles.secondaryText}>
-                    "Show Chinese Characters" 버튼을 클릭하여 한자를 확인하세요.
+                    {t('help.viewWordsDesc')}
                   </p>
                 </div>
                 <div className={`p-4 rounded-lg ${themeStyles.glassBackground} ${themeStyles.glassBorder}`}>
-                  <h4 className={`font-semibold ${themeStyles.mainText} mb-2`}>발음 듣기</h4>
+                  <h4 className={`font-semibold ${themeStyles.mainText} mb-2`}>{t('help.listenPronunciation')}</h4>
                   <p className={themeStyles.secondaryText}>
-                    스피커 버튼(🔊)을 클릭하면 중국어 발음을 들을 수 있습니다.
+                    {t('help.listenPronunciationDesc')}
                   </p>
                 </div>
                 <div className={`p-4 rounded-lg ${themeStyles.glassBackground} ${themeStyles.glassBorder}`}>
-                  <h4 className={`font-semibold ${themeStyles.mainText} mb-2`}>암기 표시</h4>
+                  <h4 className={`font-semibold ${themeStyles.mainText} mb-2`}>{t('help.markMemorized')}</h4>
                   <p className={themeStyles.secondaryText}>
-                    체크박스를 클릭하여 암기한 단어를 표시할 수 있습니다. (로그인 필요)
+                    {t('help.markMemorizedDesc')}
                   </p>
                 </div>
               </div>
@@ -183,28 +185,24 @@ function HelpPageContent() {
             <CardHeader>
               <CardTitle className={`flex items-center gap-2 ${themeStyles.mainText}`}>
                 <Navigation className="h-5 w-5" />
-                단어 탐색하기
+                {t('help.navigation')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-3">
                 <div className={`p-4 rounded-lg ${themeStyles.glassBackground} ${themeStyles.glassBorder}`}>
-                  <h4 className={`font-semibold ${themeStyles.mainText} mb-2`}>이전/다음 버튼</h4>
+                  <h4 className={`font-semibold ${themeStyles.mainText} mb-2`}>{t('help.navigationButtons')}</h4>
                   <p className={themeStyles.secondaryText}>
-                    화면 하단의 이전/다음 버튼으로 단어를 탐색할 수 있습니다.
+                    {t('help.navigationButtonsDesc')}
                   </p>
                 </div>
                 <div className={`p-4 rounded-lg ${themeStyles.glassBackground} ${themeStyles.glassBorder}`}>
-                  <h4 className={`font-semibold ${themeStyles.mainText} mb-2`}>단어 섞기</h4>
-                  <p className={themeStyles.secondaryText}>
-                    "Shuffle Words" 버튼으로 단어 순서를 랜덤하게 섞을 수 있습니다.
-                  </p>
+                  <h4 className={`font-semibold ${themeStyles.mainText} mb-2`}>{t('help.shuffleWords')}</h4>
+                  <p className={themeStyles.secondaryText}>{t('help.shuffleWordsDesc')}</p>
                 </div>
                 <div className={`p-4 rounded-lg ${themeStyles.glassBackground} ${themeStyles.glassBorder}`}>
-                  <h4 className={`font-semibold ${themeStyles.mainText} mb-2`}>일차별 필터</h4>
-                  <p className={themeStyles.secondaryText}>
-                    특정 일차의 단어만 학습하고 싶다면 Day 필터를 사용하세요.
-                  </p>
+                  <h4 className={`font-semibold ${themeStyles.mainText} mb-2`}>{t('help.dayFilter')}</h4>
+                  <p className={themeStyles.secondaryText}>{t('help.dayFilterDesc')}</p>
                 </div>
               </div>
             </CardContent>
@@ -217,51 +215,49 @@ function HelpPageContent() {
             <CardHeader>
               <CardTitle className={`flex items-center gap-2 ${themeStyles.mainText}`}>
                 <Users className="h-5 w-5" />
-                로그인 및 진도 저장
+                {t('help.authentication')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <Alert>
                 <Users className="h-4 w-4" />
                 <AlertDescription>
-                  Google 계정으로 로그인하면 학습 진도와 암기한 단어가 자동으로 저장됩니다.
+                  {t('help.saveProgress')}
                 </AlertDescription>
               </Alert>
               <div className="space-y-3">
                 <div className={`p-4 rounded-lg ${themeStyles.glassBackground} ${themeStyles.glassBorder}`}>
-                  <h4 className={`font-semibold ${themeStyles.mainText} mb-2`}>Google 로그인</h4>
-                  <p className={themeStyles.secondaryText}>
-                    화면 우상단의 "Sign in with Google" 버튼을 클릭하세요.
-                  </p>
+                  <h4 className={`font-semibold ${themeStyles.mainText} mb-2`}>{t('help.googleLogin')}</h4>
+                  <p className={themeStyles.secondaryText}>{t('help.googleLoginDesc')}</p>
                 </div>
                 <div className={`p-4 rounded-lg ${themeStyles.glassBackground} ${themeStyles.glassBorder}`}>
-                  <h4 className={`font-semibold ${themeStyles.mainText} mb-2`}>개인 단어장 생성</h4>
+                  <h4 className={`font-semibold ${themeStyles.mainText} mb-2`}>{t('help.personalSheet')}</h4>
                   <p className={themeStyles.secondaryText}>
-                    로그인 후 설정 페이지에 처음 접근하면 개인 Google Sheets가 자동으로 생성됩니다.
+                    {t('help.personalSheetDesc')}
                   </p>
                   <div className={`mt-2 p-2 rounded bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800`}>
                     <p className={`text-sm ${themeStyles.mainText}`}>
-                      📋 <strong>자동 생성 과정:</strong> 로그인 → 설정 페이지 방문 → Google Sheets 자동 생성 → 단어 데이터 동기화
+                      📋 <strong>{t('help.autoCreationProcessTitle')}:</strong> {t('help.autoCreationProcess')}
                     </p>
                   </div>
                 </div>
                 <div className={`p-4 rounded-lg ${themeStyles.glassBackground} ${themeStyles.glassBorder}`}>
-                  <h4 className={`font-semibold ${themeStyles.mainText} mb-2`}>권한 요청 안내</h4>
+                  <h4 className={`font-semibold ${themeStyles.mainText} mb-2`}>{t('help.permissionRequest')}</h4>
                   <p className={themeStyles.secondaryText}>
-                    로그인 시 Google Sheets와 Google Drive 권한을 요청하는 이유:
+                    {t('help.permissionRequestDesc')}
                   </p>
                   <ul className={`list-disc list-inside mt-2 space-y-1 ${themeStyles.secondaryText} text-sm`}>
-                    <li><strong>Google Sheets:</strong> 설정에 지정된 시트에서 단어 데이터를 가져와 앱의 데이터베이스로 옮기기 위해</li>
-                    <li><strong>Google Drive:</strong> 지정된 시트 파일에 안전하게 접근하기 위해</li>
+                    <li><strong>Google Sheets:</strong> {t('help.sheetsPermission')}</li>
+                    <li><strong>Google Drive:</strong> {t('help.drivePermission')}</li>
                   </ul>
                   <div className={`mt-3 p-3 rounded-lg bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800`}>
-                    <p className={`text-sm ${themeStyles.mainText} font-medium`}>
-                      🔒 <strong>개인정보 보호:</strong>
+                    <p className={`text-sm ${themeStyles.mainText}`}>
+                      <span role="img" aria-label="lock">🔒</span> <strong>{t('help.privacyProtection')}</strong>
                     </p>
                     <ul className={`list-disc list-inside mt-1 space-y-1 text-sm ${themeStyles.secondaryText}`}>
-                      <li>설정에서 지정한 Google Sheet ID의 파일에만 접근합니다</li>
-                      <li>다른 Google Drive 파일이나 시트에는 접근하지 않습니다</li>
-                      <li>모든 데이터는 개인 Google 계정 내에서만 처리됩니다</li>
+                      <li>{t('help.privacyPoints.0')}</li>
+                      <li>{t('help.privacyPoints.1')}</li>
+                      <li>{t('help.privacyPoints.2')}</li>
                     </ul>
                   </div>
                 </div>
@@ -276,12 +272,12 @@ function HelpPageContent() {
             <CardHeader>
               <CardTitle className={`flex items-center gap-2 ${themeStyles.mainText}`}>
                 <Smartphone className="h-5 w-5" />
-                갤럭시 중국어 음성 설정 가이드
+                {t('help.galaxyTtsGuide')}
               </CardTitle>
               <Alert>
                 <Smartphone className="h-4 w-4" />
                 <AlertDescription>
-                  갤럭시 폰에서 중국어 발음이 제대로 작동하려면 중국어 언어팩이 설치되어 있어야 합니다.
+                  {t('help.galaxyTts.requirement')}
                 </AlertDescription>
               </Alert>
             </CardHeader>
@@ -309,7 +305,7 @@ function HelpPageContent() {
                   </div>
                   <div>
                     <h3 className={`font-semibold text-lg ${themeStyles.mainText}`}>
-                      단계 {currentStep}: {galaxySteps[currentStep - 1].title}
+                      {t('help.galaxyGuide.step')} {currentStep}: {galaxySteps[currentStep - 1].title}
                     </h3>
                     <p className={`${themeStyles.secondaryText}`}>
                       {galaxySteps[currentStep - 1].description}
@@ -319,7 +315,7 @@ function HelpPageContent() {
                 
                 <div className={`p-4 rounded-lg ${themeStyles.glassBackground} ${themeStyles.glassBorder}`}>
                   <p className={`text-sm ${themeStyles.mainText}`}>
-                    💡 <strong>도움말:</strong> {galaxySteps[currentStep - 1].details}
+                    💡 <strong>{t('help.title')}:</strong> {galaxySteps[currentStep - 1].details}
                   </p>
                 </div>
               </div>
@@ -332,7 +328,7 @@ function HelpPageContent() {
                   disabled={currentStep === 1}
                   className={`backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
                 >
-                  이전
+                  {t('common.previous')}
                 </Button>
                 
                 {currentStep < totalSteps ? (
@@ -340,7 +336,7 @@ function HelpPageContent() {
                     onClick={() => setCurrentStep(currentStep + 1)}
                     className="bg-blue-500 hover:bg-blue-600 text-white"
                   >
-                    다음
+                    {t('common.next')}
                   </Button>
                 ) : (
                   <Button 
@@ -353,14 +349,14 @@ function HelpPageContent() {
                     className="bg-green-500 hover:bg-green-600 text-white"
                   >
                     <CheckCircle className="h-4 w-4 mr-2" />
-                    완료
+                    {t('help.finish')}
                   </Button>
                 )}
               </div>
 
               {/* All steps overview */}
               <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-                <h4 className={`font-semibold mb-4 ${themeStyles.mainText}`}>전체 과정 요약:</h4>
+                <h4 className={`font-semibold mb-4 ${themeStyles.mainText}`}>{t('help.overview')}</h4>
                 <div className="space-y-3">
                   {galaxySteps.map((step, index) => (
                     <div 
@@ -389,7 +385,7 @@ function HelpPageContent() {
               <Alert>
                 <CheckCircle className="h-4 w-4" />
                 <AlertDescription>
-                  설정 완료 후에는 앱을 다시 시작하면 중국어 발음이 정상적으로 작동합니다.
+                  {t('help.galaxyGuide.completionNote')}
                 </AlertDescription>
               </Alert>
             </CardContent>
@@ -404,7 +400,7 @@ function HelpPageContent() {
             className={`backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
           >
             <Home className="h-4 w-4 mr-2" />
-            맨 위로
+            {t('common.topOfPage')}
           </Button>
         </div>
       </div>
