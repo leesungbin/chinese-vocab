@@ -235,10 +235,35 @@ export default function HelpPage() {
                   </p>
                 </div>
                 <div className={`p-4 rounded-lg ${themeStyles.glassBackground} ${themeStyles.glassBorder}`}>
-                  <h4 className={`font-semibold ${themeStyles.mainText} mb-2`}>개인 단어장</h4>
+                  <h4 className={`font-semibold ${themeStyles.mainText} mb-2`}>개인 단어장 생성</h4>
                   <p className={themeStyles.secondaryText}>
-                    로그인 후 개인 Google Sheets가 자동으로 생성되어 단어 데이터가 관리됩니다.
+                    로그인 후 설정 페이지에 처음 접근하면 개인 Google Sheets가 자동으로 생성됩니다.
                   </p>
+                  <div className={`mt-2 p-2 rounded bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800`}>
+                    <p className={`text-sm ${themeStyles.mainText}`}>
+                      📋 <strong>자동 생성 과정:</strong> 로그인 → 설정 페이지 방문 → Google Sheets 자동 생성 → 단어 데이터 동기화
+                    </p>
+                  </div>
+                </div>
+                <div className={`p-4 rounded-lg ${themeStyles.glassBackground} ${themeStyles.glassBorder}`}>
+                  <h4 className={`font-semibold ${themeStyles.mainText} mb-2`}>권한 요청 안내</h4>
+                  <p className={themeStyles.secondaryText}>
+                    로그인 시 Google Sheets와 Google Drive 권한을 요청하는 이유:
+                  </p>
+                  <ul className={`list-disc list-inside mt-2 space-y-1 ${themeStyles.secondaryText} text-sm`}>
+                    <li><strong>Google Sheets:</strong> 설정에 지정된 시트에서 단어 데이터를 가져와 앱의 데이터베이스로 옮기기 위해</li>
+                    <li><strong>Google Drive:</strong> 지정된 시트 파일에 안전하게 접근하기 위해</li>
+                  </ul>
+                  <div className={`mt-3 p-3 rounded-lg bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800`}>
+                    <p className={`text-sm ${themeStyles.mainText} font-medium`}>
+                      🔒 <strong>개인정보 보호:</strong>
+                    </p>
+                    <ul className={`list-disc list-inside mt-1 space-y-1 text-sm ${themeStyles.secondaryText}`}>
+                      <li>설정에서 지정한 Google Sheet ID의 파일에만 접근합니다</li>
+                      <li>다른 Google Drive 파일이나 시트에는 접근하지 않습니다</li>
+                      <li>모든 데이터는 개인 Google 계정 내에서만 처리됩니다</li>
+                    </ul>
+                  </div>
                 </div>
               </div>
             </CardContent>
