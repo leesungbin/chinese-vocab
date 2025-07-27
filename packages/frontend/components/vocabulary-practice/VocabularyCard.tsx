@@ -1,10 +1,11 @@
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
-import { Eye, Volume2, HelpCircle } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Eye, Volume2, AlertTriangle } from "lucide-react"
 import type { VocabItem } from "@/utils/vocabularyService"
 import { useAuth } from "@/hooks/useAuth"
-import { useRouter } from "next/navigation"
 
 interface VocabularyCardProps {
   currentWord: VocabItem
@@ -44,7 +45,7 @@ export function VocabularyCard({
   showMemorizedWords
 }: VocabularyCardProps) {
   const { isAuthenticated } = useAuth()
-  const router = useRouter()
+  const [showTTSAlert, setShowTTSAlert] = useState(false)
 
   // Calculate font size based on Chinese text length
   const getFontSizeForChinese = (text: string) => {
@@ -65,6 +66,13 @@ export function VocabularyCard({
       const setVoiceAndSpeak = () => {
         const voices = speechSynthesis.getVoices()
         
+        // Check if no voices are available at all
+        if (voices.length === 0) {
+          setShowTTSAlert(true)
+          setTimeout(() => setShowTTSAlert(false), 5000)
+          return
+        }
+        
         // Try to find Chinese voices in order of preference
         const chineseVoice = voices.find(v => 
           v.lang === "zh-CN" || 
@@ -77,17 +85,19 @@ export function VocabularyCard({
         if (chineseVoice) {
           utterance.voice = chineseVoice
           utterance.lang = chineseVoice.lang
+          
+          // Additional settings for better pronunciation
+          utterance.rate = 0.6 // Slower for better pronunciation
+          utterance.pitch = 1.0
+          utterance.volume = 1.0
+          
+          speechSynthesis.speak(utterance)
         } else {
-          // Fallback: explicitly set language even without specific voice
-          utterance.lang = "zh-CN"
+          // No Chinese voice found - show alert to recommend help
+          setShowTTSAlert(true)
+          // Auto-dismiss after 5 seconds
+          setTimeout(() => setShowTTSAlert(false), 5000)
         }
-        
-        // Additional settings for better pronunciation
-        utterance.rate = 0.8 // Slower for better pronunciation
-        utterance.pitch = 1.0
-        utterance.volume = 1.0
-        
-        speechSynthesis.speak(utterance)
       }
       
       // If voices are already loaded, use them immediately
@@ -99,6 +109,10 @@ export function VocabularyCard({
         // Fallback timeout in case voiceschanged doesn't fire
         setTimeout(setVoiceAndSpeak, 100)
       }
+    } else {
+      // Speech synthesis not available
+      setShowTTSAlert(true)
+      setTimeout(() => setShowTTSAlert(false), 5000)
     }
   }
 
@@ -111,6 +125,23 @@ export function VocabularyCard({
       }}
     >
       <div className="p-8 relative">
+        {/* TTS Alert */}
+        {showTTSAlert && (
+          <Alert className="mb-4 border-orange-200 bg-orange-50 text-orange-800 dark:border-orange-800 dark:bg-orange-950 dark:text-orange-300">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertDescription>
+              중국어 음성을 찾을 수 없습니다. 갤럭시 폰의 경우 설정에서 중국어를 추가해야 할 수 있습니다. 
+              <Button
+                variant="link"
+                className="p-0 h-auto text-orange-800 dark:text-orange-300 underline ml-1"
+                onClick={() => window.open('/help#galaxy-tts-guide', '_blank')}
+              >
+                도움말 보기
+              </Button>
+            </AlertDescription>
+          </Alert>
+        )}
+
         {/* Memorized Checkbox - Only show for authenticated users */}
         {!isLoading && vocabularyDataLength > 0 && isAuthenticated && (
           <div className="absolute top-4 right-4">
@@ -155,50 +186,28 @@ export function VocabularyCard({
               {showChinese ? (
                 <div className="flex flex-col items-center">
                   <div className={`${getFontSizeForChinese(currentWord.chinese)} font-bold ${themeStyles.mainText} mb-2 whitespace-nowrap h-32`}>{currentWord.chinese}</div>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className={`backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
-                      onClick={speakChinese}
-                    >
-                      <Volume2 className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className={`backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
-                      onClick={() => router.push('/help#galaxy-tts-guide')}
-                      title="갤럭시 중국어 음성 설정 도움말"
-                    >
-                      <HelpCircle className="h-4 w-4" />
-                    </Button>
-                  </div>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className={`m-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
+                    onClick={speakChinese}
+                  >
+                    <Volume2 className="h-4 w-4" />
+                  </Button>
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center gap-4 min-h-[120px]">
                   {chineseRevealed ? (
                     <div className="flex flex-col items-center">
                       <div className={`${getFontSizeForChinese(currentWord.chinese)} font-bold ${themeStyles.mainText} mb-2 whitespace-nowrap`}>{currentWord.chinese}</div>
-                      <div className="flex gap-2">
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className={`backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
-                          onClick={speakChinese}
-                        >
-                          <Volume2 className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className={`backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
-                          onClick={() => router.push('/help#galaxy-tts-guide')}
-                          title="갤럭시 중국어 음성 설정 도움말"
-                        >
-                          <HelpCircle className="h-4 w-4" />
-                        </Button>
-                      </div>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className={`mt-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
+                        onClick={speakChinese}
+                      >
+                        <Volume2 className="h-4 w-4" />
+                      </Button>
                     </div>
                   ) : (
                     <Button
