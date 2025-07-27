@@ -314,7 +314,7 @@ export default function SettingsPage() {
                         "Enter Google Sheets ID"
                       }
                       disabled={isMigrating || isLoadingSpreadsheetId || isCreatingSpreadsheet}
-                      className={`flex-1 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.mainText}`}
+                      className={`flex-1 backdrop-blur-md ${themeStyles.glassBorderStrong} ${themeStyles.mainText} bg-white/80 dark:bg-gray-800/80 placeholder:text-gray-500 dark:placeholder:text-gray-400`}
                     />
                     <Button
                       variant="outline"
