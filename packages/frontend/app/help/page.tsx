@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowLeft, Smartphone, Settings, Globe, Volume2, CheckCircle, Eye, Navigation, Users, BookOpen, HelpCircle, Play, Home } from 'lucide-react'
 import { useThemeStyles } from '@/stores/themeStore'
 
-export default function HelpPage() {
+function HelpPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const themeStyles = useThemeStyles()
@@ -409,5 +409,13 @@ export default function HelpPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function HelpPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <HelpPageContent />
+    </Suspense>
   )
 }
