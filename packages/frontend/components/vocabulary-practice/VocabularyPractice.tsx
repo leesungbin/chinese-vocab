@@ -163,7 +163,7 @@ export default function VocabularyPractice({
 
   return (
     <div
-      className={`h-full ${themeStyles.background} p-4 relative overflow-hidden transition-colors duration-300 flex flex-col`}
+      className={`h-full ${themeStyles.background} p-4 relative overflow-y-auto transition-colors duration-300 flex flex-col`}
     >
       {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden">
@@ -178,7 +178,7 @@ export default function VocabularyPractice({
         ></div>
       </div>
 
-      <div className="w-full max-w-6xl mx-auto relative z-10 flex flex-col h-full">
+      <div className="w-full max-w-6xl mx-auto relative z-10 flex flex-col min-h-0">
         {/* Authorization Error Alert */}
         {authError && (
           <Alert className="mb-2 border-red-200 bg-red-50 text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-300 flex-shrink-0">
@@ -256,7 +256,7 @@ export default function VocabularyPractice({
         )}
 
         {/* Main Content Area */}
-        <div className="flex-1 flex flex-col min-h-0 px-5">
+        <div className="flex-1 flex flex-col px-5 space-y-4">
           <VocabularyCard
             currentWord={currentWord}
             isLoading={isLoading}
@@ -278,7 +278,7 @@ export default function VocabularyPractice({
 
           {/* Navigation */}
           {!isLoading && filteredVocabularyData.length > 0 && (
-            <div className="flex-shrink-0 mt-4">
+            <div className="flex-shrink-0">
               <NavigationControls
                 currentIndex={currentIndex}
                 filteredDataLength={filteredVocabularyData.length}
@@ -288,6 +288,20 @@ export default function VocabularyPractice({
                 prevWord={prevWord}
                 themeStyles={themeStyles}
               />
+            </div>
+          )}
+
+          {/* Loading Bar */}
+          {isLoading && (
+            <div className="flex-shrink-0">
+              <div
+                className={`rounded-full h-4 border overflow-hidden shadow-lg ${isDarkMode ? 'bg-gray-800 border-gray-600' : 'bg-gray-200 border-gray-300'}`}
+              >
+                <div
+                  className={`${themeStyles.progressFill} h-full rounded-full animate-pulse`}
+                  style={{ width: '60%' }}
+                ></div>
+              </div>
             </div>
           )}
         </div>
