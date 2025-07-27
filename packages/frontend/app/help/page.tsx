@@ -61,7 +61,7 @@ export default function HelpPage() {
           <Button
             variant="outline"
             size="icon"
-            onClick={() => router.back()}
+            onClick={() => router.push('/')}
             className={`backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
           >
             <ArrowLeft className="h-4 w-4" />
