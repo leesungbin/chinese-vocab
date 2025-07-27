@@ -185,7 +185,7 @@ export function VocabularyCard({
             <div className="relative">
               {showChinese ? (
                 <div className="flex flex-col items-center">
-                  <div className={`${getFontSizeForChinese(currentWord.chinese)} font-bold ${themeStyles.mainText} mb-2 whitespace-nowrap h-32`}>{currentWord.chinese}</div>
+                  <div className={`${getFontSizeForChinese(currentWord.chinese)} font-bold ${themeStyles.mainText} mb-2 text-center leading-tight min-h-[8rem] flex items-center justify-center`}>{currentWord.chinese}</div>
                   <Button
                     variant="outline"
                     size="icon"
@@ -199,7 +199,7 @@ export function VocabularyCard({
                 <div className="flex flex-col items-center justify-center gap-4 min-h-[120px]">
                   {chineseRevealed ? (
                     <div className="flex flex-col items-center">
-                      <div className={`${getFontSizeForChinese(currentWord.chinese)} font-bold ${themeStyles.mainText} mb-2 whitespace-nowrap`}>{currentWord.chinese}</div>
+                      <div className={`${getFontSizeForChinese(currentWord.chinese)} font-bold ${themeStyles.mainText} mb-2 text-center leading-tight`}>{currentWord.chinese}</div>
                       <Button
                         variant="outline"
                         size="icon"
