@@ -19,6 +19,11 @@
     "serverless:dev": "pnpm --filter serverless dev",
     "prepare": "husky"
   },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,css,md}": [
+      "prettier --write"
+    ]
+  },
   "devDependencies": {
     "@types/node": "^22",
     "prettier": "^3.6.2",
