@@ -129,7 +129,11 @@ export const vocabularyService = {
   },
 
   // Increment the total count for a word (when viewed)
-  async incrementWordTotal(wordId: number): Promise<boolean> {
+  async incrementWordTotal(wordId?: string): Promise<boolean> {
+    if (!wordId) {
+      throw new Error('wordId is required')
+    }
+
     try {
       const response = await fetch(
         `${API_BASE_URL}/update-vocabulary`,
