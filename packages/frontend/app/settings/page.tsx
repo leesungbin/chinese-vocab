@@ -31,6 +31,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { useNavigationState } from '@/hooks/useNavigationState'
 import { useMemorizedWords } from '@/hooks/useMemorizedWords'
 import { useAvailableDays, useVocabularyData } from '@/stores/vocabularyStore'
+import { NavigationBar } from '@/components/navigation/NavigationBar'
 
 export default function SettingsPage() {
   const router = useRouter()
@@ -252,332 +253,330 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className={`min-h-screen ${themeStyles.background} p-4`}>
-      <div className="max-w-2xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-6">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => router.back()}
-            className={`${themeStyles.mainText}`}
-            aria-label="Go back"
+    <div className={`min-h-screen ${themeStyles.background} flex flex-col`}>
+      {/* Navigation Bar */}
+      <NavigationBar showHomeButton={true} />
+
+      <div className="flex-1 p-4">
+        <div className="max-w-2xl mx-auto">
+          {/* Header */}
+          <div className="mb-6">
+            <h1 className={`text-2xl font-bold ${themeStyles.mainText}`}>
+              {t('settings.title')}
+            </h1>
+          </div>
+
+          <div
+            className={`backdrop-blur-md ${themeStyles.glassBackground} rounded-2xl ${themeStyles.glassBorder} p-6 space-y-8`}
           >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <h1 className={`text-2xl font-bold ${themeStyles.mainText}`}>
-            {t('settings.title')}
-          </h1>
-        </div>
-
-        <div
-          className={`backdrop-blur-md ${themeStyles.glassBackground} rounded-2xl ${themeStyles.glassBorder} p-6 space-y-8`}
-        >
-          {/* Error Dialog for Spreadsheet Creation */}
-          {createSpreadsheetError && (
-            <Alert className="border-red-200 bg-red-50 text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-300">
-              <AlertTriangle className="h-4 w-4" />
-              <AlertDescription>
-                <div className="space-y-2">
-                  <div className="font-semibold">
-                    {getErrorMessage(createSpreadsheetError).title}
-                  </div>
-                  <div>{getErrorMessage(createSpreadsheetError).message}</div>
-                  <div className="text-sm opacity-90">
-                    {getErrorMessage(createSpreadsheetError).suggestion}
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setCreateSpreadsheetError(null)}
-                    className="mt-2 h-7 text-xs border-red-300 text-red-700 hover:bg-red-100 dark:border-red-700 dark:text-red-300 dark:hover:bg-red-900"
-                  >
-                    Dismiss
-                  </Button>
-                </div>
-              </AlertDescription>
-            </Alert>
-          )}
-
-          {/* Theme and Language Settings */}
-          <section>
-            <h2
-              className={`text-lg font-semibold ${themeStyles.mainText} mb-4`}
-            >
-              {t('settings.appearanceLanguage')}
-            </h2>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <Label
-                  htmlFor="dark-mode"
-                  className={`text-sm font-medium ${themeStyles.secondaryText}`}
-                >
-                  {t('theme.darkMode')}
-                </Label>
-                <Switch
-                  id="dark-mode"
-                  checked={isDarkMode}
-                  onCheckedChange={toggleTheme}
-                />
-              </div>
-              <div className="flex items-center justify-between">
-                <Label
-                  htmlFor="language"
-                  className={`text-sm font-medium ${themeStyles.secondaryText}`}
-                >
-                  {t('language.changeLanguage')}
-                </Label>
-                <Select
-                  value={language}
-                  onValueChange={(value: Language) => setLanguage(value)}
-                >
-                  <SelectTrigger
-                    className={`w-32 backdrop-blur-md ${themeStyles.glassBorderStrong} ${themeStyles.mainText} bg-white/80 dark:bg-gray-800/80`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <Languages className="h-4 w-4" />
-                      <SelectValue />
+            {/* Error Dialog for Spreadsheet Creation */}
+            {createSpreadsheetError && (
+              <Alert className="border-red-200 bg-red-50 text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-300">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertDescription>
+                  <div className="space-y-2">
+                    <div className="font-semibold">
+                      {getErrorMessage(createSpreadsheetError).title}
                     </div>
-                  </SelectTrigger>
-                  <SelectContent
-                    className={`backdrop-blur-md ${themeStyles.glassBackground} ${themeStyles.glassBorder}`}
-                  >
-                    <SelectItem value="ko">{t('language.korean')}</SelectItem>
-                    <SelectItem value="en">{t('language.english')}</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </section>
+                    <div>{getErrorMessage(createSpreadsheetError).message}</div>
+                    <div className="text-sm opacity-90">
+                      {getErrorMessage(createSpreadsheetError).suggestion}
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCreateSpreadsheetError(null)}
+                      className="mt-2 h-7 text-xs border-red-300 text-red-700 hover:bg-red-100 dark:border-red-700 dark:text-red-300 dark:hover:bg-red-900"
+                    >
+                      Dismiss
+                    </Button>
+                  </div>
+                </AlertDescription>
+              </Alert>
+            )}
 
-          {/* Display Settings */}
-          <section>
-            <h2
-              className={`text-lg font-semibold ${themeStyles.mainText} mb-4`}
-            >
-              {t('settings.displaySettings')}
-            </h2>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <Label
-                  htmlFor="show-chinese"
-                  className={`text-sm font-medium ${themeStyles.secondaryText}`}
-                >
-                  {t('settings.showChinese')}
-                </Label>
-                <Switch
-                  id="show-chinese"
-                  checked={showChinese}
-                  onCheckedChange={setShowChinese}
-                />
-              </div>
-              <div className="flex items-center justify-between">
-                <Label
-                  htmlFor="show-pinyin"
-                  className={`text-sm font-medium ${themeStyles.secondaryText}`}
-                >
-                  {t('settings.showPinyin')}
-                </Label>
-                <Switch
-                  id="show-pinyin"
-                  checked={showPinyin}
-                  onCheckedChange={setShowPinyin}
-                />
-              </div>
-              <div className="flex items-center justify-between">
-                <Label
-                  htmlFor="show-korean"
-                  className={`text-sm font-medium ${themeStyles.secondaryText}`}
-                >
-                  {t('settings.showKorean')}
-                </Label>
-                <Switch
-                  id="show-korean"
-                  checked={showKorean}
-                  onCheckedChange={setShowKorean}
-                />
-              </div>
-              <div className="flex items-center justify-between">
-                <Label
-                  htmlFor="show-memorized"
-                  className={`text-sm font-medium ${themeStyles.secondaryText}`}
-                >
-                  {t('settings.showMemorized')}
-                </Label>
-                <Switch
-                  id="show-memorized"
-                  checked={showMemorizedWords}
-                  onCheckedChange={setShowMemorizedWords}
-                />
-              </div>
-            </div>
-          </section>
-
-          {/* Data Migration Section */}
-          {isAuthenticated && (
+            {/* Theme and Language Settings */}
             <section>
               <h2
                 className={`text-lg font-semibold ${themeStyles.mainText} mb-4`}
               >
-                {t('settings.dataMigration')}
+                {t('settings.appearanceLanguage')}
               </h2>
               <div className="space-y-4">
-                <div>
+                <div className="flex items-center justify-between">
                   <Label
-                    htmlFor="spreadsheet-id"
-                    className={`text-sm font-medium ${themeStyles.secondaryText} mb-2 block`}
+                    htmlFor="dark-mode"
+                    className={`text-sm font-medium ${themeStyles.secondaryText}`}
                   >
-                    {isCreatingSpreadsheet
-                      ? t('settings.creatingSheet')
-                      : t('settings.spreadsheetId')}
+                    {t('theme.darkMode')}
                   </Label>
-                  <div className="flex gap-2">
-                    <Input
-                      id="spreadsheet-id"
-                      value={spreadsheetId}
-                      onChange={e => setSpreadsheetId(e.target.value)}
-                      placeholder={
-                        isCreatingSpreadsheet
-                          ? t('settings.creatingSheet')
-                          : isLoadingSpreadsheetId
-                            ? t('common.loading')
-                            : t('settings.spreadsheetId')
-                      }
-                      disabled={
-                        isMigrating ||
-                        isLoadingSpreadsheetId ||
-                        isCreatingSpreadsheet
-                      }
-                      className={`flex-1 backdrop-blur-md ${themeStyles.glassBorderStrong} ${themeStyles.mainText} bg-white/80 dark:bg-gray-800/80 placeholder:text-gray-500 dark:placeholder:text-gray-400`}
-                    />
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={handleGoToGoogleSheet}
-                      disabled={
-                        isMigrating ||
-                        isLoadingSpreadsheetId ||
-                        isCreatingSpreadsheet
-                      }
-                      className={`backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
-                      aria-label="Open Google Sheet"
-                      title="Open Google Sheet in new tab"
-                    >
-                      <ExternalLink className="h-4 w-4" />
-                    </Button>
-                  </div>
+                  <Switch
+                    id="dark-mode"
+                    checked={isDarkMode}
+                    onCheckedChange={toggleTheme}
+                  />
                 </div>
-
-                {/* Show create button if authenticated user has no spreadsheet and auto-create failed/not tried */}
-                {!spreadsheetId &&
-                  hasTriedAutoCreate &&
-                  !isCreatingSpreadsheet &&
-                  localStorage.getItem('auth-token') && (
-                    <Button
-                      onClick={handleCreateSpreadsheet}
-                      disabled={isCreatingSpreadsheet}
-                      className={`w-full gap-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
+                <div className="flex items-center justify-between">
+                  <Label
+                    htmlFor="language"
+                    className={`text-sm font-medium ${themeStyles.secondaryText}`}
+                  >
+                    {t('language.changeLanguage')}
+                  </Label>
+                  <Select
+                    value={language}
+                    onValueChange={(value: Language) => setLanguage(value)}
+                  >
+                    <SelectTrigger
+                      className={`w-32 backdrop-blur-md ${themeStyles.glassBorderStrong} ${themeStyles.mainText} bg-white/80 dark:bg-gray-800/80`}
                     >
-                      <Plus className="h-4 w-4" />
-                      {t('settings.createPersonalSheet')}
-                    </Button>
-                  )}
-
-                <Button
-                  onClick={handleMigrateData}
-                  disabled={isMigrating}
-                  className={`w-full gap-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
-                >
-                  {isMigrating ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      {t('settings.migratingData')}
-                    </>
-                  ) : (
-                    <>
-                      <Download className="h-4 w-4" />
-                      {t('settings.loadData')}
-                    </>
-                  )}
-                </Button>
+                      <div className="flex items-center gap-2">
+                        <Languages className="h-4 w-4" />
+                        <SelectValue />
+                      </div>
+                    </SelectTrigger>
+                    <SelectContent
+                      className={`backdrop-blur-md ${themeStyles.glassBackground} ${themeStyles.glassBorder}`}
+                    >
+                      <SelectItem value="ko">{t('language.korean')}</SelectItem>
+                      <SelectItem value="en">
+                        {t('language.english')}
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </section>
-          )}
 
-          {/* Memorized Words Reset */}
-          <section>
-            <h2
-              className={`text-lg font-semibold ${themeStyles.mainText} mb-4`}
-            >
-              {t('settings.resetMemorizedWords')}
-            </h2>
-            <div className="space-y-4">
-              {/* Reset All */}
-              <div className="flex items-center justify-between">
-                <Label
-                  className={`text-sm font-medium ${themeStyles.secondaryText}`}
-                >
-                  {t('settings.resetAll')}
-                </Label>
-                <Button
-                  variant="outline"
-                  disabled={memorizedWords.size === 0}
-                  onClick={handleResetMemorizedWords}
-                  className={`gap-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
-                >
-                  {t('settings.resetAll')} ({memorizedWords.size})
-                </Button>
+            {/* Display Settings */}
+            <section>
+              <h2
+                className={`text-lg font-semibold ${themeStyles.mainText} mb-4`}
+              >
+                {t('settings.displaySettings')}
+              </h2>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <Label
+                    htmlFor="show-chinese"
+                    className={`text-sm font-medium ${themeStyles.secondaryText}`}
+                  >
+                    {t('settings.showChinese')}
+                  </Label>
+                  <Switch
+                    id="show-chinese"
+                    checked={showChinese}
+                    onCheckedChange={setShowChinese}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <Label
+                    htmlFor="show-pinyin"
+                    className={`text-sm font-medium ${themeStyles.secondaryText}`}
+                  >
+                    {t('settings.showPinyin')}
+                  </Label>
+                  <Switch
+                    id="show-pinyin"
+                    checked={showPinyin}
+                    onCheckedChange={setShowPinyin}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <Label
+                    htmlFor="show-korean"
+                    className={`text-sm font-medium ${themeStyles.secondaryText}`}
+                  >
+                    {t('settings.showKorean')}
+                  </Label>
+                  <Switch
+                    id="show-korean"
+                    checked={showKorean}
+                    onCheckedChange={setShowKorean}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <Label
+                    htmlFor="show-memorized"
+                    className={`text-sm font-medium ${themeStyles.secondaryText}`}
+                  >
+                    {t('settings.showMemorized')}
+                  </Label>
+                  <Switch
+                    id="show-memorized"
+                    checked={showMemorizedWords}
+                    onCheckedChange={setShowMemorizedWords}
+                  />
+                </div>
               </div>
+            </section>
 
-              {/* Reset by Day */}
-              {availableDays.length > 0 && (
-                <div className="space-y-3">
+            {/* Data Migration Section */}
+            {isAuthenticated && (
+              <section>
+                <h2
+                  className={`text-lg font-semibold ${themeStyles.mainText} mb-4`}
+                >
+                  {t('settings.dataMigration')}
+                </h2>
+                <div className="space-y-4">
+                  <div>
+                    <Label
+                      htmlFor="spreadsheet-id"
+                      className={`text-sm font-medium ${themeStyles.secondaryText} mb-2 block`}
+                    >
+                      {isCreatingSpreadsheet
+                        ? t('settings.creatingSheet')
+                        : t('settings.spreadsheetId')}
+                    </Label>
+                    <div className="flex gap-2">
+                      <Input
+                        id="spreadsheet-id"
+                        value={spreadsheetId}
+                        onChange={e => setSpreadsheetId(e.target.value)}
+                        placeholder={
+                          isCreatingSpreadsheet
+                            ? t('settings.creatingSheet')
+                            : isLoadingSpreadsheetId
+                              ? t('common.loading')
+                              : t('settings.spreadsheetId')
+                        }
+                        disabled={
+                          isMigrating ||
+                          isLoadingSpreadsheetId ||
+                          isCreatingSpreadsheet
+                        }
+                        className={`flex-1 backdrop-blur-md ${themeStyles.glassBorderStrong} ${themeStyles.mainText} bg-white/80 dark:bg-gray-800/80 placeholder:text-gray-500 dark:placeholder:text-gray-400`}
+                      />
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={handleGoToGoogleSheet}
+                        disabled={
+                          isMigrating ||
+                          isLoadingSpreadsheetId ||
+                          isCreatingSpreadsheet
+                        }
+                        className={`backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
+                        aria-label="Open Google Sheet"
+                        title="Open Google Sheet in new tab"
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Show create button if authenticated user has no spreadsheet and auto-create failed/not tried */}
+                  {!spreadsheetId &&
+                    hasTriedAutoCreate &&
+                    !isCreatingSpreadsheet &&
+                    localStorage.getItem('auth-token') && (
+                      <Button
+                        onClick={handleCreateSpreadsheet}
+                        disabled={isCreatingSpreadsheet}
+                        className={`w-full gap-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
+                      >
+                        <Plus className="h-4 w-4" />
+                        {t('settings.createPersonalSheet')}
+                      </Button>
+                    )}
+
+                  <Button
+                    onClick={handleMigrateData}
+                    disabled={isMigrating}
+                    className={`w-full gap-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
+                  >
+                    {isMigrating ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        {t('settings.migratingData')}
+                      </>
+                    ) : (
+                      <>
+                        <Download className="h-4 w-4" />
+                        {t('settings.loadData')}
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </section>
+            )}
+
+            {/* Memorized Words Reset */}
+            <section>
+              <h2
+                className={`text-lg font-semibold ${themeStyles.mainText} mb-4`}
+              >
+                {t('settings.resetMemorizedWords')}
+              </h2>
+              <div className="space-y-4">
+                {/* Reset All */}
+                <div className="flex items-center justify-between">
                   <Label
                     className={`text-sm font-medium ${themeStyles.secondaryText}`}
                   >
-                    {t('settings.resetByDay')}
+                    {t('settings.resetAll')}
                   </Label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {availableDays.map(day => {
-                      const memorizedInDay = getMemorizedWordCountByDay(day)
-                      const totalInDay = vocabularyData.filter(
-                        word => word.day === day
-                      ).length
-                      return (
-                        <div
-                          key={day}
-                          className="flex items-center justify-between p-2 rounded-lg bg-gray-50 dark:bg-gray-800"
-                        >
-                          <div className="flex flex-col">
-                            <span
-                              className={`text-sm font-medium ${themeStyles.mainText}`}
-                            >
-                              {t('vocabulary.day')} {day}
-                            </span>
-                            <span
-                              className={`text-xs ${themeStyles.secondaryText}`}
-                            >
-                              {memorizedInDay}/{totalInDay}
-                              {t('settings.memorizedCount')}
-                            </span>
-                          </div>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            disabled={memorizedInDay === 0}
-                            onClick={() => resetMemorizedWordsByDay(day)}
-                            className={`gap-1 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
-                          >
-                            {t('common.reset')} ({memorizedInDay})
-                          </Button>
-                        </div>
-                      )
-                    })}
-                  </div>
+                  <Button
+                    variant="outline"
+                    disabled={memorizedWords.size === 0}
+                    onClick={handleResetMemorizedWords}
+                    className={`gap-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
+                  >
+                    {t('settings.resetAll')} ({memorizedWords.size})
+                  </Button>
                 </div>
-              )}
-            </div>
-          </section>
+
+                {/* Reset by Day */}
+                {availableDays.length > 0 && (
+                  <div className="space-y-3">
+                    <Label
+                      className={`text-sm font-medium ${themeStyles.secondaryText}`}
+                    >
+                      {t('settings.resetByDay')}
+                    </Label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {availableDays.map(day => {
+                        const memorizedInDay = getMemorizedWordCountByDay(day)
+                        const totalInDay = vocabularyData.filter(
+                          word => word.day === day
+                        ).length
+                        return (
+                          <div
+                            key={day}
+                            className="flex items-center justify-between p-2 rounded-lg bg-gray-50 dark:bg-gray-800"
+                          >
+                            <div className="flex flex-col">
+                              <span
+                                className={`text-sm font-medium ${themeStyles.mainText}`}
+                              >
+                                {t('vocabulary.day')} {day}
+                              </span>
+                              <span
+                                className={`text-xs ${themeStyles.secondaryText}`}
+                              >
+                                {memorizedInDay}/{totalInDay}
+                                {t('settings.memorizedCount')}
+                              </span>
+                            </div>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              disabled={memorizedInDay === 0}
+                              onClick={() => resetMemorizedWordsByDay(day)}
+                              className={`gap-1 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
+                            >
+                              {t('common.reset')} ({memorizedInDay})
+                            </Button>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </section>
+          </div>
         </div>
       </div>
     </div>

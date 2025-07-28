@@ -1,33 +1,17 @@
 'use client'
 
 import { useAuth } from '@/hooks/useAuth'
-import { useRouter } from 'next/navigation'
 import VocabularyPractice from '@/components/vocabulary-practice/VocabularyPractice'
-import { AuthHeader } from './AuthHeader'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Button } from '@/components/ui/button'
-import {
-  InfoIcon,
-  Sun,
-  Moon,
-  Settings,
-  HelpCircle,
-  Languages,
-} from 'lucide-react'
+import { InfoIcon } from 'lucide-react'
 import { useThemeStore, useThemeStyles } from '@/stores/themeStore'
-import { useLanguageStore, type Language } from '@/stores/languageStore'
 import { useTranslation } from '@/hooks/useTranslation'
+import { NavigationBar } from '@/components/navigation/NavigationBar'
 
 export default function ProtectedVocabulary() {
-  const { user, isAuthenticated, isLoading, signIn } = useAuth()
-  const router = useRouter()
-  const isDarkMode = useThemeStore(state => state.isDarkMode)
-  const toggleTheme = useThemeStore(state => state.toggleTheme)
+  const { user, isAuthenticated, isLoading } = useAuth()
   const isLoaded = useThemeStore(state => state.isLoaded)
   const themeStyles = useThemeStyles()
-
-  const language = useLanguageStore(state => state.language)
-  const setLanguage = useLanguageStore(state => state.setLanguage)
   const { t } = useTranslation()
 
   if (isLoading || !isLoaded) {
@@ -45,61 +29,8 @@ export default function ProtectedVocabulary() {
 
   return (
     <div className={`h-screen flex flex-col ${themeStyles.background}`}>
-      {/* Header with auth controls */}
-      <div className="bg-white dark:bg-gray-800 flex-shrink-0">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex justify-end items-center py-4">
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={toggleTheme}
-                className="backdrop-blur-md border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800"
-                aria-label={
-                  isDarkMode
-                    ? t('theme.switchToLight')
-                    : t('theme.switchToDark')
-                }
-              >
-                {isDarkMode ? (
-                  <Sun className="h-4 w-4" />
-                ) : (
-                  <Moon className="h-4 w-4" />
-                )}
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setLanguage(language === 'ko' ? 'en' : 'ko')}
-                className="backdrop-blur-md border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 gap-1"
-                aria-label={t('language.changeLanguage')}
-              >
-                <Languages className="h-4 w-4" />
-                {language === 'ko' ? 'EN' : '한'}
-              </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => router.push('/settings')}
-                className="backdrop-blur-md border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800"
-                aria-label="Open settings"
-              >
-                <Settings className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => router.push('/help')}
-                className="backdrop-blur-md border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800"
-                aria-label="Open help"
-              >
-                <HelpCircle className="h-4 w-4" />
-              </Button>
-              <AuthHeader />
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Navigation Bar */}
+      <NavigationBar />
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto">

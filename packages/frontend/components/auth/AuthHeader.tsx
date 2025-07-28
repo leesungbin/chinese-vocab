@@ -34,12 +34,6 @@ export function AuthHeader() {
     signOut()
   }
 
-  if (isLoading) {
-    return (
-      <div className="w-8 h-8 border-2 border-gray-300 border-t-transparent rounded-full animate-spin" />
-    )
-  }
-
   const initializeGoogleOAuth = useCallback(() => {
     if (typeof window === 'undefined') return
 
@@ -123,6 +117,12 @@ export function AuthHeader() {
       checkGoogleLoaded()
     }
   }, [initializeGoogleOAuth])
+
+  if (isLoading) {
+    return (
+      <div className="w-8 h-8 border-2 border-gray-300 border-t-transparent rounded-full animate-spin" />
+    )
+  }
 
   if (!isAuthenticated || !user) {
     return (
