@@ -24,9 +24,9 @@ provider:
             - dynamodb:BatchWriteItem
             - dynamodb:DescribeTable
             - dynamodb:CreateTable
-          Resource: 
-            - "arn:aws:dynamodb:ap-northeast-2:*:table/user-vocabulary"
-            - "arn:aws:dynamodb:ap-northeast-2:*:table/user-spreadsheets"
+          Resource:
+            - 'arn:aws:dynamodb:ap-northeast-2:*:table/user-vocabulary'
+            - 'arn:aws:dynamodb:ap-northeast-2:*:table/user-spreadsheets'
 
 build:
   esbuild:
@@ -54,7 +54,7 @@ functions:
               - Expires
             allowCredentials: false
     timeout: 30
-    
+
   migrateData:
     handler: src/handlers/migrateData.handler
     events:
@@ -105,7 +105,7 @@ functions:
     environment:
       GOOGLE_SHEETS_CREDENTIALS: ${env:GOOGLE_SHEETS_CREDENTIALS}
       GOOGLE_SHEETS_SPREADSHEET_ID: ${env:GOOGLE_SHEETS_SPREADSHEET_ID}
-    
+
   updateVocabulary:
     handler: src/handlers/updateVocabulary.handler
     events:
@@ -126,7 +126,7 @@ functions:
               - Expires
             allowCredentials: false
     timeout: 30
-    
+
   getUserSpreadsheet:
     handler: src/handlers/getUserSpreadsheet.getUserSpreadsheet
     events:
@@ -147,7 +147,7 @@ functions:
               - Expires
             allowCredentials: false
     timeout: 30
-    
+
   getAnonymousVocabulary:
     handler: src/handlers/getAnonymousVocabulary.getAnonymousVocabulary
     events:
@@ -171,7 +171,7 @@ functions:
     environment:
       GOOGLE_SHEETS_CREDENTIALS: ${env:GOOGLE_SHEETS_CREDENTIALS}
       GOOGLE_SHEETS_SPREADSHEET_ID: ${env:GOOGLE_SHEETS_SPREADSHEET_ID}
-    
+
   createUserSpreadsheet:
     handler: src/handlers/createUserSpreadsheet.createUserSpreadsheet
     events:
@@ -196,7 +196,6 @@ functions:
     environment:
       GOOGLE_SHEETS_CREDENTIALS: ${env:GOOGLE_SHEETS_CREDENTIALS}
       GOOGLE_SHEETS_SPREADSHEET_ID: ${env:GOOGLE_SHEETS_SPREADSHEET_ID}
-    
 
 package:
   individually: true

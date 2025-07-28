@@ -1,47 +1,55 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 import jwt from 'jsonwebtoken'
-import {UserInfo} from "../types";
+import { UserInfo } from '../types'
 
 // Google OAuth2 verification and profile fetching
-async function verifyGoogleTokenAndGetProfile(credential: string, isOAuth: boolean = false) {
+async function verifyGoogleTokenAndGetProfile(
+  credential: string,
+  isOAuth: boolean = false
+) {
   if (isOAuth) {
     // For OAuth access token, get user info directly
-    const userInfoResponse = await fetch(`https://www.googleapis.com/oauth2/v2/userinfo`, {
-      headers: {
-        'Authorization': `Bearer ${credential}`
+    const userInfoResponse = await fetch(
+      `https://www.googleapis.com/oauth2/v2/userinfo`,
+      {
+        headers: {
+          Authorization: `Bearer ${credential}`,
+        },
       }
-    })
-    
+    )
+
     if (!userInfoResponse.ok) {
       const errorText = await userInfoResponse.text()
       console.error('OAuth userinfo error:', errorText)
       throw new Error('Invalid Google OAuth token')
     }
 
-    const userInfo = await userInfoResponse.json() as UserInfo
-    
+    const userInfo = (await userInfoResponse.json()) as UserInfo
+
     return {
       sub: userInfo.id,
       email: userInfo.email,
       name: userInfo.name,
-      picture: userInfo.picture
+      picture: userInfo.picture,
     }
   } else {
     // Original ID token verification flow
-    const tokenResponse = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${credential}`)
-    
+    const tokenResponse = await fetch(
+      `https://oauth2.googleapis.com/tokeninfo?id_token=${credential}`
+    )
+
     if (!tokenResponse.ok) {
       throw new Error('Invalid Google credential')
     }
-    
-    const tokenPayload = await tokenResponse.json() as { aud: string }
-    
+
+    const tokenPayload = (await tokenResponse.json()) as { aud: string }
+
     // Verify the audience matches our client ID
     const expectedClientId = process.env.GOOGLE_CLIENT_ID
     if (tokenPayload.aud !== expectedClientId) {
       throw new Error('Invalid audience')
     }
-    
+
     // Get profile information from userinfo endpoint using the access token
     // Note: For ID tokens, we need to decode the token to get basic info
     // and use Google's userinfo API for reliable profile picture access
@@ -56,7 +64,7 @@ async function verifyGoogleTokenAndGetProfile(credential: string, isOAuth: boole
           .join('')
       )
       const decodedToken = JSON.parse(jsonPayload)
-      
+
       // Return the decoded token data which should include picture
       return decodedToken
     } catch (error) {
@@ -67,7 +75,9 @@ async function verifyGoogleTokenAndGetProfile(credential: string, isOAuth: boole
   }
 }
 
-export async function auth(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
+export async function auth(
+  event: APIGatewayProxyEvent
+): Promise<APIGatewayProxyResult> {
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
@@ -93,7 +103,7 @@ export async function auth(event: APIGatewayProxyEvent): Promise<APIGatewayProxy
     }
 
     const { credential, isOAuth } = JSON.parse(event.body)
-    
+
     if (!credential) {
       return {
         statusCode: 400,
@@ -103,14 +113,17 @@ export async function auth(event: APIGatewayProxyEvent): Promise<APIGatewayProxy
     }
 
     // Verify Google credential and get profile
-    const googlePayload = await verifyGoogleTokenAndGetProfile(credential, isOAuth)
-    
+    const googlePayload = await verifyGoogleTokenAndGetProfile(
+      credential,
+      isOAuth
+    )
+
     // Create user object
     const user = {
       id: googlePayload.sub,
       email: googlePayload.email,
       name: googlePayload.name,
-      image: googlePayload.picture
+      image: googlePayload.picture,
     }
 
     // Create JWT token
@@ -126,7 +139,7 @@ export async function auth(event: APIGatewayProxyEvent): Promise<APIGatewayProxy
         name: user.name,
       },
       jwtSecret,
-      { 
+      {
         expiresIn: '24h',
         issuer: 'chinese-vocab-app',
         subject: user.id,
@@ -138,7 +151,7 @@ export async function auth(event: APIGatewayProxyEvent): Promise<APIGatewayProxy
       headers: corsHeaders,
       body: JSON.stringify({
         token,
-        user
+        user,
       }),
     }
   } catch (error) {
@@ -146,8 +159,8 @@ export async function auth(event: APIGatewayProxyEvent): Promise<APIGatewayProxy
     return {
       statusCode: 401,
       headers: corsHeaders,
-      body: JSON.stringify({ 
-        error: error instanceof Error ? error.message : 'Authentication failed' 
+      body: JSON.stringify({
+        error: error instanceof Error ? error.message : 'Authentication failed',
       }),
     }
   }

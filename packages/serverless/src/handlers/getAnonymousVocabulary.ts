@@ -7,7 +7,9 @@ const ANONYMOUS_USER_ID = 'anonymous'
 
 const dynamoService = new DynamoService()
 
-export async function getAnonymousVocabulary(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
+export async function getAnonymousVocabulary(
+  event: APIGatewayProxyEvent
+): Promise<APIGatewayProxyResult> {
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
@@ -25,15 +27,18 @@ export async function getAnonymousVocabulary(event: APIGatewayProxyEvent): Promi
 
   try {
     // First try to get cached anonymous data from DynamoDB
-    let vocabularyWords = await dynamoService.getUserVocabulary(ANONYMOUS_USER_ID)
-    
+    let vocabularyWords =
+      await dynamoService.getUserVocabulary(ANONYMOUS_USER_ID)
+
     // If no cached data exists, fetch from Google Sheets and cache it
     if (vocabularyWords.length === 0) {
-      console.log('No cached anonymous data found, fetching from Google Sheets...')
-      
+      console.log(
+        'No cached anonymous data found, fetching from Google Sheets...'
+      )
+
       const sheetsService = new GoogleSheetsService(ANONYMOUS_SPREADSHEET_ID)
       const sheetData = await sheetsService.getVocabWords()
-      
+
       if (sheetData.length > 0) {
         // Save the data to DynamoDB for future requests
         await dynamoService.batchAddVocabWords(ANONYMOUS_USER_ID, sheetData)
@@ -50,8 +55,8 @@ export async function getAnonymousVocabulary(event: APIGatewayProxyEvent): Promi
         data: {
           words: vocabularyWords,
           count: vocabularyWords.length,
-          filter: 'all'
-        }
+          filter: 'all',
+        },
       }),
     }
   } catch (error) {
@@ -59,9 +64,12 @@ export async function getAnonymousVocabulary(event: APIGatewayProxyEvent): Promi
     return {
       statusCode: 500,
       headers: corsHeaders,
-      body: JSON.stringify({ 
+      body: JSON.stringify({
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to fetch vocabulary data' 
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to fetch vocabulary data',
       }),
     }
   }

@@ -16,7 +16,10 @@ export interface AuthenticatedUser {
 }
 
 export class AuthError extends Error {
-  constructor(message: string, public statusCode: number = 401) {
+  constructor(
+    message: string,
+    public statusCode: number = 401
+  ) {
     super(message)
     this.name = 'AuthError'
   }
@@ -24,7 +27,7 @@ export class AuthError extends Error {
 
 export function validateJWT(event: APIGatewayProxyEvent): AuthenticatedUser {
   const token = extractTokenFromEvent(event)
-  
+
   if (!token) {
     throw new AuthError('Authentication token is required')
   }
@@ -36,7 +39,7 @@ export function validateJWT(event: APIGatewayProxyEvent): AuthenticatedUser {
     }
 
     const decoded = jwt.verify(token, jwtSecret) as JWTPayload
-    
+
     return {
       userId: decoded.userId,
       email: decoded.email,
@@ -55,15 +58,17 @@ export function validateJWT(event: APIGatewayProxyEvent): AuthenticatedUser {
   }
 }
 
-export function validateAuthorizedUser(event: APIGatewayProxyEvent): AuthenticatedUser {
+export function validateAuthorizedUser(
+  event: APIGatewayProxyEvent
+): AuthenticatedUser {
   const user = validateJWT(event)
-  
+
   // Only allow updates from the authorized email
   const authorizedEmail = 'lee@sungbin.dev'
   if (user.email !== authorizedEmail) {
     throw new AuthError('You are not authorized to perform this action', 403)
   }
-  
+
   return user
 }
 

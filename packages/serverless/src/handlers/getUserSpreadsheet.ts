@@ -4,7 +4,9 @@ import { DynamoService } from '../services/dynamoService'
 
 const dynamoService = new DynamoService()
 
-export async function getUserSpreadsheet(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
+export async function getUserSpreadsheet(
+  event: APIGatewayProxyEvent
+): Promise<APIGatewayProxyResult> {
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
@@ -22,12 +24,15 @@ export async function getUserSpreadsheet(event: APIGatewayProxyEvent): Promise<A
 
   try {
     // Get and verify the JWT token
-    const authHeader = event.headers['Authorization'] || event.headers['authorization']
+    const authHeader =
+      event.headers['Authorization'] || event.headers['authorization']
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return {
         statusCode: 401,
         headers: corsHeaders,
-        body: JSON.stringify({ error: 'Missing or invalid authorization header' }),
+        body: JSON.stringify({
+          error: 'Missing or invalid authorization header',
+        }),
       }
     }
 
@@ -65,7 +70,7 @@ export async function getUserSpreadsheet(event: APIGatewayProxyEvent): Promise<A
       headers: corsHeaders,
       body: JSON.stringify({
         success: true,
-        spreadsheetId: spreadsheetId
+        spreadsheetId: spreadsheetId,
       }),
     }
   } catch (error) {
@@ -73,8 +78,8 @@ export async function getUserSpreadsheet(event: APIGatewayProxyEvent): Promise<A
     return {
       statusCode: 500,
       headers: corsHeaders,
-      body: JSON.stringify({ 
-        error: error instanceof Error ? error.message : 'Internal server error' 
+      body: JSON.stringify({
+        error: error instanceof Error ? error.message : 'Internal server error',
       }),
     }
   }

@@ -9,7 +9,9 @@
     "remove": "serverless remove",
     "invoke": "serverless invoke",
     "logs": "serverless logs",
-    "clean": "rm -rf dist node_modules .serverless"
+    "clean": "rm -rf dist node_modules .serverless",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.848.0",
@@ -22,6 +24,7 @@
     "@types/aws-lambda": "^8.10.145",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^22",
+    "prettier": "^3.6.2",
     "serverless": "^4.4.7",
     "serverless-plugin-typescript": "^2.1.5",
     "tsx": "^4.19.2",

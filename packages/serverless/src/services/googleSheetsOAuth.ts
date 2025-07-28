@@ -15,7 +15,9 @@ export class GoogleSheetsOAuthService {
     this.drive = google.drive({ version: 'v3', auth: oauth2Client })
   }
 
-  async createSpreadsheet(title: string): Promise<{ spreadsheetId: string; spreadsheetUrl: string }> {
+  async createSpreadsheet(
+    title: string
+  ): Promise<{ spreadsheetId: string; spreadsheetUrl: string }> {
     try {
       // Create the spreadsheet
       const createResponse = await this.sheets.spreadsheets.create({
@@ -59,7 +61,7 @@ export class GoogleSheetsOAuthService {
             ['=ROW()-1', 1, '丈夫', 'zhàngfu', '남편'],
             ['=ROW()-1', 1, '阿姨', 'āyí', '이모 / 아주머니'],
             ['=ROW()-1', 2, '叔叔', 'shūshu', '삼촌 / 아저씨'],
-            ['=ROW()-1', 2, '邻居', 'línjū', '이웃']
+            ['=ROW()-1', 2, '邻居', 'línjū', '이웃'],
           ],
         },
       })
@@ -103,8 +105,9 @@ export class GoogleSheetsOAuthService {
         resource: {
           role: 'reader',
           type: 'user',
-          emailAddress: 'chinese-vocab@chinese-vocab-466512.iam.gserviceaccount.com'
-        }
+          emailAddress:
+            'chinese-vocab@chinese-vocab-466512.iam.gserviceaccount.com',
+        },
       })
 
       return {
@@ -117,7 +120,10 @@ export class GoogleSheetsOAuthService {
     }
   }
 
-  async addVocabularyEntries(spreadsheetId: string, entries: any[]): Promise<void> {
+  async addVocabularyEntries(
+    spreadsheetId: string,
+    entries: any[]
+  ): Promise<void> {
     try {
       // Get the current number of rows with data
       const response = await this.sheets.spreadsheets.values.get({
@@ -125,7 +131,9 @@ export class GoogleSheetsOAuthService {
         range: 'Vocabulary!A:A',
       })
 
-      const existingRows = response.data.values ? response.data.values.length : 1
+      const existingRows = response.data.values
+        ? response.data.values.length
+        : 1
       const startRow = existingRows + 1
 
       // Prepare the values to insert
@@ -135,7 +143,7 @@ export class GoogleSheetsOAuthService {
         entry.english,
         entry.level || '',
         new Date().toISOString().split('T')[0], // Date added
-        'New' // Study status
+        'New', // Study status
       ])
 
       // Add the new entries
