@@ -28,29 +28,27 @@ export default function ProtectedVocabulary() {
   }
 
   return (
-    <div className={`h-screen flex flex-col ${themeStyles.background}`}>
+    <div className={themeStyles.background}>
       {/* Navigation Bar */}
       <NavigationBar />
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          {!isAuthenticated && (
-            <Alert className="mb-6">
-              <InfoIcon className="h-4 w-4" />
-              <AlertDescription>
-                You can view vocabulary words, but you need to sign in with
-                Google to save your progress and mark words as memorized.
-              </AlertDescription>
-            </Alert>
-          )}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 pb-10">
+        {!isAuthenticated && (
+          <Alert className="mb-6">
+            <InfoIcon className="h-4 w-4" />
+            <AlertDescription>
+              You can view vocabulary words, but you need to sign in with Google
+              to save your progress and mark words as memorized.
+            </AlertDescription>
+          </Alert>
+        )}
 
-          <VocabularyPractice userId={user?.id || null} />
-        </div>
+        <VocabularyPractice userId={user?.id || null} />
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex-shrink-0">
+      <footer className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 mt-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="text-center">
             <p className="text-sm text-gray-500 dark:text-gray-400">
