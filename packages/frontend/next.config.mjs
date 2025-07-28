@@ -4,7 +4,7 @@ const nextConfig = {
   basePath: '',
   trailingSlash: true,
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: false,
   },
   typescript: {
     ignoreBuildErrors: true,
