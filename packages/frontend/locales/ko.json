@@ -45,9 +45,9 @@
     "migratingData": "데이터 마이그레이션 중...",
     "createPersonalSheet": "개인 Google Sheet 생성",
     "openGoogleSheet": "Google Sheet 열기",
-    "resetMemorizedWords": "암기한 단어 재설정",
-    "resetAll": "모든 암기 단어 재설정",
-    "resetByDay": "일차별 재설정",
+    "resetMemorizedWords": "암기한 단어 초기화",
+    "resetAll": "모든 암기 단어 초기화",
+    "resetByDay": "일차별 초기화",
     "memorizedCount": "개 암기함",
     "errors": {
       "storageQuota": "Google Drive 저장소 용량이 초과되었습니다",
@@ -76,9 +76,19 @@
     "notMemorized": "암기 안 함",
     "previousWord": "이전 단어",
     "nextWord": "다음 단어",
+    "of": "중",
     "dayFilter": "Day 필터",
     "allDays": "모든 Day",
-    "day": "Day"
+    "day": "Day",
+    "resetOrder": "순서 재설정",
+    "ttsNotFound": "중국어 음성을 찾을 수 없습니다. 갤럭시 폰의 경우 설정에서 중국어를 추가해야 할 수 있습니다.",
+    "viewHelp": "도움말 보기",
+    "loadingData": "단어 데이터 로딩 중...",
+    "failedToLoad": "단어 데이터 로딩 실패",
+    "allMemorized": "모든 단어를 암기했습니다!",
+    "checkConnection": "연결을 확인하고 다시 시도해주세요",
+    "enableShowMemorized": "모든 단어를 보려면 설정에서 '암기한 단어 표시'를 활성화하세요",
+    "totalWords": "전체 단어"
   },
   "help": {
     "title": "도움말",

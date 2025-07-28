@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
+import { useTranslation } from "@/hooks/useTranslation"
 
 interface NavigationControlsProps {
   currentIndex: number
@@ -20,6 +21,8 @@ export function NavigationControls({
   prevWord,
   themeStyles
 }: NavigationControlsProps) {
+  const { t } = useTranslation()
+  
   return (
     <>
       <div className="flex items-center justify-between mb-6">
@@ -29,16 +32,16 @@ export function NavigationControls({
           className={`gap-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
         >
           <ChevronLeft className="h-4 w-4" />
-          Previous
+          {t('vocabulary.previousWord')}
         </Button>
 
         <div
           className={`flex flex-col items-center text-sm ${themeStyles.secondaryText} backdrop-blur-md ${themeStyles.glassBackground} px-4 py-2 rounded-full ${themeStyles.glassBorder}`}
         >
-          <div>{currentIndex + 1} of {filteredDataLength}</div>
+          <div>{currentIndex + 1} {t('vocabulary.of')} {filteredDataLength}</div>
           {!showMemorizedWords && memorizedWords.size > 0 && (
             <div className="text-xs opacity-75">
-              ({memorizedWords.size} memorized)
+              ({memorizedWords.size} {t('vocabulary.memorized')})
             </div>
           )}
         </div>
@@ -48,7 +51,7 @@ export function NavigationControls({
           onClick={nextWord}
           className={`gap-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
         >
-          Next
+          {t('vocabulary.nextWord')}
           <ChevronRight className="h-4 w-4" />
         </Button>
       </div>

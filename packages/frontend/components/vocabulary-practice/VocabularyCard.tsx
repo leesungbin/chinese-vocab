@@ -6,6 +6,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Eye, Volume2, AlertTriangle } from "lucide-react"
 import type { VocabItem } from "@/utils/vocabularyService"
 import { useAuth } from "@/hooks/useAuth"
+import { useTranslation } from "@/hooks/useTranslation"
 
 interface VocabularyCardProps {
   currentWord: VocabItem
@@ -45,6 +46,7 @@ export function VocabularyCard({
   showMemorizedWords
 }: VocabularyCardProps) {
   const { isAuthenticated } = useAuth()
+  const { t } = useTranslation()
   const [showTTSAlert, setShowTTSAlert] = useState(false)
 
   // Calculate font size based on Chinese text length
@@ -130,13 +132,13 @@ export function VocabularyCard({
           <Alert className="mb-4 border-orange-200 bg-orange-50 text-orange-800 dark:border-orange-800 dark:bg-orange-950 dark:text-orange-300">
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              중국어 음성을 찾을 수 없습니다. 갤럭시 폰의 경우 설정에서 중국어를 추가해야 할 수 있습니다. 
+              {t('vocabulary.ttsNotFound')} 
               <Button
                 variant="link"
                 className="p-0 h-auto text-orange-800 dark:text-orange-300 underline ml-1"
                 onClick={() => window.open('/help#galaxy-tts-guide', '_blank')}
               >
-                도움말 보기
+                {t('vocabulary.viewHelp')}
               </Button>
             </AlertDescription>
           </Alert>
@@ -156,7 +158,7 @@ export function VocabularyCard({
                 htmlFor="memorized"
                 className={`text-sm font-medium ${themeStyles.secondaryText} cursor-pointer`}
               >
-                Memorized
+                {t('vocabulary.memorized')}
               </Label>
             </div>
           </div>
@@ -164,18 +166,18 @@ export function VocabularyCard({
 
         {isLoading ? (
           <div className="text-center space-y-6 min-h-[300px] flex flex-col items-center justify-center">
-            <div className={`text-2xl font-bold ${themeStyles.mainText} mb-4`}>Loading vocabulary data...</div>
+            <div className={`text-2xl font-bold ${themeStyles.mainText} mb-4`}>{t('vocabulary.loadingData')}</div>
             <div className={`${themeStyles.progressFill} h-2 w-24 rounded-full animate-pulse`}></div>
           </div>
         ) : vocabularyDataLength === 0 ? (
           <div className="text-center space-y-6 min-h-[300px] flex flex-col items-center justify-center">
             <div className={`text-2xl font-bold ${themeStyles.mainText} mb-4`}>
-              {vocabularyDataLength === 0 ? "Failed to load vocabulary data" : "All words are memorized!"}
+              {vocabularyDataLength === 0 ? t('vocabulary.failedToLoad') : t('vocabulary.allMemorized')}
             </div>
             <div className={`text-lg ${themeStyles.secondaryText}`}>
               {vocabularyDataLength === 0 
-                ? "Please check your connection and try again"
-                : "Enable 'Show memorized words' in settings to see all words"
+                ? t('vocabulary.checkConnection')
+                : t('vocabulary.enableShowMemorized')
               }
             </div>
           </div>
@@ -216,7 +218,7 @@ export function VocabularyCard({
                       className={`gap-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText} text-lg px-6 py-3`}
                     >
                       <Eye className="h-5 w-5" />
-                      Show Chinese Characters
+                      {t('vocabulary.showChinese')}
                     </Button>
                   )}
                 </div>
@@ -238,7 +240,7 @@ export function VocabularyCard({
                       className={`gap-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
                     >
                       <Eye className="h-4 w-4" />
-                      Show Pronunciation
+                      {t('vocabulary.showPinyin')}
                     </Button>
                   )}
                 </div>
@@ -260,7 +262,7 @@ export function VocabularyCard({
                       className={`gap-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
                     >
                       <Eye className="h-4 w-4" />
-                      Show Korean Meaning
+                      {t('vocabulary.showKorean')}
                     </Button>
                   )}
                 </div>

@@ -14,9 +14,11 @@ import { LogOut, User, BookOpen, CheckCircle } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import { useVocabularyData } from '@/stores/vocabularyStore'
 import { useMemorizedWords } from '@/hooks/useMemorizedWords'
+import { useTranslation } from '@/hooks/useTranslation'
 
 export function AuthHeader() {
   const { user, isAuthenticated, isLoading, signIn, signOut } = useAuth()
+  const { t } = useTranslation()
   const [googleLoaded, setGoogleLoaded] = useState(false)
   const [googleError, setGoogleError] = useState<string | null>(null)
   
@@ -139,7 +141,7 @@ export function AuthHeader() {
               <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
               <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
             </svg>
-            Sign in with Google
+            {t('auth.signInWithGoogle')}
           </Button>
         ) : (
           <div className="w-8 h-8 border-2 border-gray-300 border-t-transparent rounded-full animate-spin" />
@@ -176,14 +178,14 @@ export function AuthHeader() {
           <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
             <div className="flex items-center gap-1">
               <BookOpen className="h-3 w-3" />
-              <span>Total Words</span>
+              <span>{t('vocabulary.totalWords')}</span>
             </div>
             <span className="font-medium">{totalWords}</span>
           </div>
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <div className="flex items-center gap-1">
               <CheckCircle className="h-3 w-3" />
-              <span>Memorized</span>
+              <span>{t('vocabulary.memorized')}</span>
             </div>
             <span className="font-medium">{memorizedCount}</span>
           </div>
@@ -192,7 +194,7 @@ export function AuthHeader() {
         
         <DropdownMenuItem onClick={handleSignOut}>
           <LogOut className="mr-2 h-4 w-4" />
-          Sign out
+          {t('auth.signOut')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -11,9 +11,10 @@ type TranslationKey = string
 type NestedTranslation = Record<string, any>
 
 function getNestedValue(obj: NestedTranslation, path: string): string {
-  return path.split('.').reduce((current, key) => {
+  const result = path.split('.').reduce((current, key) => {
     return current?.[key]
-  }, obj) || path
+  }, obj)
+  return typeof result === 'string' ? result : path
 }
 
 export function useTranslation() {

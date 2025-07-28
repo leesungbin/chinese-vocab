@@ -25,6 +25,7 @@ import { useMemorizedWords } from "@/hooks/useMemorizedWords"
 import { VocabularyCard } from "./VocabularyCard"
 import { NavigationControls } from "./NavigationControls"
 import { vocabularyService } from "@/utils/vocabularyService"
+import { useTranslation } from "@/hooks/useTranslation"
 
 interface VocabularyPracticeProps {
   userId?: string | null
@@ -44,6 +45,7 @@ export default function VocabularyPractice({
   const isDarkMode = useThemeStore((state) => state.isDarkMode)
   const toggleTheme = useThemeStore((state) => state.toggleTheme)
   const themeStyles = useThemeStyles()
+  const { t } = useTranslation()
   // Vocabulary store selectors
   const vocabularyData = useVocabularyData()
   const isLoading = useVocabularyLoading()
@@ -201,7 +203,7 @@ export default function VocabularyPractice({
                   className={`gap-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
                 >
                   <Shuffle className="h-4 w-4" />
-                  Shuffle Words
+                  {t('vocabulary.shuffleWords')}
                 </Button>
                 <Button
                   variant="outline"
@@ -209,14 +211,14 @@ export default function VocabularyPractice({
                   disabled={vocabularyData.length === 0 || (!isShuffled && selectedDay === null)}
                   className={`gap-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
                 >
-                  Reset Order
+                  {t('vocabulary.resetOrder')}
                 </Button>
               </div>
 
               {availableDays.length > 0 && (
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label className={`text-sm font-medium ${themeStyles.secondaryText}`}>Filter by Day Group</Label>
+                    <Label className={`text-sm font-medium ${themeStyles.secondaryText}`}>{t('vocabulary.dayFilter')}</Label>
                     <Button
                       variant="ghost"
                       size="sm"
@@ -234,7 +236,7 @@ export default function VocabularyPractice({
                         onClick={() => handleFilterByDay(null)}
                         className={`backdrop-blur-md ${themeStyles.buttonGlass} ${selectedDay === null ? 'border-2 border-blue-500 text-black dark:text-white' : themeStyles.glassBorderStrong + ' ' + themeStyles.mainText} ${themeStyles.buttonGlassHover}`}
                       >
-                        All Days
+                        {t('vocabulary.allDays')}
                       </Button>
                       {availableDays.map(day => (
                         <Button
@@ -244,7 +246,7 @@ export default function VocabularyPractice({
                           onClick={() => handleFilterByDay(day)}
                           className={`backdrop-blur-md ${themeStyles.buttonGlass} ${selectedDay === day ? 'border-2 border-blue-500 text-black dark:text-white' : themeStyles.glassBorderStrong + ' ' + themeStyles.mainText} ${themeStyles.buttonGlassHover}`}
                         >
-                          Day {day}
+                          {t('vocabulary.day')} {day}
                         </Button>
                       ))}
                     </div>

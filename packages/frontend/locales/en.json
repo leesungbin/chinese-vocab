@@ -76,9 +76,19 @@
     "notMemorized": "Not Memorized",
     "previousWord": "Previous Word",
     "nextWord": "Next Word",
+    "of": "of",
     "dayFilter": "Day Filter",
     "allDays": "All Days",
-    "day": "Day"
+    "day": "Day",
+    "resetOrder": "Reset Order",
+    "ttsNotFound": "Chinese voice not found. For Galaxy phones, you may need to add Chinese language in settings.",
+    "viewHelp": "View Help",
+    "loadingData": "Loading vocabulary data...",
+    "failedToLoad": "Failed to load vocabulary data",
+    "allMemorized": "All words are memorized!",
+    "checkConnection": "Please check your connection and try again",
+    "enableShowMemorized": "Enable 'Show memorized words' in settings to see all words",
+    "totalWords": "Total Words"
   },
   "help": {
     "title": "Help",
