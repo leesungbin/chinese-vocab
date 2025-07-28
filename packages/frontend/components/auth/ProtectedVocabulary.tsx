@@ -6,7 +6,14 @@ import VocabularyPractice from '@/components/vocabulary-practice/VocabularyPract
 import { AuthHeader } from './AuthHeader'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
-import { InfoIcon, Sun, Moon, Settings, HelpCircle, Languages } from 'lucide-react'
+import {
+  InfoIcon,
+  Sun,
+  Moon,
+  Settings,
+  HelpCircle,
+  Languages,
+} from 'lucide-react'
 import { useThemeStore, useThemeStyles } from '@/stores/themeStore'
 import { useLanguageStore, type Language } from '@/stores/languageStore'
 import { useTranslation } from '@/hooks/useTranslation'
@@ -14,13 +21,13 @@ import { useTranslation } from '@/hooks/useTranslation'
 export default function ProtectedVocabulary() {
   const { user, isAuthenticated, isLoading, signIn } = useAuth()
   const router = useRouter()
-  const isDarkMode = useThemeStore((state) => state.isDarkMode)
-  const toggleTheme = useThemeStore((state) => state.toggleTheme)
-  const isLoaded = useThemeStore((state) => state.isLoaded)
+  const isDarkMode = useThemeStore(state => state.isDarkMode)
+  const toggleTheme = useThemeStore(state => state.toggleTheme)
+  const isLoaded = useThemeStore(state => state.isLoaded)
   const themeStyles = useThemeStyles()
-  
-  const language = useLanguageStore((state) => state.language)
-  const setLanguage = useLanguageStore((state) => state.setLanguage)
+
+  const language = useLanguageStore(state => state.language)
+  const setLanguage = useLanguageStore(state => state.setLanguage)
   const { t } = useTranslation()
 
   if (isLoading || !isLoaded) {
@@ -28,7 +35,9 @@ export default function ProtectedVocabulary() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center space-y-4">
           <div className="w-8 h-8 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin mx-auto" />
-          <p className="text-gray-600 dark:text-gray-400">{t('common.loading')}</p>
+          <p className="text-gray-600 dark:text-gray-400">
+            {t('common.loading')}
+          </p>
         </div>
       </div>
     )
@@ -46,9 +55,17 @@ export default function ProtectedVocabulary() {
                 size="icon"
                 onClick={toggleTheme}
                 className="backdrop-blur-md border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800"
-                aria-label={isDarkMode ? t('theme.switchToLight') : t('theme.switchToDark')}
+                aria-label={
+                  isDarkMode
+                    ? t('theme.switchToLight')
+                    : t('theme.switchToDark')
+                }
               >
-                {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                {isDarkMode ? (
+                  <Sun className="h-4 w-4" />
+                ) : (
+                  <Moon className="h-4 w-4" />
+                )}
               </Button>
               <Button
                 variant="outline"
@@ -91,14 +108,13 @@ export default function ProtectedVocabulary() {
             <Alert className="mb-6">
               <InfoIcon className="h-4 w-4" />
               <AlertDescription>
-                You can view vocabulary words, but you need to sign in with Google to save your progress and mark words as memorized.
+                You can view vocabulary words, but you need to sign in with
+                Google to save your progress and mark words as memorized.
               </AlertDescription>
             </Alert>
           )}
 
-          <VocabularyPractice
-            userId={user?.id || null}
-          />
+          <VocabularyPractice userId={user?.id || null} />
         </div>
       </div>
 
@@ -109,8 +125,8 @@ export default function ProtectedVocabulary() {
             <p className="text-sm text-gray-500 dark:text-gray-400">
               © 2025 Seongbin Lee
               <span className="mx-2">•</span>
-              <a 
-                href="/privacy-policy" 
+              <a
+                href="/privacy-policy"
                 className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline"
               >
                 Privacy Policy

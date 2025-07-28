@@ -1,6 +1,12 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from 'react'
 import { API_BASE_URL } from '@/config/api'
 
 // Simple JWT decode function for client-side use
@@ -22,7 +28,10 @@ function decodeJWT(token: string): any {
 
 // Server authentication endpoint
 
-async function authenticateWithServer(credential: string, isOAuth: boolean = false): Promise<{ token: string, user?: User }> {
+async function authenticateWithServer(
+  credential: string,
+  isOAuth: boolean = false
+): Promise<{ token: string; user?: User }> {
   try {
     const response = await fetch(`${API_BASE_URL}/auth`, {
       method: 'POST',
@@ -32,20 +41,25 @@ async function authenticateWithServer(credential: string, isOAuth: boolean = fal
       mode: 'cors',
       body: JSON.stringify({
         credential: credential,
-        isOAuth: isOAuth
-      })
+        isOAuth: isOAuth,
+      }),
     })
-    
+
     if (!response.ok) {
       const errorText = await response.text()
       throw new Error(`Authentication failed: ${response.status} ${errorText}`)
     }
-    
+
     return await response.json()
   } catch (error) {
     console.error('Authentication error:', error)
-    if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
-      throw new Error('Unable to connect to authentication server. Please check your internet connection.')
+    if (
+      error instanceof TypeError &&
+      error.message.includes('Failed to fetch')
+    ) {
+      throw new Error(
+        'Unable to connect to authentication server. Please check your internet connection.'
+      )
     }
     throw error
   }
@@ -103,16 +117,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }
 
   const fetchUserProfile = async (accessToken: string): Promise<User> => {
-    const response = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    })
-    
+    const response = await fetch(
+      'https://www.googleapis.com/oauth2/v2/userinfo',
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    )
+
     if (!response.ok) {
       throw new Error('Failed to fetch user profile')
     }
-    
+
     const profile = await response.json()
     return {
       id: profile.id,
@@ -124,7 +141,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const signIn = async (response: any): Promise<void> => {
     try {
-      
       // Handle OAuth 2.0 response
       if (response && response.access_token) {
         // Store OAuth tokens
@@ -135,24 +151,27 @@ export function AuthProvider({ children }: AuthProviderProps) {
           scope: response.scope,
           token_type: response.token_type || 'Bearer',
         }
-        
+
         setOAuthTokens(tokens)
         localStorage.setItem('oauth-token', response.access_token)
         localStorage.setItem('oauth-tokens', JSON.stringify(tokens))
-        
+
         // Fetch user profile using OAuth token
         const userProfile = await fetchUserProfile(response.access_token)
-        
+
         // Send OAuth access token to server for JWT creation
-        const authResult = await authenticateWithServer(response.access_token, true)
-        
+        const authResult = await authenticateWithServer(
+          response.access_token,
+          true
+        )
+
         setUser(userProfile)
         localStorage.setItem('auth-token', authResult.token)
         localStorage.setItem('user', JSON.stringify(userProfile))
       } else if (response && response.credential) {
         // Fallback for old ID token flow (if still needed)
         const authResult = await authenticateWithServer(response.credential)
-        
+
         setUser(authResult.user)
         localStorage.setItem('auth-token', authResult.token)
         localStorage.setItem('user', JSON.stringify(authResult.user))
@@ -161,7 +180,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
     } catch (error) {
       console.error('Sign in error:', error)
-      
+
       // Clear any partial auth state on error
       setUser(null)
       setOAuthTokens(null)
@@ -169,7 +188,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       localStorage.removeItem('user')
       localStorage.removeItem('oauth-token')
       localStorage.removeItem('oauth-tokens')
-      
+
       // Re-throw to allow UI components to handle the error
       throw error
     }
@@ -182,7 +201,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     localStorage.removeItem('user')
     localStorage.removeItem('oauth-token')
     localStorage.removeItem('oauth-tokens')
-    
+
     if (window.google) {
       window.google.accounts.id.disableAutoSelect()
     }
@@ -193,7 +212,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const storedUser = localStorage.getItem('user')
     const storedToken = localStorage.getItem('auth-token')
     const storedOAuthTokens = localStorage.getItem('oauth-tokens')
-    
+
     if (storedUser && storedToken) {
       try {
         const userData = JSON.parse(storedUser)
@@ -201,7 +220,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const decoded = decodeJWT(storedToken)
         if (decoded && decoded.exp && decoded.exp * 1000 > Date.now()) {
           setUser(userData)
-          
+
           // Load OAuth tokens if available
           if (storedOAuthTokens) {
             try {
@@ -226,7 +245,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         localStorage.removeItem('oauth-tokens')
       }
     }
-    
+
     setIsLoading(false)
   }, [])
 
@@ -240,11 +259,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     getOAuthToken,
   }
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  )
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
 export function useAuth(): AuthContextType {

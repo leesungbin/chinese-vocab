@@ -1,16 +1,24 @@
-"use client"
+'use client'
 
-import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Label } from "@/components/ui/label"
-import { Sun, Moon, Settings, AlertTriangle, Shuffle, ChevronDown, ChevronUp } from "lucide-react"
-import { useThemeStore, useThemeStyles } from "@/stores/themeStore"
-import { 
-  useVocabularyData, 
-  useVocabularyLoading, 
-  useVocabularyShuffled, 
-  useSelectedDay, 
+import { useState, useEffect } from 'react'
+import { Button } from '@/components/ui/button'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Label } from '@/components/ui/label'
+import {
+  Sun,
+  Moon,
+  Settings,
+  AlertTriangle,
+  Shuffle,
+  ChevronDown,
+  ChevronUp,
+} from 'lucide-react'
+import { useThemeStore, useThemeStyles } from '@/stores/themeStore'
+import {
+  useVocabularyData,
+  useVocabularyLoading,
+  useVocabularyShuffled,
+  useSelectedDay,
   useAvailableDays,
   useLoadVocabularyData,
   useCheckAndReloadForUser,
@@ -18,32 +26,31 @@ import {
   useFilterByDay,
   useResetToOriginal,
   useUpdateWordTotal,
-  useGetFilteredData
-} from "@/stores/vocabularyStore"
-import { useNavigationState } from "@/hooks/useNavigationState"
-import { useMemorizedWords } from "@/hooks/useMemorizedWords"
-import { VocabularyCard } from "./VocabularyCard"
-import { NavigationControls } from "./NavigationControls"
-import { vocabularyService } from "@/utils/vocabularyService"
-import { useTranslation } from "@/hooks/useTranslation"
+  useGetFilteredData,
+} from '@/stores/vocabularyStore'
+import { useNavigationState } from '@/hooks/useNavigationState'
+import { useMemorizedWords } from '@/hooks/useMemorizedWords'
+import { VocabularyCard } from './VocabularyCard'
+import { NavigationControls } from './NavigationControls'
+import { vocabularyService } from '@/utils/vocabularyService'
+import { useTranslation } from '@/hooks/useTranslation'
 
 interface VocabularyPracticeProps {
   userId?: string | null
 }
 
-export default function VocabularyPractice({ 
-  userId 
+export default function VocabularyPractice({
+  userId,
 }: VocabularyPracticeProps) {
-  
   // Authorization error state
   const [authError, setAuthError] = useState<string | null>(null)
-  
+
   // Filter collapse state
   const [isFilterCollapsed, setIsFilterCollapsed] = useState(false)
-  
+
   // Custom hooks
-  const isDarkMode = useThemeStore((state) => state.isDarkMode)
-  const toggleTheme = useThemeStore((state) => state.toggleTheme)
+  const isDarkMode = useThemeStore(state => state.isDarkMode)
+  const toggleTheme = useThemeStore(state => state.toggleTheme)
   const themeStyles = useThemeStyles()
   const { t } = useTranslation()
   // Vocabulary store selectors
@@ -59,7 +66,7 @@ export default function VocabularyPractice({
   const resetToOriginal = useResetToOriginal()
   const getFilteredData = useGetFilteredData()
   const updateWordTotal = useUpdateWordTotal()
-  
+
   const {
     currentIndex,
     setCurrentIndex,
@@ -81,18 +88,25 @@ export default function VocabularyPractice({
     nextWord: navigateNext,
     prevWord: navigatePrev,
     handleRevealChinese: revealChinese,
-    useAutoChineseDisplay
+    useAutoChineseDisplay,
   } = useNavigationState()
-  
-  const { memorizedWords, toggleMemorized, resetAllMemorizedWords } = useMemorizedWords()
+
+  const { memorizedWords, toggleMemorized, resetAllMemorizedWords } =
+    useMemorizedWords()
 
   // Get filtered data
-  const filteredVocabularyData = getFilteredData(memorizedWords, showMemorizedWords)
-  
+  const filteredVocabularyData = getFilteredData(
+    memorizedWords,
+    showMemorizedWords
+  )
+
   // Get the current word
-  const currentWord = filteredVocabularyData.length > 0
-    ? filteredVocabularyData[Math.min(currentIndex, filteredVocabularyData.length - 1)]
-    : { id: 0, chinese: "", pinyin: "", korean: "", total: 0, day: 0 }
+  const currentWord =
+    filteredVocabularyData.length > 0
+      ? filteredVocabularyData[
+          Math.min(currentIndex, filteredVocabularyData.length - 1)
+        ]
+      : { id: 0, chinese: '', pinyin: '', korean: '', total: 0, day: 0 }
 
   // Navigation functions
   const nextWord = () => navigateNext(filteredVocabularyData, currentWord)
@@ -132,7 +146,13 @@ export default function VocabularyPractice({
   // Reset current index when filtered data changes
   useEffect(() => {
     resetCurrentIndex(filteredVocabularyData.length)
-  }, [showMemorizedWords, memorizedWords, filteredVocabularyData.length, currentIndex, resetCurrentIndex])
+  }, [
+    showMemorizedWords,
+    memorizedWords,
+    filteredVocabularyData.length,
+    currentIndex,
+    resetCurrentIndex,
+  ])
 
   // Load vocabulary data on mount
   useEffect(() => {
@@ -145,13 +165,19 @@ export default function VocabularyPractice({
   }, [userId]) // Only depend on userId changes
 
   // Handle automatic Chinese display
-  useAutoChineseDisplay(isLoading, vocabularyData.length, currentWord, updateWordTotal)
+  useAutoChineseDisplay(
+    isLoading,
+    vocabularyData.length,
+    currentWord,
+    updateWordTotal
+  )
 
   // Handle data migration
   const handleMigrateData = async (spreadsheetId?: string) => {
     try {
-      const result = await vocabularyService.migrateDataFromSheets(spreadsheetId)
-      
+      const result =
+        await vocabularyService.migrateDataFromSheets(spreadsheetId)
+
       if (result.success) {
         // Refresh the vocabulary data after successful migration
         window.location.reload()
@@ -161,7 +187,10 @@ export default function VocabularyPractice({
       }
     } catch (error) {
       console.error('Migration error:', error)
-      setAuthError('Migration failed: ' + (error instanceof Error ? error.message : 'Unknown error'))
+      setAuthError(
+        'Migration failed: ' +
+          (error instanceof Error ? error.message : 'Unknown error')
+      )
       setTimeout(() => setAuthError(null), 5000)
     }
   }
@@ -188,15 +217,15 @@ export default function VocabularyPractice({
         {authError && (
           <Alert className="mb-2 border-red-200 bg-red-50 text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-300 flex-shrink-0">
             <AlertTriangle className="h-4 w-4" />
-            <AlertDescription>
-              {authError}
-            </AlertDescription>
+            <AlertDescription>{authError}</AlertDescription>
           </Alert>
         )}
 
         {/* Word Order & Filtering Controls */}
         {!isLoading && vocabularyData.length > 0 && (
-          <div className={`backdrop-blur-md ${themeStyles.glassBackground} rounded-2xl ${themeStyles.glassBorder} mb-2 flex-shrink-0`}>
+          <div
+            className={`backdrop-blur-md ${themeStyles.glassBackground} rounded-2xl ${themeStyles.glassBorder} mb-2 flex-shrink-0`}
+          >
             <div className="space-y-4">
               <div className="flex items-center gap-3">
                 <Button
@@ -211,7 +240,10 @@ export default function VocabularyPractice({
                 <Button
                   variant="outline"
                   onClick={handleResetToOriginal}
-                  disabled={vocabularyData.length === 0 || (!isShuffled && selectedDay === null)}
+                  disabled={
+                    vocabularyData.length === 0 ||
+                    (!isShuffled && selectedDay === null)
+                  }
                   className={`gap-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
                 >
                   {t('vocabulary.resetOrder')}
@@ -221,14 +253,22 @@ export default function VocabularyPractice({
               {availableDays.length > 0 && (
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label className={`text-sm font-medium ${themeStyles.secondaryText}`}>{t('vocabulary.dayFilter')}</Label>
+                    <Label
+                      className={`text-sm font-medium ${themeStyles.secondaryText}`}
+                    >
+                      {t('vocabulary.dayFilter')}
+                    </Label>
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => setIsFilterCollapsed(!isFilterCollapsed)}
                       className={`p-1 h-6 w-6 ${themeStyles.mainText} hover:bg-white/20`}
                     >
-                      {isFilterCollapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
+                      {isFilterCollapsed ? (
+                        <ChevronDown className="h-4 w-4" />
+                      ) : (
+                        <ChevronUp className="h-4 w-4" />
+                      )}
                     </Button>
                   </div>
                   {!isFilterCollapsed && (

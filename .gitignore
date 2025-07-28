@@ -14,3 +14,8 @@ yarn-error.log*
 
 # build artifacts
 packages/serverless/dist/
+
+# IDE specific files (keep code style configs)
+.idea/*
+!.idea/codeStyles/
+!.idea/prettier.xml

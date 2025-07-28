@@ -4,7 +4,7 @@ import en from '@/locales/en.json'
 
 const translations = {
   ko,
-  en
+  en,
 }
 
 type TranslationKey = string
@@ -18,8 +18,8 @@ function getNestedValue(obj: NestedTranslation, path: string): string {
 }
 
 export function useTranslation() {
-  const language = useLanguageStore((state) => state.language)
-  
+  const language = useLanguageStore(state => state.language)
+
   const t = (key: TranslationKey): string => {
     const translation = translations[language]
     return getNestedValue(translation, key)

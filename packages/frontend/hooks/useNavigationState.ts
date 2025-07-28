@@ -5,13 +5,16 @@ import { vocabularyService, type VocabItem } from '@/utils/vocabularyService'
 export function useNavigationState() {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [hasShownChinese, setHasShownChinese] = useState(false)
-  
+
   // Display settings
   const [showChinese, setShowChinese] = useLocalStorage('showChinese', true)
   const [showPinyin, setShowPinyin] = useLocalStorage('showPinyin', false)
   const [showKorean, setShowKorean] = useLocalStorage('showKorean', false)
-  const [showMemorizedWords, setShowMemorizedWords] = useLocalStorage('showMemorizedWords', true)
-  
+  const [showMemorizedWords, setShowMemorizedWords] = useLocalStorage(
+    'showMemorizedWords',
+    true
+  )
+
   // Reveal states
   const [pinyinRevealed, setPinyinRevealed] = useState(false)
   const [koreanRevealed, setKoreanRevealed] = useState(false)
@@ -43,7 +46,7 @@ export function useNavigationState() {
       })
     }
 
-    setCurrentIndex((prev) => (prev + 1) % filteredData.length)
+    setCurrentIndex(prev => (prev + 1) % filteredData.length)
     resetRevealStates()
   }
 
@@ -57,24 +60,37 @@ export function useNavigationState() {
       })
     }
 
-    setCurrentIndex((prev) => (prev - 1 + filteredData.length) % filteredData.length)
+    setCurrentIndex(
+      prev => (prev - 1 + filteredData.length) % filteredData.length
+    )
     resetRevealStates()
   }
 
-  const handleChineseShown = (currentWord: VocabItem, updateWordTotal: (wordId: number) => void) => {
+  const handleChineseShown = (
+    currentWord: VocabItem,
+    updateWordTotal: (wordId: number) => void
+  ) => {
     if (!hasShownChinese && currentWord.id > 0) {
       setHasShownChinese(true)
       updateWordTotal(currentWord.id)
     }
   }
 
-  const handleRevealChinese = (currentWord: VocabItem, updateWordTotal: (wordId: number) => void) => {
+  const handleRevealChinese = (
+    currentWord: VocabItem,
+    updateWordTotal: (wordId: number) => void
+  ) => {
     setChineseRevealed(true)
     handleChineseShown(currentWord, updateWordTotal)
   }
 
   // Effect for handling automatic Chinese display when showChinese is true
-  const useAutoChineseDisplay = (isLoading: boolean, vocabularyDataLength: number, currentWord: VocabItem, updateWordTotal: (wordId: number) => void) => {
+  const useAutoChineseDisplay = (
+    isLoading: boolean,
+    vocabularyDataLength: number,
+    currentWord: VocabItem,
+    updateWordTotal: (wordId: number) => void
+  ) => {
     useEffect(() => {
       if (showChinese && !isLoading && vocabularyDataLength > 0) {
         handleChineseShown(currentWord, updateWordTotal)
@@ -106,6 +122,6 @@ export function useNavigationState() {
     prevWord,
     handleChineseShown,
     handleRevealChinese,
-    useAutoChineseDisplay
+    useAutoChineseDisplay,
   }
 }

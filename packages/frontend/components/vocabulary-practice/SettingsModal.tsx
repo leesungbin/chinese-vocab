@@ -1,11 +1,19 @@
-import { Button } from "@/components/ui/button"
-import { Switch } from "@/components/ui/switch"
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { X, Shuffle, Download, Loader2, ExternalLink, Plus, AlertTriangle } from "lucide-react"
-import { useState, useEffect } from "react"
-import { vocabularyService } from "@/utils/vocabularyService"
+import { Button } from '@/components/ui/button'
+import { Switch } from '@/components/ui/switch'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import {
+  X,
+  Shuffle,
+  Download,
+  Loader2,
+  ExternalLink,
+  Plus,
+  AlertTriangle,
+} from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { vocabularyService } from '@/utils/vocabularyService'
 
 interface SettingsModalProps {
   settingsOpen: boolean
@@ -54,59 +62,72 @@ export function SettingsModal({
   resetAllMemorizedWords,
   resetRevealStates,
   themeStyles,
-  onMigrateData
+  onMigrateData,
 }: SettingsModalProps) {
-  
   const [spreadsheetId, setSpreadsheetId] = useState('')
   const [isMigrating, setIsMigrating] = useState(false)
   const [isLoadingSpreadsheetId, setIsLoadingSpreadsheetId] = useState(false)
   const [isCreatingSpreadsheet, setIsCreatingSpreadsheet] = useState(false)
   const [hasTriedAutoCreate, setHasTriedAutoCreate] = useState(false)
-  const [createSpreadsheetError, setCreateSpreadsheetError] = useState<string | null>(null)
+  const [createSpreadsheetError, setCreateSpreadsheetError] = useState<
+    string | null
+  >(null)
 
   const handleResetMemorizedWords = () => {
     resetAllMemorizedWords()
     resetRevealStates()
   }
 
-  const getErrorMessage = (error: string): { title: string; message: string; suggestion: string } => {
+  const getErrorMessage = (
+    error: string
+  ): { title: string; message: string; suggestion: string } => {
     if (error.includes('Drive storage quota has been exceeded')) {
       return {
         title: 'Google Drive Storage Full',
-        message: 'Your Google Drive storage is full and cannot create new files.',
-        suggestion: 'Please free up space in your Google Drive or upgrade your storage plan, then try again.'
+        message:
+          'Your Google Drive storage is full and cannot create new files.',
+        suggestion:
+          'Please free up space in your Google Drive or upgrade your storage plan, then try again.',
       }
     }
-    
+
     if (error.includes('permission') || error.includes('Permission')) {
       return {
         title: 'Permission Error',
         message: 'Unable to create spreadsheet due to permission restrictions.',
-        suggestion: 'Please check your Google account permissions and try again.'
+        suggestion:
+          'Please check your Google account permissions and try again.',
       }
     }
-    
+
     if (error.includes('quota') || error.includes('Quota')) {
       return {
         title: 'API Quota Exceeded',
         message: 'Google Sheets API quota has been exceeded.',
-        suggestion: 'Please try again later or contact support if the issue persists.'
+        suggestion:
+          'Please try again later or contact support if the issue persists.',
       }
     }
-    
-    if (error.includes('network') || error.includes('Network') || error.includes('Failed to fetch')) {
+
+    if (
+      error.includes('network') ||
+      error.includes('Network') ||
+      error.includes('Failed to fetch')
+    ) {
       return {
         title: 'Network Error',
         message: 'Unable to connect to Google Sheets service.',
-        suggestion: 'Please check your internet connection and try again.'
+        suggestion: 'Please check your internet connection and try again.',
       }
     }
-    
+
     // Default error message
     return {
       title: 'Spreadsheet Creation Failed',
-      message: 'An unexpected error occurred while creating your personal Google Sheet.',
-      suggestion: 'You can manually enter your Google Sheets ID below or try again later.'
+      message:
+        'An unexpected error occurred while creating your personal Google Sheet.',
+      suggestion:
+        'You can manually enter your Google Sheets ID below or try again later.',
     }
   }
 
@@ -147,7 +168,7 @@ export function SettingsModal({
 
   const handleMigrateData = async () => {
     if (!onMigrateData) return
-    
+
     setIsMigrating(true)
     try {
       await onMigrateData(spreadsheetId.trim() || undefined)
@@ -162,15 +183,15 @@ export function SettingsModal({
   const handleCreateSpreadsheet = async () => {
     setIsCreatingSpreadsheet(true)
     setCreateSpreadsheetError(null) // Clear any previous errors
-    
+
     try {
       const result = await vocabularyService.createUserSpreadsheet()
-      
+
       if (result.success && result.spreadsheetId) {
         setSpreadsheetId(result.spreadsheetId)
         setHasTriedAutoCreate(true)
         setCreateSpreadsheetError(null) // Clear any errors on success
-        
+
         // Show success message if it's a new sheet
         if (result.isNew) {
           console.log('Successfully created your personal Google Sheet!')
@@ -184,7 +205,8 @@ export function SettingsModal({
       }
     } catch (error) {
       // Handle network/unexpected errors
-      const errorMessage = error instanceof Error ? error.message : 'Network error occurred'
+      const errorMessage =
+        error instanceof Error ? error.message : 'Network error occurred'
       setCreateSpreadsheetError(errorMessage)
       setHasTriedAutoCreate(true)
       console.error('Error creating spreadsheet:', error)
@@ -197,12 +219,18 @@ export function SettingsModal({
     const currentSpreadsheetId = spreadsheetId.trim()
     if (currentSpreadsheetId) {
       // Open user's specific Google Sheet
-      window.open(`https://docs.google.com/spreadsheets/d/${currentSpreadsheetId}/edit`, '_blank')
+      window.open(
+        `https://docs.google.com/spreadsheets/d/${currentSpreadsheetId}/edit`,
+        '_blank'
+      )
     } else {
       // If no spreadsheet ID, show a message or use default anonymous sheet
       // Using the anonymous sheet ID as fallback
       const anonymousSheetId = '1JBGAlJ14-yKHoSNlVnogCT4Xj30SLS_jQNuZe5YLe0I'
-      window.open(`https://docs.google.com/spreadsheets/d/${anonymousSheetId}/edit`, '_blank')
+      window.open(
+        `https://docs.google.com/spreadsheets/d/${anonymousSheetId}/edit`,
+        '_blank'
+      )
     }
   }
 
@@ -212,8 +240,15 @@ export function SettingsModal({
     <div className="fixed top-0 left-0 right-0 bottom-0 z-50 flex items-start justify-center bg-black bg-opacity-50 overflow-y-auto min-h-screen w-full">
       <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-xl p-6 w-full max-w-md mx-4 my-4 md:my-8">
         <div className="flex items-center justify-between mb-4">
-          <h2 className={`text-xl font-semibold ${themeStyles.mainText}`}>Settings</h2>
-          <Button variant="ghost" size="icon" onClick={() => setSettingsOpen(false)} aria-label="Close settings">
+          <h2 className={`text-xl font-semibold ${themeStyles.mainText}`}>
+            Settings
+          </h2>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setSettingsOpen(false)}
+            aria-label="Close settings"
+          >
             <X className="h-5 w-5" />
           </Button>
         </div>
@@ -227,9 +262,7 @@ export function SettingsModal({
                 <div className="font-semibold">
                   {getErrorMessage(createSpreadsheetError).title}
                 </div>
-                <div>
-                  {getErrorMessage(createSpreadsheetError).message}
-                </div>
+                <div>{getErrorMessage(createSpreadsheetError).message}</div>
                 <div className="text-sm opacity-90">
                   {getErrorMessage(createSpreadsheetError).suggestion}
                 </div>
@@ -247,52 +280,68 @@ export function SettingsModal({
         )}
 
         {/* Display Settings */}
-        <h3 className={`text-lg font-semibold ${themeStyles.mainText} mb-4`}>Display Settings</h3>
+        <h3 className={`text-lg font-semibold ${themeStyles.mainText} mb-4`}>
+          Display Settings
+        </h3>
         <div className="space-y-4 mb-6">
           <div className="flex items-center justify-between">
-            <Label htmlFor="show-chinese" className={`text-sm font-medium ${themeStyles.secondaryText}`}>
+            <Label
+              htmlFor="show-chinese"
+              className={`text-sm font-medium ${themeStyles.secondaryText}`}
+            >
               Always show Chinese characters
             </Label>
-            <Switch 
-              id="show-chinese" 
-              checked={showChinese} 
+            <Switch
+              id="show-chinese"
+              checked={showChinese}
               onCheckedChange={setShowChinese}
             />
           </div>
           <div className="flex items-center justify-between">
-            <Label htmlFor="show-pinyin" className={`text-sm font-medium ${themeStyles.secondaryText}`}>
+            <Label
+              htmlFor="show-pinyin"
+              className={`text-sm font-medium ${themeStyles.secondaryText}`}
+            >
               Always show pronunciation (Pinyin)
             </Label>
-            <Switch 
-              id="show-pinyin" 
-              checked={showPinyin} 
+            <Switch
+              id="show-pinyin"
+              checked={showPinyin}
               onCheckedChange={setShowPinyin}
             />
           </div>
           <div className="flex items-center justify-between">
-            <Label htmlFor="show-korean" className={`text-sm font-medium ${themeStyles.secondaryText}`}>
+            <Label
+              htmlFor="show-korean"
+              className={`text-sm font-medium ${themeStyles.secondaryText}`}
+            >
               Always show Korean meaning
             </Label>
-            <Switch 
-              id="show-korean" 
-              checked={showKorean} 
+            <Switch
+              id="show-korean"
+              checked={showKorean}
               onCheckedChange={setShowKorean}
             />
           </div>
           <div className="flex items-center justify-between">
-            <Label htmlFor="show-memorized" className={`text-sm font-medium ${themeStyles.secondaryText}`}>
+            <Label
+              htmlFor="show-memorized"
+              className={`text-sm font-medium ${themeStyles.secondaryText}`}
+            >
               Show memorized words
             </Label>
-            <Switch 
-              id="show-memorized" 
-              checked={showMemorizedWords} 
+            <Switch
+              id="show-memorized"
+              checked={showMemorizedWords}
               onCheckedChange={setShowMemorizedWords}
             />
           </div>
         </div>
 
         {/* Word Order & Filtering */}
-        <h3 className={`text-lg font-semibold ${themeStyles.mainText} mb-4`}>Word Order & Filtering</h3>
+        <h3 className={`text-lg font-semibold ${themeStyles.mainText} mb-4`}>
+          Word Order & Filtering
+        </h3>
         <div className="space-y-4">
           <div className="flex items-center gap-3 mb-4">
             <Button
@@ -307,16 +356,23 @@ export function SettingsModal({
             <Button
               variant="outline"
               onClick={resetToOriginal}
-              disabled={vocabularyDataLength === 0 || (!isShuffled && selectedDay === null)}
+              disabled={
+                vocabularyDataLength === 0 ||
+                (!isShuffled && selectedDay === null)
+              }
               className={`gap-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
             >
               Reset Order
             </Button>
           </div>
-          
+
           {availableDays.length > 0 && (
             <div className="space-y-2">
-              <Label className={`text-sm font-medium ${themeStyles.secondaryText}`}>Filter by Day Group</Label>
+              <Label
+                className={`text-sm font-medium ${themeStyles.secondaryText}`}
+              >
+                Filter by Day Group
+              </Label>
               <div className="flex flex-wrap gap-2">
                 <Button
                   variant="outline"
@@ -345,30 +401,49 @@ export function SettingsModal({
         {/* Data Migration Section */}
         {onMigrateData && (
           <>
-            <h3 className={`text-lg font-semibold ${themeStyles.mainText} mb-4 mt-6`}>Data Migration</h3>
+            <h3
+              className={`text-lg font-semibold ${themeStyles.mainText} mb-4 mt-6`}
+            >
+              Data Migration
+            </h3>
             <div className="space-y-4">
               <div>
-                <Label htmlFor="spreadsheet-id" className={`text-sm font-medium ${themeStyles.secondaryText} mb-2 block`}>
-                  {isCreatingSpreadsheet ? "Creating your personal Google Sheet..." : "Google Sheets ID (optional - uses default if empty)"}
+                <Label
+                  htmlFor="spreadsheet-id"
+                  className={`text-sm font-medium ${themeStyles.secondaryText} mb-2 block`}
+                >
+                  {isCreatingSpreadsheet
+                    ? 'Creating your personal Google Sheet...'
+                    : 'Google Sheets ID (optional - uses default if empty)'}
                 </Label>
                 <div className="flex gap-2">
                   <Input
                     id="spreadsheet-id"
                     value={spreadsheetId}
-                    onChange={(e) => setSpreadsheetId(e.target.value)}
+                    onChange={e => setSpreadsheetId(e.target.value)}
                     placeholder={
-                      isCreatingSpreadsheet ? "Creating your personal sheet..." : 
-                      isLoadingSpreadsheetId ? "Loading..." : 
-                      "Enter Google Sheets ID"
+                      isCreatingSpreadsheet
+                        ? 'Creating your personal sheet...'
+                        : isLoadingSpreadsheetId
+                          ? 'Loading...'
+                          : 'Enter Google Sheets ID'
                     }
-                    disabled={isMigrating || isLoadingSpreadsheetId || isCreatingSpreadsheet}
+                    disabled={
+                      isMigrating ||
+                      isLoadingSpreadsheetId ||
+                      isCreatingSpreadsheet
+                    }
                     className={`flex-1 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.mainText}`}
                   />
                   <Button
                     variant="outline"
                     size="icon"
                     onClick={handleGoToGoogleSheet}
-                    disabled={isMigrating || isLoadingSpreadsheetId || isCreatingSpreadsheet}
+                    disabled={
+                      isMigrating ||
+                      isLoadingSpreadsheetId ||
+                      isCreatingSpreadsheet
+                    }
                     className={`backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
                     aria-label="Open Google Sheet"
                     title="Open Google Sheet in new tab"
@@ -377,18 +452,21 @@ export function SettingsModal({
                   </Button>
                 </div>
               </div>
-              
+
               {/* Show create button if authenticated user has no spreadsheet and auto-create failed/not tried */}
-              {!spreadsheetId && hasTriedAutoCreate && !isCreatingSpreadsheet && localStorage.getItem('auth-token') && (
-                <Button
-                  onClick={handleCreateSpreadsheet}
-                  disabled={isCreatingSpreadsheet}
-                  className={`w-full gap-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
-                >
-                  <Plus className="h-4 w-4" />
-                  Create Personal Google Sheet
-                </Button>
-              )}
+              {!spreadsheetId &&
+                hasTriedAutoCreate &&
+                !isCreatingSpreadsheet &&
+                localStorage.getItem('auth-token') && (
+                  <Button
+                    onClick={handleCreateSpreadsheet}
+                    disabled={isCreatingSpreadsheet}
+                    className={`w-full gap-2 backdrop-blur-md ${themeStyles.buttonGlass} ${themeStyles.glassBorderStrong} ${themeStyles.buttonGlassHover} ${themeStyles.mainText}`}
+                  >
+                    <Plus className="h-4 w-4" />
+                    Create Personal Google Sheet
+                  </Button>
+                )}
               <Button
                 onClick={handleMigrateData}
                 disabled={isMigrating}
@@ -412,7 +490,9 @@ export function SettingsModal({
 
         {/* Memorized Words Reset */}
         <div className="flex items-center justify-between mt-6">
-          <Label className={`text-sm font-medium ${themeStyles.secondaryText}`}>Reset Memorized Words</Label>
+          <Label className={`text-sm font-medium ${themeStyles.secondaryText}`}>
+            Reset Memorized Words
+          </Label>
           <Button
             variant="outline"
             disabled={memorizedWords.size === 0}

@@ -3,10 +3,14 @@ import { vocabularyService, type VocabItem } from '@/utils/vocabularyService'
 import { useVocabularyData } from '@/stores/vocabularyStore'
 
 export function useMemorizedWords() {
-  const { memorizedWords, setMemorizedWords, resetMemorizedWords } = useMemorizedWordsStorage()
+  const { memorizedWords, setMemorizedWords, resetMemorizedWords } =
+    useMemorizedWordsStorage()
   const vocabularyData = useVocabularyData()
 
-  const toggleMemorized = async (wordId: number, currentWord: VocabItem): Promise<{ success: boolean; error?: string }> => {
+  const toggleMemorized = async (
+    wordId: number,
+    currentWord: VocabItem
+  ): Promise<{ success: boolean; error?: string }> => {
     const wasMemorized = memorizedWords.has(wordId)
     const willBeMemorized = !wasMemorized
 
@@ -21,14 +25,17 @@ export function useMemorizedWords() {
 
     try {
       // Call API to update memorized status
-      const result = await vocabularyService.toggleMemorizedStatus(currentWord, willBeMemorized)
-      
+      const result = await vocabularyService.toggleMemorizedStatus(
+        currentWord,
+        willBeMemorized
+      )
+
       if (!result.success) {
         // Revert local state if API call failed
         setMemorizedWords(memorizedWords)
         return { success: false, error: result.error }
       }
-      
+
       return { success: true }
     } catch (error) {
       // Revert local state on error
@@ -47,13 +54,13 @@ export function useMemorizedWords() {
     const wordsInDay = vocabularyData
       .filter(word => word.day === day)
       .map(word => word.id)
-    
+
     // Create a new set excluding words from the specified day
     const newMemorizedSet = new Set(memorizedWords)
     wordsInDay.forEach(wordId => {
       newMemorizedSet.delete(wordId)
     })
-    
+
     setMemorizedWords(newMemorizedSet)
   }
 
@@ -61,7 +68,7 @@ export function useMemorizedWords() {
     const wordsInDay = vocabularyData
       .filter(word => word.day === day)
       .map(word => word.id)
-    
+
     return wordsInDay.filter(wordId => memorizedWords.has(wordId)).length
   }
 
@@ -70,6 +77,6 @@ export function useMemorizedWords() {
     toggleMemorized,
     resetAllMemorizedWords,
     resetMemorizedWordsByDay,
-    getMemorizedWordCountByDay
+    getMemorizedWordCountByDay,
   }
 }

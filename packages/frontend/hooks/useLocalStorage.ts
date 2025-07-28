@@ -19,7 +19,8 @@ export function useLocalStorage<T>(key: string, defaultValue: T) {
 
   const setStoredValue = (newValue: T | ((prev: T) => T)) => {
     try {
-      const valueToStore = newValue instanceof Function ? newValue(value) : newValue
+      const valueToStore =
+        newValue instanceof Function ? newValue(value) : newValue
       setValue(valueToStore)
       localStorage.setItem(key, JSON.stringify(valueToStore))
     } catch (error) {
@@ -47,7 +48,10 @@ export function useMemorizedWordsStorage() {
 
   const saveMemorizedWords = (memorizedSet: Set<number>) => {
     try {
-      localStorage.setItem('memorizedWords', JSON.stringify(Array.from(memorizedSet)))
+      localStorage.setItem(
+        'memorizedWords',
+        JSON.stringify(Array.from(memorizedSet))
+      )
       setMemorizedWords(memorizedSet)
     } catch (error) {
       console.error('Error saving memorized words to localStorage:', error)
@@ -66,6 +70,6 @@ export function useMemorizedWordsStorage() {
   return {
     memorizedWords,
     setMemorizedWords: saveMemorizedWords,
-    resetMemorizedWords
+    resetMemorizedWords,
   }
 }

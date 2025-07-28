@@ -10,13 +10,18 @@
     "dev": "pnpm -r --parallel dev",
     "lint": "pnpm -r lint",
     "clean": "pnpm -r clean && rm -rf node_modules",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "frontend:dev": "pnpm --filter frontend dev",
     "frontend:build": "pnpm --filter frontend build",
+    "frontend:format": "pnpm --filter frontend format",
     "serverless:deploy": "pnpm --filter serverless deploy",
-    "serverless:dev": "pnpm --filter serverless dev"
+    "serverless:dev": "pnpm --filter serverless dev",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@types/node": "^22",
+    "prettier": "^3.6.2",
     "typescript": "^5"
   }
 }

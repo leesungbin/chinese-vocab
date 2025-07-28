@@ -1,0 +1,1 @@
+cd packages/frontend && pnpm dlx lint-staged

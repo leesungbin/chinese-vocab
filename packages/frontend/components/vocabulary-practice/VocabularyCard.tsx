@@ -1,12 +1,12 @@
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Label } from "@/components/ui/label"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Eye, Volume2, AlertTriangle } from "lucide-react"
-import type { VocabItem } from "@/utils/vocabularyService"
-import { useAuth } from "@/hooks/useAuth"
-import { useTranslation } from "@/hooks/useTranslation"
+import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Label } from '@/components/ui/label'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Eye, Volume2, AlertTriangle } from 'lucide-react'
+import type { VocabItem } from '@/utils/vocabularyService'
+import { useAuth } from '@/hooks/useAuth'
+import { useTranslation } from '@/hooks/useTranslation'
 
 interface VocabularyCardProps {
   currentWord: VocabItem
@@ -43,7 +43,7 @@ export function VocabularyCard({
   handleRevealChinese,
   toggleMemorized,
   themeStyles,
-  showMemorizedWords
+  showMemorizedWords,
 }: VocabularyCardProps) {
   const { isAuthenticated } = useAuth()
   const { t } = useTranslation()
@@ -61,38 +61,39 @@ export function VocabularyCard({
   }
 
   const speakChinese = () => {
-    if ("speechSynthesis" in window) {
+    if ('speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance(currentWord.chinese)
-      
+
       // Wait for voices to load if they haven't already
       const setVoiceAndSpeak = () => {
         const voices = speechSynthesis.getVoices()
-        
+
         // Check if no voices are available at all
         if (voices.length === 0) {
           setShowTTSAlert(true)
           setTimeout(() => setShowTTSAlert(false), 5000)
           return
         }
-        
+
         // Try to find Chinese voices in order of preference
-        const chineseVoice = voices.find(v => 
-          v.lang === "zh-CN" || 
-          v.lang === "zh" || 
-          v.lang.startsWith("zh-") ||
-          v.name.toLowerCase().includes("chinese") ||
-          v.name.toLowerCase().includes("mandarin")
+        const chineseVoice = voices.find(
+          v =>
+            v.lang === 'zh-CN' ||
+            v.lang === 'zh' ||
+            v.lang.startsWith('zh-') ||
+            v.name.toLowerCase().includes('chinese') ||
+            v.name.toLowerCase().includes('mandarin')
         )
-        
+
         if (chineseVoice) {
           utterance.voice = chineseVoice
           utterance.lang = chineseVoice.lang
-          
+
           // Additional settings for better pronunciation
           utterance.rate = 0.6 // Slower for better pronunciation
           utterance.pitch = 1.0
           utterance.volume = 1.0
-          
+
           speechSynthesis.speak(utterance)
         } else {
           // No Chinese voice found - show alert to recommend help
@@ -101,13 +102,15 @@ export function VocabularyCard({
           setTimeout(() => setShowTTSAlert(false), 5000)
         }
       }
-      
+
       // If voices are already loaded, use them immediately
       if (speechSynthesis.getVoices().length > 0) {
         setVoiceAndSpeak()
       } else {
         // Wait for voices to load (especially important on mobile)
-        speechSynthesis.addEventListener('voiceschanged', setVoiceAndSpeak, { once: true })
+        speechSynthesis.addEventListener('voiceschanged', setVoiceAndSpeak, {
+          once: true,
+        })
         // Fallback timeout in case voiceschanged doesn't fire
         setTimeout(setVoiceAndSpeak, 100)
       }
@@ -121,9 +124,11 @@ export function VocabularyCard({
   return (
     <div
       className={`mb-6 backdrop-blur-lg ${themeStyles.glassBackgroundStrong} rounded-3xl ${themeStyles.glassBorderStrong} w-full max-w-4xl mx-auto`}
-      style={{ 
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.05)',
-        filter: 'drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1))'
+      style={{
+        boxShadow:
+          '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.05)',
+        filter:
+          'drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1))',
       }}
     >
       <div className="p-8 relative">
@@ -132,7 +137,7 @@ export function VocabularyCard({
           <Alert className="mb-4 border-orange-200 bg-orange-50 text-orange-800 dark:border-orange-800 dark:bg-orange-950 dark:text-orange-300">
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              {t('vocabulary.ttsNotFound')} 
+              {t('vocabulary.ttsNotFound')}
               <Button
                 variant="link"
                 className="p-0 h-auto text-orange-800 dark:text-orange-300 underline ml-1"
@@ -166,19 +171,24 @@ export function VocabularyCard({
 
         {isLoading ? (
           <div className="text-center space-y-6 min-h-[300px] flex flex-col items-center justify-center">
-            <div className={`text-2xl font-bold ${themeStyles.mainText} mb-4`}>{t('vocabulary.loadingData')}</div>
-            <div className={`${themeStyles.progressFill} h-2 w-24 rounded-full animate-pulse`}></div>
+            <div className={`text-2xl font-bold ${themeStyles.mainText} mb-4`}>
+              {t('vocabulary.loadingData')}
+            </div>
+            <div
+              className={`${themeStyles.progressFill} h-2 w-24 rounded-full animate-pulse`}
+            ></div>
           </div>
         ) : vocabularyDataLength === 0 ? (
           <div className="text-center space-y-6 min-h-[300px] flex flex-col items-center justify-center">
             <div className={`text-2xl font-bold ${themeStyles.mainText} mb-4`}>
-              {vocabularyDataLength === 0 ? t('vocabulary.failedToLoad') : t('vocabulary.allMemorized')}
+              {vocabularyDataLength === 0
+                ? t('vocabulary.failedToLoad')
+                : t('vocabulary.allMemorized')}
             </div>
             <div className={`text-lg ${themeStyles.secondaryText}`}>
-              {vocabularyDataLength === 0 
+              {vocabularyDataLength === 0
                 ? t('vocabulary.checkConnection')
-                : t('vocabulary.enableShowMemorized')
-              }
+                : t('vocabulary.enableShowMemorized')}
             </div>
           </div>
         ) : (
@@ -187,7 +197,11 @@ export function VocabularyCard({
             <div className="relative">
               {showChinese ? (
                 <div className="flex flex-col items-center">
-                  <div className={`${getFontSizeForChinese(currentWord.chinese)} font-bold ${themeStyles.mainText} mb-2 text-center leading-tight min-h-[8rem] flex items-center justify-center`}>{currentWord.chinese}</div>
+                  <div
+                    className={`${getFontSizeForChinese(currentWord.chinese)} font-bold ${themeStyles.mainText} mb-2 text-center leading-tight min-h-[8rem] flex items-center justify-center`}
+                  >
+                    {currentWord.chinese}
+                  </div>
                   <Button
                     variant="outline"
                     size="icon"
@@ -201,7 +215,11 @@ export function VocabularyCard({
                 <div className="flex flex-col items-center justify-center gap-4 min-h-[120px]">
                   {chineseRevealed ? (
                     <div className="flex flex-col items-center">
-                      <div className={`${getFontSizeForChinese(currentWord.chinese)} font-bold ${themeStyles.mainText} mb-2 text-center leading-tight`}>{currentWord.chinese}</div>
+                      <div
+                        className={`${getFontSizeForChinese(currentWord.chinese)} font-bold ${themeStyles.mainText} mb-2 text-center leading-tight`}
+                      >
+                        {currentWord.chinese}
+                      </div>
                       <Button
                         variant="outline"
                         size="icon"
@@ -228,11 +246,19 @@ export function VocabularyCard({
             {/* Pinyin */}
             <div className="space-y-2">
               {showPinyin ? (
-                <div className={`text-2xl ${themeStyles.secondaryText} font-medium`}>{currentWord.pinyin}</div>
+                <div
+                  className={`text-2xl ${themeStyles.secondaryText} font-medium`}
+                >
+                  {currentWord.pinyin}
+                </div>
               ) : (
                 <div className="flex items-center justify-center gap-2">
                   {pinyinRevealed ? (
-                    <div className={`text-2xl ${themeStyles.secondaryText} font-medium`}>{currentWord.pinyin}</div>
+                    <div
+                      className={`text-2xl ${themeStyles.secondaryText} font-medium`}
+                    >
+                      {currentWord.pinyin}
+                    </div>
                   ) : (
                     <Button
                       variant="outline"
@@ -250,11 +276,19 @@ export function VocabularyCard({
             {/* Korean Meaning */}
             <div className="space-y-2">
               {showKorean ? (
-                <div className={`text-xl ${themeStyles.tertiaryText} font-medium`}>{currentWord.korean}</div>
+                <div
+                  className={`text-xl ${themeStyles.tertiaryText} font-medium`}
+                >
+                  {currentWord.korean}
+                </div>
               ) : (
                 <div className="flex items-center justify-center gap-2">
                   {koreanRevealed ? (
-                    <div className={`text-xl ${themeStyles.tertiaryText} font-medium`}>{currentWord.korean}</div>
+                    <div
+                      className={`text-xl ${themeStyles.tertiaryText} font-medium`}
+                    >
+                      {currentWord.korean}
+                    </div>
                   ) : (
                     <Button
                       variant="outline"

@@ -17,8 +17,8 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body>
-        <Script 
-          src="https://accounts.google.com/gsi/client" 
+        <Script
+          src="https://accounts.google.com/gsi/client"
           strategy="beforeInteractive"
         />
         <AuthProvider>{children}</AuthProvider>

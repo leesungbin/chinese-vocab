@@ -22,7 +22,7 @@ export const useLanguageStore = create<LanguageState>()(
     }),
     {
       name: 'language-preference',
-      onRehydrateStorage: () => (state) => {
+      onRehydrateStorage: () => state => {
         if (state) {
           state.setIsLoaded(true)
         }
