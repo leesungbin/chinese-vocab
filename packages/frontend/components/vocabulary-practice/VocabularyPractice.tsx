@@ -104,6 +104,9 @@ export default function VocabularyPractice({
       setAuthError(result.error)
       // Clear error after 5 seconds
       setTimeout(() => setAuthError(null), 5000)
+    } else {
+      // Reset reveal states after marking as memorized to ensure consistency
+      resetRevealStates()
     }
   }
 
