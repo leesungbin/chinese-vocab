@@ -1,16 +1,8 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 import { DynamoService } from '../services/dynamoService'
-import { GoogleSheetsService } from '../services/googleSheets'
 import { ApiResponse } from '../types'
-import {
-  validateAuthorizedUser,
-  AuthError,
-  validateJWT,
-} from '../middleware/auth'
+import { validateJWT } from '../middleware/auth'
 import { allowedOrigins } from '../constants'
-
-const ANONYMOUS_SPREADSHEET_ID = '1JBGAlJ14-yKHoSNlVnogCT4Xj30SLS_jQNuZe5YLe0I'
-const ANONYMOUS_USER_ID = 'anonymous'
 
 export const handler = async (
   event: APIGatewayProxyEvent
@@ -45,20 +37,13 @@ export const handler = async (
 
   try {
     const dynamoService = new DynamoService()
-    let userId = ANONYMOUS_USER_ID
-    let isAuthenticated = false
 
-    try {
-      // Try to validate user - if it fails, treat as anonymous
-      const user = validateJWT(event)
-      userId = user.userId
-      isAuthenticated = true
-      console.log(
-        `Fetching vocabulary for authenticated user: ${user.email} (${user.name})`
-      )
-    } catch (authError) {
-      console.log('No valid authentication found, using anonymous user data')
-    }
+    // Require authentication - throw error for anonymous users
+    const user = validateJWT(event)
+    const userId = user.userId
+    console.log(
+      `Fetching vocabulary for authenticated user: ${user.email} (${user.name})`
+    )
 
     // Get query parameters
     const filter = event.queryStringParameters?.filter as
@@ -68,28 +53,6 @@ export const handler = async (
 
     // Get user's vocabulary from DynamoDB
     let words = await dynamoService.getUserVocabulary(userId, filter)
-
-    // If anonymous user and no cached data, fetch from Google Sheets
-    if (userId === ANONYMOUS_USER_ID && words.length === 0) {
-      console.log(
-        'No cached anonymous data found, fetching from Google Sheets...'
-      )
-
-      try {
-        const sheetsService = new GoogleSheetsService(ANONYMOUS_SPREADSHEET_ID)
-        const sheetData = await sheetsService.getVocabularyData()
-
-        if (sheetData.length > 0) {
-          // Save the data to DynamoDB for future requests
-          await dynamoService.saveUserVocabulary(ANONYMOUS_USER_ID, sheetData)
-          words = sheetData
-          console.log(`Cached ${sheetData.length} words for anonymous users`)
-        }
-      } catch (sheetsError) {
-        console.error('Error fetching from Google Sheets:', sheetsError)
-        // Continue with empty array if sheets fetch fails
-      }
-    }
 
     // Sort by id to maintain consistent order
     words = words.sort((a, b) => a.id - b.id)
@@ -101,7 +64,6 @@ export const handler = async (
         count: words.length,
         filter: filter || 'all',
         userId: userId,
-        isAuthenticated,
       },
     }
 
