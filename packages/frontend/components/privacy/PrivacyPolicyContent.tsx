@@ -19,15 +19,17 @@ export function PrivacyPolicyContent() {
       {/* Navigation Bar */}
       <NavigationBar showHomeButton={true} />
 
-      <div className="flex-1 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto">
-          <div
-            className={`backdrop-blur-md ${themeStyles.glassBackground} rounded-2xl ${themeStyles.glassBorder} shadow-sm p-8`}
-          >
-            <h1 className={`text-3xl font-bold ${themeStyles.mainText} mb-8`}>
+      <div className="flex-1 p-4">
+        <div className="max-w-4xl mx-auto space-y-8">
+          <div>
+            <h1 className={`text-3xl font-bold ${themeStyles.mainText}`}>
               Privacy Policy
             </h1>
+          </div>
 
+          <div
+            className={`backdrop-blur-lg ${themeStyles.glassBackgroundStrong} border-0 rounded-2xl p-8`}
+          >
             <div className="prose prose-gray max-w-none">
               <p className={`text-sm ${themeStyles.secondaryText} mb-6`}>
                 <strong>Effective Date:</strong>{' '}

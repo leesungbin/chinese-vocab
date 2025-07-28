@@ -258,16 +258,16 @@ export default function SettingsPage() {
       <NavigationBar showHomeButton={true} />
 
       <div className="flex-1 p-4">
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-4xl mx-auto space-y-8">
           {/* Header */}
-          <div className="mb-6">
-            <h1 className={`text-2xl font-bold ${themeStyles.mainText}`}>
+          <div>
+            <h1 className={`text-3xl font-bold ${themeStyles.mainText}`}>
               {t('settings.title')}
             </h1>
           </div>
 
           <div
-            className={`backdrop-blur-md ${themeStyles.glassBackground} rounded-2xl ${themeStyles.glassBorder} p-6 space-y-8`}
+            className={`backdrop-blur-lg ${themeStyles.glassBackgroundStrong} border-0 rounded-2xl p-6 space-y-8`}
           >
             {/* Error Dialog for Spreadsheet Creation */}
             {createSpreadsheetError && (
